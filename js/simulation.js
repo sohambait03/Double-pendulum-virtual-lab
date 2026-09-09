@@ -2283,14 +2283,17 @@ window.addEventListener(
    DOM INITIALIZATION
    ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
+document.addEventListener("DOMContentLoaded", function () {
+
+    console.log("Simulation.js: DOM loaded");
+
+    setTimeout(function () {
 
         initializeSimulation();
 
-    }
-);
+    }, 100);
+
+});
 
 
 /* =========================================================
