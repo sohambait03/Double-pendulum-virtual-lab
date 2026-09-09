@@ -1,1162 +1,815 @@
-/* =========================================================
+/* ============================================================
    DOUBLE PENDULUM VIRTUAL LAB
-   Main Stylesheet
-   ========================================================= */
+   style.css
 
-/* ---------- GLOBAL RESET ---------- */
+   Dashboard layout
+   ============================================================ */
+
+
+/* ============================================================
+   1. GLOBAL RESET
+   ============================================================ */
 
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
+
 
 html {
     scroll-behavior: smooth;
 }
 
+
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
     background: #eef5f7;
-    color: #1f2933;
-    line-height: 1.5;
+
+    color: #18343a;
+
+    font-size: 13px;
+
+    line-height: 1.35;
+
+    min-width: 1100px;
 }
 
 
-/* ---------- SCROLLBAR ---------- */
+/* ============================================================
+   2. HEADER
+   ============================================================ */
 
-::-webkit-scrollbar {
-    width: 9px;
-}
+.top-header {
 
-::-webkit-scrollbar-track {
-    background: #e6eef0;
-}
+    height: 62px;
 
-::-webkit-scrollbar-thumb {
-    background: #26777c;
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #185c61;
-}
-
-
-/* =========================================================
-   HEADER
-   ========================================================= */
-
-header {
-    height: 86px;
     width: 100%;
 
     display: flex;
-    align-items: center;
-    justify-content: center;
 
-    background: linear-gradient(
-        135deg,
-        #24777b,
-        #15545a
-    );
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 7px 18px;
+
+    background: #075b61;
 
     color: white;
 
-    border-radius: 0 0 10px 10px;
+    border-bottom: 3px solid #063f44;
 
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.20);
-
-    position: relative;
-
-    z-index: 10;
-}
-
-header h1 {
-    font-size: 25px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    text-align: center;
-}
-
-header p {
-    font-size: 13px;
-    opacity: 0.9;
-    text-align: center;
 }
 
 
-/* =========================================================
-   APPLICATION LAYOUT
-   ========================================================= */
-
-.app {
-    display: flex;
-    min-height: calc(100vh - 86px);
-}
-
-
-/* =========================================================
-   SIDEBAR
-   ========================================================= */
-
-.sidebar {
-    width: 92px;
-    min-width: 92px;
-
-    background: #ffffff;
-
-    border-right: 2px solid #b8dfe2;
+.header-left {
 
     display: flex;
-    flex-direction: column;
+
     align-items: center;
 
-    padding: 15px 8px;
+    gap: 10px;
 
-    position: sticky;
-    top: 0;
-
-    height: calc(100vh - 86px);
-
-    box-shadow: 2px 0 7px rgba(0, 0, 0, 0.08);
 }
 
 
-/* ---------- Sidebar buttons ---------- */
+.lab-logo {
 
-.sidebar button {
-    width: 70px;
-    min-height: 65px;
+    width: 38px;
 
-    margin-bottom: 10px;
-
-    border: none;
-
-    background: transparent;
-
-    color: #145b60;
-
-    border-radius: 10px;
-
-    cursor: pointer;
+    height: 38px;
 
     display: flex;
-    flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
 
-    gap: 5px;
+    font-size: 24px;
 
-    font-size: 12px;
-
-    transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
 }
 
-.sidebar button:hover {
-    background: #e2f2f3;
-    color: #0c474b;
 
-    transform: translateY(-2px);
-}
+.header-title h1 {
 
-.sidebar button.active {
-    background: #d4ecee;
-    color: #104b50;
+    font-size: 20px;
 
     font-weight: 700;
+
+    line-height: 1.05;
+
 }
 
 
-/* ---------- Sidebar icons ---------- */
+.header-title p {
 
-.sidebar .icon {
-    font-size: 24px;
-    line-height: 1;
+    font-size: 10px;
+
+    opacity: 0.9;
+
+    margin-top: 2px;
+
 }
 
-.sidebar .label {
+
+.header-right {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 2px;
+
+    font-size: 10px;
+
+}
+
+
+.header-right strong {
+
     font-size: 11px;
+
 }
 
 
-/* =========================================================
-   MAIN CONTENT
-   ========================================================= */
+.header-right span {
 
-main {
-    flex: 1;
+    opacity: 0.85;
 
-    padding: 12px;
+}
 
-    max-width: 1600px;
+
+/* ============================================================
+   3. MAIN DASHBOARD
+   ============================================================ */
+
+.main-container {
+
+    width: 100%;
+
+    max-width: 1500px;
 
     margin: 0 auto;
 
-    width: 100%;
+    padding: 8px;
+
+    display: grid;
+
+    grid-template-columns: 160px minmax(0, 1fr);
+
+    gap: 8px;
+
+    align-items: start;
+
 }
 
 
-/* =========================================================
-   GENERAL SECTION / CARD
-   ========================================================= */
+/* ============================================================
+   4. SIDEBAR
+   ============================================================ */
 
-section {
-    background: #ffffff;
+.sidebar {
 
-    border: 2px solid #b7dfe2;
+    width: 160px;
 
-    border-radius: 10px;
+    display: flex;
 
-    margin-bottom: 12px;
+    flex-direction: column;
+
+    gap: 7px;
+
+}
+
+
+.sidebar-section {
+
+    background: white;
+
+    border: 1px solid #c4dfe3;
+
+    border-radius: 5px;
 
     overflow: hidden;
 
     box-shadow:
-        0 2px 6px rgba(0, 0, 0, 0.08);
+        0 1px 3px rgba(0, 0, 0, 0.08);
+
 }
 
 
-/* ---------- Section title ---------- */
+.sidebar-section > h2 {
 
-.section-title {
-    min-height: 42px;
-
-    padding: 9px 15px;
-
-    display: flex;
-    align-items: center;
-
-    background: linear-gradient(
-        90deg,
-        #226b70,
-        #174f54
-    );
+    background: #12666b;
 
     color: white;
-
-    font-size: 17px;
-
-    font-weight: 700;
-
-    letter-spacing: 0.3px;
-}
-
-section h2 {
-    min-height: 42px;
-
-    padding: 8px 15px;
-
-    display: flex;
-    align-items: center;
-
-    background: linear-gradient(
-        90deg,
-        #226b70,
-        #174f54
-    );
-
-    color: white;
-
-    font-size: 17px;
-
-    font-weight: 700;
-}
-
-
-/* =========================================================
-   SIMULATION AREA
-   ========================================================= */
-
-#simulation {
-    min-height: 480px;
-}
-
-.simulation-container {
-    width: 100%;
-
-    min-height: 400px;
-
-    padding: 10px;
-
-    background:
-        radial-gradient(
-            circle at center,
-            #ffffff 0%,
-            #f8fbfc 65%,
-            #edf5f6 100%
-        );
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    position: relative;
-}
-
-
-/* ---------- Canvas ---------- */
-
-#pendulumCanvas {
-    display: block;
-
-    width: 100%;
-    max-width: 1050px;
-
-    height: 400px;
-
-    background: #ffffff;
-
-    border: 1px solid #d4e4e6;
-
-    border-radius: 8px;
-}
-
-
-/* ---------- Simulation status ---------- */
-
-.simulation-status {
-    position: absolute;
-
-    top: 20px;
-    right: 20px;
-
-    padding: 6px 12px;
-
-    background: rgba(255, 255, 255, 0.92);
-
-    border: 1px solid #bddadd;
-
-    border-radius: 20px;
 
     font-size: 12px;
 
-    color: #18585d;
+    font-weight: 700;
 
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    padding: 6px 8px;
+
+    line-height: 1.2;
+
 }
 
 
-/* =========================================================
-   VARIABLES SECTION
-   ========================================================= */
+.sidebar-card-content {
 
-.variables-container {
-    padding: 20px;
+    padding: 7px;
 
-    background: #f2f8fa;
+}
+
+
+.sidebar-card-content h3 {
+
+    color: #164e54;
+
+    font-size: 10.5px;
+
+    margin-bottom: 4px;
+
+}
+
+
+.sidebar-card-content p {
+
+    font-size: 9px;
+
+    line-height: 1.35;
+
+    color: #354e52;
+
+}
+
+
+/* ============================================================
+   5. BUTTONS
+   ============================================================ */
+
+.button-grid {
 
     display: grid;
 
-    grid-template-columns:
-        repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: 1fr 1fr;
 
-    gap: 18px;
+    gap: 5px;
+
+    padding: 7px;
+
 }
 
 
-/* ---------- Variable card ---------- */
+.control-button {
 
-.variable-group {
-    background: #ffffff;
+    border: 1px solid #c7d8db;
 
-    border: 1px solid #c9e1e4;
+    border-radius: 3px;
 
-    border-radius: 8px;
+    background: #e7eef0;
 
-    padding: 14px;
+    color: #183f44;
 
-    box-shadow:
-        0 2px 5px rgba(0, 0, 0, 0.06);
+    padding: 6px 4px;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        transform 0.1s ease;
+
 }
 
 
-/* ---------- Variable title ---------- */
+.control-button:hover {
 
-.variable-label {
+    background: #d6e4e7;
+
+}
+
+
+.control-button:active {
+
+    transform: translateY(1px);
+
+}
+
+
+.start-button {
+
+    background: #2f9b68;
+
+    color: white;
+
+    border-color: #278258;
+
+}
+
+
+.start-button:hover {
+
+    background: #27895c;
+
+}
+
+
+.pause-button {
+
+    background: #3979a5;
+
+    color: white;
+
+    border-color: #30698e;
+
+}
+
+
+.pause-button:hover {
+
+    background: #326d94;
+
+}
+
+
+.reset-button {
+
+    background: #e7edef;
+
+}
+
+
+.step-button {
+
+    background: #e7edef;
+
+}
+
+
+.trail-control {
+
+    padding: 0 7px 7px 7px;
+
+}
+
+
+.trail-control label {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    font-size: 9px;
+
+    cursor: pointer;
+
+}
+
+
+.trail-control input {
+
+    width: 12px;
+
+    height: 12px;
+
+}
+
+
+/* ============================================================
+   6. PARAMETERS
+   ============================================================ */
+
+.parameters-section {
+
+    padding-bottom: 5px;
+
+}
+
+
+.parameter-control {
+
+    padding: 5px 7px 3px 7px;
+
+    border-bottom: 1px solid #edf2f3;
+
+}
+
+
+.parameter-control:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.parameter-header {
+
     display: flex;
 
     justify-content: space-between;
 
     align-items: center;
 
-    margin-bottom: 9px;
+    gap: 4px;
 
-    font-size: 14px;
+    margin-bottom: 2px;
+
+}
+
+
+.parameter-header label {
+
+    font-size: 8.5px;
+
+    color: #294b50;
 
     font-weight: 600;
 
-    color: #21474b;
 }
 
 
-/* ---------- Variable symbol ---------- */
+.parameter-header span {
 
-.variable-symbol {
-    font-size: 17px;
+    font-size: 8.5px;
+
+    color: #12666b;
 
     font-weight: 700;
 
-    color: #17646a;
+    white-space: nowrap;
+
 }
 
 
-/* ---------- Variable value ---------- */
+.parameter-input-row {
 
-.variable-value {
-    font-size: 14px;
+    display: flex;
 
-    font-weight: 700;
+    align-items: center;
 
-    color: #15565b;
+    gap: 5px;
+
 }
 
 
-/* =========================================================
-   RANGE SLIDERS
-   ========================================================= */
+.slider-wrapper {
 
-input[type="range"] {
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+.slider-wrapper input[type="range"] {
+
     width: 100%;
 
-    height: 6px;
+    height: 12px;
 
-    appearance: none;
+    margin: 0;
 
-    -webkit-appearance: none;
+    accent-color: #218a91;
 
-    background: #c7dfe1;
+    cursor: pointer;
 
-    border-radius: 10px;
+}
+
+
+.slider-range {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    color: #718589;
+
+    font-size: 7px;
+
+    line-height: 1;
+
+    margin-top: -1px;
+
+}
+
+
+.parameter-input-row > input[type="number"] {
+
+    width: 42px;
+
+    height: 25px;
+
+    border: 1px solid #b9d5d9;
+
+    border-radius: 4px;
+
+    padding: 2px 4px;
+
+    font-size: 9px;
+
+    color: #183f44;
+
+    background: #fff;
+
+}
+
+
+.parameter-input-row > input[type="number"]:focus {
 
     outline: none;
 
-    cursor: pointer;
-}
-
-
-/* Chrome / Edge / Safari */
-
-input[type="range"]::-webkit-slider-thumb {
-    appearance: none;
-
-    -webkit-appearance: none;
-
-    width: 17px;
-    height: 17px;
-
-    border-radius: 50%;
-
-    background: #2b858a;
-
-    border: 2px solid white;
+    border-color: #218a91;
 
     box-shadow:
-        0 1px 4px rgba(0, 0, 0, 0.25);
+        0 0 0 1px rgba(33, 138, 145, 0.15);
 
-    cursor: pointer;
 }
 
 
-/* Firefox */
+/* ============================================================
+   7. DATA SECTION
+   ============================================================ */
 
-input[type="range"]::-moz-range-thumb {
-    width: 17px;
-    height: 17px;
+.data-button-grid {
 
-    border-radius: 50%;
+    display: grid;
 
-    background: #2b858a;
+    grid-template-columns: 1fr 1fr;
 
-    border: 2px solid white;
+    gap: 5px;
 
-    box-shadow:
-        0 1px 4px rgba(0, 0, 0, 0.25);
+    padding: 7px;
 
-    cursor: pointer;
 }
 
 
-/* =========================================================
-   NUMBER INPUTS
-   ========================================================= */
+.data-button-grid .control-button {
 
-input[type="number"] {
-    width: 100%;
+    font-size: 8px;
 
-    padding: 8px 10px;
+    min-height: 29px;
 
-    margin-top: 8px;
+}
 
-    border: 1px solid #bcd6d9;
+
+/* ============================================================
+   8. SHORTCUTS
+   ============================================================ */
+
+.shortcut-grid {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    padding: 7px;
+
+}
+
+
+.shortcut-grid span {
+
+    font-size: 8.5px;
+
+    color: #40595d;
+
+}
+
+
+.shortcut-grid strong {
+
+    display: inline-block;
+
+    min-width: 36px;
+
+    color: #12666b;
+
+}
+
+
+/* ============================================================
+   9. CONTENT
+   ============================================================ */
+
+.content {
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+}
+
+
+/* ============================================================
+   10. GENERAL CARD
+   ============================================================ */
+
+.card {
+
+    background: white;
+
+    border: 1px solid #bddce0;
 
     border-radius: 6px;
 
-    background: white;
-
-    color: #1f3639;
-
-    font-size: 14px;
-
-    outline: none;
-
-    transition: border 0.2s ease;
-}
-
-input[type="number"]:focus {
-    border-color: #24777b;
+    overflow: hidden;
 
     box-shadow:
-        0 0 0 2px rgba(36, 119, 123, 0.12);
+        0 1px 3px rgba(0, 0, 0, 0.07);
+
 }
 
 
-/* =========================================================
-   CONTROL BUTTONS
-   ========================================================= */
+.card-header {
 
-.controls {
-    display: flex;
+    min-height: 28px;
 
-    flex-wrap: wrap;
-
-    justify-content: center;
-
-    gap: 10px;
-
-    padding: 15px;
-
-    background: #f2f8fa;
-
-    border-top: 1px solid #d1e5e7;
-}
-
-
-/* ---------- General buttons ---------- */
-
-.btn {
-    border: none;
-
-    border-radius: 7px;
-
-    padding: 10px 20px;
-
-    min-width: 100px;
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease,
-        background 0.15s ease;
-}
-
-
-/* ---------- Hover ---------- */
-
-.btn:hover {
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 3px 7px rgba(0, 0, 0, 0.16);
-}
-
-
-/* ---------- Start ---------- */
-
-.btn-start {
-    background: #247b66;
-    color: white;
-}
-
-.btn-start:hover {
-    background: #1d6655;
-}
-
-
-/* ---------- Pause ---------- */
-
-.btn-pause {
-    background: #d39b32;
-    color: white;
-}
-
-.btn-pause:hover {
-    background: #b98225;
-}
-
-
-/* ---------- Reset ---------- */
-
-.btn-reset {
-    background: #b64c4c;
-    color: white;
-}
-
-.btn-reset:hover {
-    background: #983b3b;
-}
-
-
-/* ---------- Step ---------- */
-
-.btn-step {
-    background: #3475a3;
-    color: white;
-}
-
-.btn-step:hover {
-    background: #285f88;
-}
-
-
-/* =========================================================
-   CURRENT STATE / RESULTS
-   ========================================================= */
-
-.results-container {
-    padding: 20px;
-
-    background: #f4f9fa;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fit, minmax(180px, 1fr));
-
-    gap: 14px;
-}
-
-
-/* ---------- Result card ---------- */
-
-.result-card {
-    background: white;
-
-    border: 1px solid #c7dfe2;
-
-    border-radius: 8px;
-
-    padding: 15px;
-
-    text-align: center;
-
-    box-shadow:
-        0 2px 5px rgba(0, 0, 0, 0.06);
-}
-
-
-/* ---------- Result title ---------- */
-
-.result-card .result-label {
-    font-size: 12px;
-
-    color: #60777a;
-
-    margin-bottom: 5px;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.5px;
-}
-
-
-/* ---------- Result value ---------- */
-
-.result-card .result-value {
-    font-size: 22px;
-
-    font-weight: 700;
-
-    color: #155c61;
-}
-
-
-/* ---------- Result unit ---------- */
-
-.result-card .result-unit {
-    font-size: 12px;
-
-    color: #657b7e;
-}
-
-
-/* =========================================================
-   TIME DISPLAY
-   ========================================================= */
-
-.time-display {
     display: flex;
 
     align-items: center;
 
-    justify-content: center;
+    justify-content: space-between;
 
-    gap: 10px;
+    padding: 5px 8px;
 
-    padding: 12px;
+    background: #12666b;
 
-    background: #e5f2f4;
+    color: white;
 
-    border-top: 1px solid #c4dfe2;
-
-    border-bottom: 1px solid #c4dfe2;
 }
 
-.time-label {
-    font-size: 13px;
 
-    color: #456a6d;
+.card-header h2 {
 
-    font-weight: 600;
-}
-
-.time-value {
-    font-size: 18px;
-
-    color: #12565b;
+    font-size: 12px;
 
     font-weight: 700;
 
-    font-family: "Courier New", monospace;
+    line-height: 1.15;
+
 }
 
 
-/* =========================================================
-   GRAPHS
-   ========================================================= */
+.card-header p {
 
-.graphs-container {
-    padding: 20px;
+    font-size: 8.5px;
 
-    background: #f4f9fa;
+    margin-top: 1px;
 
-    display: grid;
+    opacity: 0.85;
 
-    grid-template-columns:
-        repeat(auto-fit, minmax(350px, 1fr));
-
-    gap: 18px;
 }
 
 
-/* ---------- Graph card ---------- */
+/* ============================================================
+   11. SIMULATION CARD
+   ============================================================ */
 
-.graph-card {
-    background: white;
+.simulation-card {
 
-    border: 1px solid #c7dfe2;
+    height: 192px;
 
-    border-radius: 8px;
-
-    padding: 12px;
-
-    min-height: 300px;
-
-    box-shadow:
-        0 2px 5px rgba(0, 0, 0, 0.06);
 }
 
 
-/* ---------- Graph title ---------- */
-
-.graph-title {
-    font-size: 14px;
-
-    font-weight: 700;
-
-    color: #205c61;
-
-    margin-bottom: 10px;
-
-    text-align: center;
-}
-
-
-/* ---------- Chart canvas ---------- */
-
-.graph-card canvas {
-    width: 100% !important;
-
-    max-height: 260px;
-}
-
-
-/* =========================================================
-   THEORY SECTION
-   ========================================================= */
-
-.theory-container {
-    padding: 25px;
-
-    background: #ffffff;
-}
-
-.theory-container h3 {
-    color: #176168;
-
-    margin-top: 20px;
-
-    margin-bottom: 10px;
-
-    font-size: 18px;
-}
-
-.theory-container h3:first-child {
-    margin-top: 0;
-}
-
-.theory-container p {
-    margin-bottom: 12px;
-
-    color: #3f5053;
-
-    font-size: 14px;
-}
-
-.theory-container ul {
-    margin-left: 25px;
-
-    margin-bottom: 15px;
-}
-
-.theory-container li {
-    margin-bottom: 6px;
-
-    color: #3f5053;
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   EQUATION BOX
-   ========================================================= */
-
-.equation-box {
-    margin: 15px 0;
-
-    padding: 18px;
-
-    background: #f1f7f8;
-
-    border-left: 5px solid #27787d;
-
-    border-radius: 5px;
-
-    overflow-x: auto;
-
-    text-align: center;
-}
-
-.equation-box p {
-    margin: 8px 0;
-
-    font-size: 16px;
-
-    color: #173f42;
-
-    font-family:
-        "Times New Roman",
-        Times,
-        serif;
-}
-
-
-/* =========================================================
-   MATRIX EQUATION
-   ========================================================= */
-
-.matrix-box {
-    margin: 15px 0;
-
-    padding: 20px;
-
-    background: #f5f9fa;
-
-    border: 1px solid #c8dfe2;
-
-    border-radius: 8px;
-
-    text-align: center;
-
-    overflow-x: auto;
-}
-
-
-/* =========================================================
-   PROCEDURE SECTION
-   ========================================================= */
-
-.procedure-container {
-    padding: 25px;
-
-    background: #ffffff;
-}
-
-.procedure-step {
-    display: flex;
-
-    gap: 15px;
-
-    margin-bottom: 15px;
-
-    padding: 14px;
-
-    background: #f4f9fa;
-
-    border: 1px solid #c9e0e2;
-
-    border-radius: 7px;
-}
-
-.step-number {
-    min-width: 35px;
+.simulation-header {
 
     height: 35px;
 
+}
+
+
+.simulation-header-right {
+
     display: flex;
 
     align-items: center;
 
-    justify-content: center;
+    gap: 12px;
 
-    background: #24777b;
-
-    color: white;
-
-    border-radius: 50%;
-
-    font-weight: 700;
-}
-
-.step-content h4 {
-    color: #185c61;
-
-    margin-bottom: 4px;
-
-    font-size: 15px;
-}
-
-.step-content p {
-    color: #53676a;
-
-    font-size: 13px;
 }
 
 
-/* =========================================================
-   OBSERVATION TABLE
-   ========================================================= */
+.simulation-status {
 
-.table-container {
-    padding: 20px;
+    font-size: 9px;
 
-    overflow-x: auto;
+    font-weight: 600;
+
 }
 
-table {
+
+#statusText {
+
+    white-space: nowrap;
+
+}
+
+
+.time-display {
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+}
+
+
+.canvas-container {
+
+    height: calc(100% - 35px);
+
     width: 100%;
 
-    border-collapse: collapse;
+    display: flex;
 
-    background: white;
+    justify-content: center;
 
-    min-width: 600px;
-}
+    align-items: center;
 
-thead {
-    background: #226b70;
-
-    color: white;
-}
-
-th {
-    padding: 11px;
-
-    text-align: center;
-
-    font-size: 13px;
-
-    font-weight: 700;
-}
-
-td {
-    padding: 10px;
-
-    text-align: center;
-
-    border-bottom: 1px solid #d8e5e7;
-
-    font-size: 13px;
-
-    color: #42575a;
-}
-
-tbody tr:hover {
-    background: #f1f8f9;
-}
-
-
-/* =========================================================
-   ENERGY VALIDATION
-   ========================================================= */
-
-.energy-status {
-    margin: 15px;
-
-    padding: 15px;
-
-    border-radius: 7px;
-
-    border: 1px solid #c7dfe2;
-
-    background: #f3f9fa;
-}
-
-.energy-status.good {
-    border-left: 5px solid #288260;
-}
-
-.energy-status.warning {
-    border-left: 5px solid #d49a31;
-}
-
-.energy-status.error {
-    border-left: 5px solid #b64d4d;
-}
-
-.energy-status h4 {
-    margin-bottom: 5px;
-
-    color: #1b5d62;
-}
-
-
-/* =========================================================
-   QUIZ
-   ========================================================= */
-
-.quiz-container {
-    padding: 25px;
+    padding: 6px;
 
     background: #ffffff;
+
 }
 
-.quiz-question {
-    margin-bottom: 25px;
 
-    padding: 18px;
+#pendulumCanvas {
 
-    background: #f3f8f9;
-
-    border: 1px solid #cbdfe1;
-
-    border-radius: 8px;
-}
-
-.quiz-question h4 {
-    color: #185d62;
-
-    margin-bottom: 12px;
-
-    font-size: 15px;
-}
-
-.quiz-option {
     display: block;
 
-    padding: 8px;
+    width: 100%;
 
-    margin: 5px 0;
+    height: 100%;
 
-    border-radius: 5px;
+    max-height: 170px;
 
-    cursor: pointer;
+    border-radius: 3px;
 
-    color: #435659;
+    background: #f8fbfc;
 
-    font-size: 14px;
-
-    transition: background 0.15s ease;
-}
-
-.quiz-option:hover {
-    background: #e4f1f3;
 }
 
 
-/* =========================================================
-   DOWNLOAD / SECONDARY BUTTONS
-   ========================================================= */
+/* ============================================================
+   12. STATE + ENERGY GRID
+   ============================================================ */
 
-.btn-download {
-    background: #5d6e75;
+.state-energy-grid {
 
-    color: white;
-}
+    display: grid;
 
-.btn-download:hover {
-    background: #49595f;
-}
+    grid-template-columns:
+        minmax(0, 1.7fr)
+        minmax(270px, 1fr);
 
-.btn-secondary {
-    background: #e6f1f3;
+    gap: 7px;
 
-    color: #185c61;
-
-    border: 1px solid #bcd9dc;
-}
-
-.btn-secondary:hover {
-    background: #d7e9eb;
 }
 
 
-/* =========================================================
-   FOOTER
-   ========================================================= */
+.state-card,
+.energy-card {
 
-footer {
-    margin-top: 10px;
+    min-width: 0;
 
-    padding: 15px;
-
-    background: #174f54;
-
-    color: white;
-
-    text-align: center;
-
-    font-size: 12px;
-
-    border-radius: 8px 8px 0 0;
-}
-
-footer p {
-    margin: 3px 0;
-
-    opacity: 0.9;
 }
 
 
-/* =========================================================
-   LOADING SCREEN
-   ========================================================= */
+.results-grid {
 
-.loading {
-    position: fixed;
+    display: grid;
 
-    inset: 0;
+    grid-template-columns: repeat(5, 1fr);
 
-    background: rgba(255, 255, 255, 0.96);
+}
+
+
+.result-card {
+
+    min-height: 46px;
+
+    border-right: 1px solid #d7e7e9;
+
+    border-bottom: 1px solid #d7e7e9;
 
     display: flex;
 
@@ -1166,461 +819,997 @@ footer p {
 
     justify-content: center;
 
-    z-index: 9999;
-}
+    text-align: center;
 
-.loading-spinner {
-    width: 45px;
-
-    height: 45px;
-
-    border: 4px solid #d7e8ea;
-
-    border-top-color: #24777b;
-
-    border-radius: 50%;
-
-    animation: spin 1s linear infinite;
-
-    margin-bottom: 15px;
-}
-
-@keyframes spin {
-
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
+    padding: 3px;
 
 }
 
 
-/* =========================================================
-   TOOLTIP
-   ========================================================= */
+.result-card:nth-child(5n) {
 
-.tooltip {
-    position: relative;
+    border-right: none;
 
-    cursor: help;
-}
-
-.tooltip::after {
-    content: attr(data-tooltip);
-
-    position: absolute;
-
-    bottom: 120%;
-
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    background: #173f42;
-
-    color: white;
-
-    padding: 6px 9px;
-
-    border-radius: 5px;
-
-    font-size: 11px;
-
-    white-space: nowrap;
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    transition: opacity 0.2s ease;
-
-    z-index: 100;
-}
-
-.tooltip:hover::after {
-    opacity: 1;
 }
 
 
-/* =========================================================
-   STATUS INDICATORS
-   ========================================================= */
+.result-label {
 
-.status {
-    display: inline-flex;
+    color: #326067;
 
-    align-items: center;
+    font-size: 8px;
 
-    gap: 6px;
+    font-weight: 600;
+
+    margin-bottom: 2px;
+
+}
+
+
+.result-value {
+
+    color: #075b61;
 
     font-size: 12px;
 
-    font-weight: 600;
+    font-weight: 700;
+
+    line-height: 1.05;
+
 }
 
-.status-dot {
-    width: 8px;
 
-    height: 8px;
+.result-value small {
+
+    display: block;
+
+    font-size: 7px;
+
+    font-weight: 400;
+
+    color: #60787b;
+
+    margin-top: 1px;
+
+}
+
+
+/* ============================================================
+   13. ENERGY VALIDATION
+   ============================================================ */
+
+.energy-validation-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 5px;
+
+    padding: 6px;
+
+}
+
+
+.validation-item {
+
+    min-height: 44px;
+
+    border: 1px solid #dcebed;
+
+    border-radius: 4px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    padding: 4px;
+
+}
+
+
+.validation-item span {
+
+    font-size: 7.5px;
+
+    color: #557176;
+
+}
+
+
+.validation-item strong {
+
+    color: #075b61;
+
+    font-size: 11px;
+
+    margin-top: 2px;
+
+}
+
+
+.energy-status {
+
+    grid-column: 1 / -1;
+
+    min-height: 24px;
+
+    border-radius: 4px;
+
+    background: #ddf5df;
+
+    color: #287139;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 5px 8px;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+}
+
+
+.energy-status::before {
+
+    content: "";
+
+    width: 9px;
+
+    height: 9px;
 
     border-radius: 50%;
-}
 
-.status-running .status-dot {
-    background: #2b8a6e;
-}
+    background: #20a341;
 
-.status-paused .status-dot {
-    background: #d29a31;
-}
+    margin-right: 5px;
 
-.status-stopped .status-dot {
-    background: #aebdc0;
+    flex-shrink: 0;
+
 }
 
 
-/* =========================================================
-   RESPONSIVE DESIGN — TABLET
-   ========================================================= */
+/* ============================================================
+   14. GRAPHS
+   ============================================================ */
 
-@media (max-width: 900px) {
+.graphs-section {
 
-    header {
-        height: 75px;
-    }
+    overflow: visible;
 
-    header h1 {
-        font-size: 21px;
-    }
+}
 
-    .app {
-        min-height: calc(100vh - 75px);
+
+.graphs-section > .card-header {
+
+    height: 27px;
+
+}
+
+
+.charts-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 5px;
+
+    padding: 5px;
+
+}
+
+
+.chart-card {
+
+    min-width: 0;
+
+    border: 1px solid #cbdfe2;
+
+    border-radius: 4px;
+
+    background: white;
+
+    overflow: hidden;
+
+}
+
+
+.chart-title {
+
+    height: 21px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 3px 5px;
+
+    background: #edf5f6;
+
+    color: #23565c;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+}
+
+
+.chart-container {
+
+    height: 105px;
+
+    padding: 3px;
+
+    position: relative;
+
+}
+
+
+.chart-container canvas {
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+}
+
+
+/* ============================================================
+   15. BOTTOM DASHBOARD
+   ============================================================ */
+
+.bottom-dashboard-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(300px, 1.7fr)
+        minmax(170px, 0.8fr)
+        minmax(170px, 0.8fr)
+        minmax(180px, 0.9fr);
+
+    gap: 7px;
+
+    align-items: stretch;
+
+}
+
+
+.bottom-dashboard-grid > .card {
+
+    min-width: 0;
+
+}
+
+
+/* ============================================================
+   16. OBSERVATION TABLE
+   ============================================================ */
+
+.observation-card {
+
+    min-height: 190px;
+
+}
+
+
+.table-container {
+
+    position: relative;
+
+    max-height: 155px;
+
+    overflow: auto;
+
+}
+
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 8px;
+
+}
+
+
+thead {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 2;
+
+}
+
+
+th {
+
+    background: #edf5f6;
+
+    color: #315d63;
+
+    border-bottom: 1px solid #c9dfe2;
+
+    padding: 5px 3px;
+
+    text-align: center;
+
+    font-weight: 700;
+
+}
+
+
+td {
+
+    border-bottom: 1px solid #edf1f2;
+
+    padding: 4px 3px;
+
+    text-align: center;
+
+    color: #405b60;
+
+}
+
+
+tbody tr:hover {
+
+    background: #f4f9fa;
+
+}
+
+
+.empty-table-message {
+
+    text-align: center;
+
+    color: #829497;
+
+    font-size: 8px;
+
+    padding: 20px 5px;
+
+}
+
+
+/* ============================================================
+   17. INFORMATION CARDS
+   ============================================================ */
+
+.info-card {
+
+    min-height: 190px;
+
+}
+
+
+.info-content {
+
+    padding: 7px;
+
+}
+
+
+.info-content ul,
+.info-content ol {
+
+    padding-left: 15px;
+
+}
+
+
+.info-content li {
+
+    font-size: 8px;
+
+    line-height: 1.45;
+
+    margin-bottom: 3px;
+
+    color: #405b60;
+
+}
+
+
+.info-content li::marker {
+
+    color: #147078;
+
+}
+
+
+.secondary-button {
+
+    width: 100%;
+
+    margin-top: 5px;
+
+    border: 1px solid #c5d9dc;
+
+    background: #e9eff1;
+
+    color: #29565c;
+
+    border-radius: 3px;
+
+    padding: 5px;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+.secondary-button:hover {
+
+    background: #dce9eb;
+
+}
+
+
+/* ============================================================
+   18. THEORY
+   ============================================================ */
+
+.theory-content {
+
+    padding: 10px 12px;
+
+}
+
+
+.theory-content h3 {
+
+    color: #12666b;
+
+    font-size: 13px;
+
+    margin: 12px 0 5px;
+
+}
+
+
+.theory-content h3:first-child {
+
+    margin-top: 0;
+
+}
+
+
+.theory-content p {
+
+    font-size: 11px;
+
+    color: #425c61;
+
+}
+
+
+.equation {
+
+    padding: 8px;
+
+    margin: 6px 0;
+
+    background: #f5f9fa;
+
+    border: 1px solid #dbe9eb;
+
+    border-radius: 4px;
+
+    overflow-x: auto;
+
+}
+
+
+/* ============================================================
+   19. PROCEDURE DETAILS
+   ============================================================ */
+
+.procedure-content {
+
+    padding: 10px 15px;
+
+}
+
+
+.procedure-content ol {
+
+    padding-left: 18px;
+
+}
+
+
+.procedure-content li {
+
+    font-size: 10px;
+
+    margin-bottom: 5px;
+
+    color: #405b60;
+
+}
+
+
+/* ============================================================
+   20. QUIZ
+   ============================================================ */
+
+.quiz-content {
+
+    padding: 7px;
+
+}
+
+
+.quiz-question {
+
+    margin-bottom: 8px;
+
+}
+
+
+.quiz-question p {
+
+    font-size: 8px;
+
+    color: #31575c;
+
+    line-height: 1.35;
+
+    margin-bottom: 4px;
+
+}
+
+
+.quiz-question label {
+
+    display: block;
+
+    font-size: 7.5px;
+
+    color: #526b6f;
+
+    margin-bottom: 3px;
+
+    cursor: pointer;
+
+}
+
+
+.quiz-question input {
+
+    width: 10px;
+
+    height: 10px;
+
+    vertical-align: middle;
+
+    margin-right: 3px;
+
+}
+
+
+.quiz-button {
+
+    width: 100%;
+
+    border: none;
+
+    border-radius: 3px;
+
+    background: #0b9994;
+
+    color: white;
+
+    padding: 6px;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+
+.quiz-button:hover {
+
+    background: #087f7b;
+
+}
+
+
+.quiz-result {
+
+    margin-top: 5px;
+
+    text-align: center;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+}
+
+
+.quiz-result.correct {
+
+    color: #23813a;
+
+}
+
+
+/* ============================================================
+   21. FOOTER
+   ============================================================ */
+
+.footer {
+
+    width: 100%;
+
+    text-align: center;
+
+    padding: 10px;
+
+    margin-top: 5px;
+
+    color: #60777b;
+
+    font-size: 8px;
+
+}
+
+
+.footer p + p {
+
+    margin-top: 2px;
+
+}
+
+
+/* ============================================================
+   22. SCROLLBARS
+   ============================================================ */
+
+::-webkit-scrollbar {
+
+    width: 7px;
+
+    height: 7px;
+
+}
+
+
+::-webkit-scrollbar-track {
+
+    background: #edf3f4;
+
+}
+
+
+::-webkit-scrollbar-thumb {
+
+    background: #a9c4c8;
+
+    border-radius: 5px;
+
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+
+    background: #7fa8ad;
+
+}
+
+
+/* ============================================================
+   23. FOCUS STATES
+   ============================================================ */
+
+button:focus-visible,
+input:focus-visible {
+
+    outline: 2px solid #238a91;
+
+    outline-offset: 1px;
+
+}
+
+
+/* ============================================================
+   24. RESPONSIVE - LARGE SCREENS
+   ============================================================ */
+
+@media (min-width: 1500px) {
+
+    .main-container {
+
+        max-width: 1600px;
+
     }
 
     .sidebar {
-        width: 75px;
 
-        min-width: 75px;
+        width: 175px;
 
-        height: calc(100vh - 75px);
     }
 
-    .sidebar button {
-        width: 58px;
+    .main-container {
 
-        min-height: 58px;
-    }
+        grid-template-columns: 175px minmax(0, 1fr);
 
-    .sidebar .icon {
-        font-size: 20px;
-    }
-
-    .sidebar .label {
-        font-size: 9px;
-    }
-
-    main {
-        padding: 8px;
-    }
-
-    #pendulumCanvas {
-        height: 350px;
     }
 
 }
 
 
-/* =========================================================
-   RESPONSIVE DESIGN — MOBILE
-   ========================================================= */
+/* ============================================================
+   25. RESPONSIVE - MEDIUM SCREENS
+   ============================================================ */
 
-@media (max-width: 650px) {
+@media (max-width: 1250px) {
 
-    header {
-        height: 68px;
+    body {
 
-        border-radius: 0;
+        min-width: 950px;
+
     }
 
-    header h1 {
-        font-size: 17px;
 
-        letter-spacing: 0.4px;
+    .main-container {
+
+        grid-template-columns: 145px minmax(0, 1fr);
+
     }
 
-    .app {
-        display: block;
-    }
 
     .sidebar {
-        width: 100%;
 
-        height: auto;
+        width: 145px;
+
+    }
+
+
+    .bottom-dashboard-grid {
+
+        grid-template-columns:
+            1.5fr
+            0.8fr
+            0.8fr
+            0.9fr;
+
+    }
+
+
+    .result-value {
+
+        font-size: 10px;
+
+    }
+
+}
+
+
+/* ============================================================
+   26. RESPONSIVE - SMALLER SCREENS
+   ============================================================ */
+
+@media (max-width: 1050px) {
+
+    body {
 
         min-width: 0;
 
-        position: sticky;
-
-        top: 0;
-
-        z-index: 50;
-
-        flex-direction: row;
-
-        justify-content: center;
-
-        padding: 5px;
-
-        border-right: none;
-
-        border-bottom: 2px solid #b8dfe2;
-
-        overflow-x: auto;
     }
 
-    .sidebar button {
-        width: 58px;
 
-        min-width: 58px;
+    .main-container {
 
-        min-height: 52px;
-
-        margin: 0 2px;
-    }
-
-    .sidebar .icon {
-        font-size: 18px;
-    }
-
-    .sidebar .label {
-        font-size: 8px;
-    }
-
-    main {
-        padding: 6px;
-    }
-
-    section {
-        border-radius: 7px;
-    }
-
-    section h2,
-    .section-title {
-        font-size: 15px;
-
-        min-height: 38px;
-
-        padding: 7px 11px;
-    }
-
-    #simulation {
-        min-height: 350px;
-    }
-
-    .simulation-container {
-        min-height: 300px;
-
-        padding: 5px;
-    }
-
-    #pendulumCanvas {
-        height: 300px;
-
-        border-radius: 5px;
-    }
-
-    .variables-container {
         grid-template-columns: 1fr;
 
-        padding: 12px;
-
-        gap: 10px;
     }
 
-    .results-container {
-        grid-template-columns:
-            repeat(2, 1fr);
 
-        padding: 12px;
+    .sidebar {
 
-        gap: 8px;
-    }
-
-    .result-card {
-        padding: 10px;
-    }
-
-    .result-card .result-value {
-        font-size: 18px;
-    }
-
-    .graphs-container {
-        grid-template-columns: 1fr;
-
-        padding: 12px;
-
-        gap: 10px;
-    }
-
-    .graph-card {
-        min-height: 260px;
-    }
-
-    .controls {
-        padding: 10px;
-
-        gap: 6px;
-    }
-
-    .btn {
-        min-width: 80px;
-
-        padding: 8px 12px;
-
-        font-size: 12px;
-    }
-
-    .theory-container,
-    .procedure-container,
-    .quiz-container {
-        padding: 15px;
-    }
-
-    .equation-box {
-        padding: 12px;
-
-        font-size: 13px;
-    }
-
-}
-
-
-/* =========================================================
-   VERY SMALL MOBILE
-   ========================================================= */
-
-@media (max-width: 400px) {
-
-    header h1 {
-        font-size: 15px;
-    }
-
-    .results-container {
-        grid-template-columns: 1fr;
-    }
-
-    .sidebar button {
-        width: 52px;
-
-        min-width: 52px;
-    }
-
-    .sidebar .label {
-        font-size: 7px;
-    }
-
-}
-
-
-/* =========================================================
-   PRINT STYLES
-   ========================================================= */
-
-@media print {
-
-    body {
-        background: white;
-
-        color: black;
-    }
-
-    .sidebar,
-    .controls,
-    button {
-        display: none !important;
-    }
-
-    main {
         width: 100%;
 
-        padding: 0;
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        align-items: start;
+
     }
 
-    section {
-        box-shadow: none;
 
-        border: 1px solid #999;
+    .parameters-section {
 
-        break-inside: avoid;
+        grid-column: 1 / -1;
+
     }
 
-    section h2 {
-        color: black;
 
-        background: white;
+    .content {
 
-        border-bottom: 1px solid #999;
+        width: 100%;
+
     }
 
-    footer {
-        display: none;
+
+    .charts-grid {
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+    }
+
+
+    .bottom-dashboard-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
     }
 
 }
 
 
-/* =========================================================
-   UTILITY CLASSES
-   ========================================================= */
+/* ============================================================
+   27. RESPONSIVE - MOBILE
+   ============================================================ */
+
+@media (max-width: 700px) {
+
+    .top-header {
+
+        height: auto;
+
+        min-height: 60px;
+
+    }
+
+
+    .header-right {
+
+        display: none;
+
+    }
+
+
+    .sidebar {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .parameters-section {
+
+        grid-column: auto;
+
+    }
+
+
+    .state-energy-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .results-grid {
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+    }
+
+
+    .result-card:nth-child(5n) {
+
+        border-right: 1px solid #d7e7e9;
+
+    }
+
+
+    .charts-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+
+    .bottom-dashboard-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+
+/* ============================================================
+   28. SIMULATION STATUS STATES
+   ============================================================ */
+
+.simulation-status.running {
+
+    color: #b9f4c7;
+
+}
+
+
+.simulation-status.paused {
+
+    color: #ffe39a;
+
+}
+
+
+.simulation-status.ready {
+
+    color: #d5eeee;
+
+}
+
+
+.simulation-status.error {
+
+    color: #ffb4b4;
+
+}
+
+
+/* ============================================================
+   29. UTILITY CLASSES
+   ============================================================ */
 
 .hidden {
+
     display: none !important;
+
 }
 
-.visible {
-    display: block !important;
-}
 
 .text-center {
+
     text-align: center;
-}
 
-.text-left {
-    text-align: left;
-}
-
-.text-right {
-    text-align: right;
-}
-
-.mt-10 {
-    margin-top: 10px;
-}
-
-.mt-20 {
-    margin-top: 20px;
-}
-
-.mb-10 {
-    margin-bottom: 10px;
-}
-
-.mb-20 {
-    margin-bottom: 20px;
-}
-
-.p-10 {
-    padding: 10px;
-}
-
-.p-20 {
-    padding: 20px;
 }
 
 
-/* =========================================================
-   END OF STYLESHEET
-   ========================================================= */
+.full-width {
+
+    width: 100%;
+
+}
+
+
+/* ============================================================
+   END OF STYLE SHEET
+   ============================================================ */
