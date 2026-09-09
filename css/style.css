@@ -1,13 +1,11 @@
 /* ============================================================
    DOUBLE PENDULUM VIRTUAL LAB
-   style.css
-
-   Dashboard layout
+   DASHBOARD STYLE
    ============================================================ */
 
 
 /* ============================================================
-   1. GLOBAL RESET
+   GLOBAL
    ============================================================ */
 
 * {
@@ -28,27 +26,27 @@ body {
         Helvetica,
         sans-serif;
 
-    background: #eef5f7;
+    background: #edf5f7;
 
-    color: #18343a;
+    color: #19383d;
 
-    font-size: 13px;
+    font-size: 12px;
 
     line-height: 1.35;
-
-    min-width: 1100px;
 }
 
 
 /* ============================================================
-   2. HEADER
+   HEADER
    ============================================================ */
 
 .top-header {
 
-    height: 62px;
+    height: 58px;
 
-    width: 100%;
+    background: #075e63;
+
+    color: white;
 
     display: flex;
 
@@ -56,14 +54,9 @@ body {
 
     justify-content: space-between;
 
-    padding: 7px 18px;
+    padding: 6px 14px;
 
-    background: #075b61;
-
-    color: white;
-
-    border-bottom: 3px solid #063f44;
-
+    border-bottom: 2px solid #06494d;
 }
 
 
@@ -73,47 +66,37 @@ body {
 
     align-items: center;
 
-    gap: 10px;
-
+    gap: 8px;
 }
 
 
 .lab-logo {
 
-    width: 38px;
+    font-size: 25px;
 
-    height: 38px;
+    width: 32px;
 
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 24px;
-
+    text-align: center;
 }
 
 
 .header-title h1 {
 
-    font-size: 20px;
+    font-size: 18px;
 
-    font-weight: 700;
+    line-height: 1;
 
-    line-height: 1.05;
-
+    margin: 0;
 }
 
 
 .header-title p {
 
-    font-size: 10px;
+    font-size: 9px;
+
+    margin-top: 3px;
 
     opacity: 0.9;
-
-    margin-top: 2px;
-
 }
 
 
@@ -127,27 +110,24 @@ body {
 
     gap: 2px;
 
-    font-size: 10px;
-
+    font-size: 9px;
 }
 
 
 .header-right strong {
 
-    font-size: 11px;
-
+    font-size: 10px;
 }
 
 
 .header-right span {
 
     opacity: 0.85;
-
 }
 
 
 /* ============================================================
-   3. MAIN DASHBOARD
+   MAIN LAYOUT
    ============================================================ */
 
 .main-container {
@@ -158,21 +138,20 @@ body {
 
     margin: 0 auto;
 
-    padding: 8px;
+    padding: 7px;
 
     display: grid;
 
     grid-template-columns: 160px minmax(0, 1fr);
 
-    gap: 8px;
+    gap: 7px;
 
     align-items: start;
-
 }
 
 
 /* ============================================================
-   4. SIDEBAR
+   SIDEBAR
    ============================================================ */
 
 .sidebar {
@@ -183,8 +162,7 @@ body {
 
     flex-direction: column;
 
-    gap: 7px;
-
+    gap: 6px;
 }
 
 
@@ -192,66 +170,59 @@ body {
 
     background: white;
 
-    border: 1px solid #c4dfe3;
+    border: 1px solid #c4dfe2;
 
     border-radius: 5px;
 
     overflow: hidden;
 
     box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.08);
-
+        0 1px 2px rgba(0,0,0,0.08);
 }
 
 
 .sidebar-section > h2 {
 
-    background: #12666b;
+    background: #12696e;
 
     color: white;
 
-    font-size: 12px;
+    padding: 5px 7px;
+
+    font-size: 11px;
 
     font-weight: 700;
-
-    padding: 6px 8px;
-
-    line-height: 1.2;
-
 }
 
 
 .sidebar-card-content {
 
-    padding: 7px;
-
+    padding: 6px;
 }
 
 
 .sidebar-card-content h3 {
 
-    color: #164e54;
+    color: #174f55;
 
-    font-size: 10.5px;
+    font-size: 9px;
 
-    margin-bottom: 4px;
-
+    margin-bottom: 3px;
 }
 
 
 .sidebar-card-content p {
 
-    font-size: 9px;
+    color: #405b60;
+
+    font-size: 8px;
 
     line-height: 1.35;
-
-    color: #354e52;
-
 }
 
 
 /* ============================================================
-   5. BUTTONS
+   CONTROL BUTTONS
    ============================================================ */
 
 .button-grid {
@@ -260,106 +231,68 @@ body {
 
     grid-template-columns: 1fr 1fr;
 
-    gap: 5px;
+    gap: 4px;
 
-    padding: 7px;
-
+    padding: 6px;
 }
 
 
 .control-button {
 
-    border: 1px solid #c7d8db;
+    min-height: 25px;
+
+    border: 1px solid #cadadd;
 
     border-radius: 3px;
 
-    background: #e7eef0;
+    background: #e8eff1;
 
-    color: #183f44;
+    color: #294e53;
 
-    padding: 6px 4px;
-
-    font-size: 9px;
+    font-size: 8px;
 
     font-weight: 600;
 
     cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        transform 0.1s ease;
-
 }
 
 
 .control-button:hover {
 
-    background: #d6e4e7;
-
-}
-
-
-.control-button:active {
-
-    transform: translateY(1px);
-
+    background: #dce8ea;
 }
 
 
 .start-button {
 
-    background: #2f9b68;
+    background: #309765;
+
+    border-color: #267e53;
 
     color: white;
-
-    border-color: #278258;
-
-}
-
-
-.start-button:hover {
-
-    background: #27895c;
-
 }
 
 
 .pause-button {
 
-    background: #3979a5;
+    background: #387da5;
+
+    border-color: #306b8c;
 
     color: white;
-
-    border-color: #30698e;
-
 }
 
 
-.pause-button:hover {
-
-    background: #326d94;
-
-}
-
-
-.reset-button {
-
-    background: #e7edef;
-
-}
-
-
+.reset-button,
 .step-button {
 
-    background: #e7edef;
-
+    background: #e5ecee;
 }
 
 
 .trail-control {
 
-    padding: 0 7px 7px 7px;
-
+    padding: 0 6px 6px;
 }
 
 
@@ -369,48 +302,35 @@ body {
 
     align-items: center;
 
-    gap: 5px;
+    gap: 4px;
 
-    font-size: 9px;
-
-    cursor: pointer;
-
+    font-size: 8px;
 }
 
 
 .trail-control input {
 
-    width: 12px;
+    width: 11px;
 
-    height: 12px;
-
+    height: 11px;
 }
 
 
 /* ============================================================
-   6. PARAMETERS
+   PARAMETERS
    ============================================================ */
-
-.parameters-section {
-
-    padding-bottom: 5px;
-
-}
-
 
 .parameter-control {
 
-    padding: 5px 7px 3px 7px;
+    padding: 4px 6px;
 
     border-bottom: 1px solid #edf2f3;
-
 }
 
 
 .parameter-control:last-child {
 
     border-bottom: none;
-
 }
 
 
@@ -418,38 +338,33 @@ body {
 
     display: flex;
 
-    justify-content: space-between;
-
     align-items: center;
 
-    gap: 4px;
+    justify-content: space-between;
 
     margin-bottom: 2px;
-
 }
 
 
 .parameter-header label {
 
-    font-size: 8.5px;
-
-    color: #294b50;
+    font-size: 8px;
 
     font-weight: 600;
 
+    color: #38585d;
 }
 
 
 .parameter-header span {
 
-    font-size: 8.5px;
-
-    color: #12666b;
+    font-size: 8px;
 
     font-weight: 700;
 
-    white-space: nowrap;
+    color: #12696e;
 
+    white-space: nowrap;
 }
 
 
@@ -459,8 +374,7 @@ body {
 
     align-items: center;
 
-    gap: 5px;
-
+    gap: 4px;
 }
 
 
@@ -469,7 +383,6 @@ body {
     flex: 1;
 
     min-width: 0;
-
 }
 
 
@@ -479,12 +392,9 @@ body {
 
     height: 12px;
 
-    margin: 0;
-
-    accent-color: #218a91;
+    accent-color: #258d95;
 
     cursor: pointer;
-
 }
 
 
@@ -494,35 +404,27 @@ body {
 
     justify-content: space-between;
 
-    color: #718589;
+    font-size: 6px;
 
-    font-size: 7px;
-
-    line-height: 1;
-
-    margin-top: -1px;
-
+    color: #839497;
 }
 
 
 .parameter-input-row > input[type="number"] {
 
-    width: 42px;
+    width: 40px;
 
-    height: 25px;
+    height: 24px;
 
-    border: 1px solid #b9d5d9;
+    padding: 2px 3px;
 
-    border-radius: 4px;
+    border: 1px solid #bad4d8;
 
-    padding: 2px 4px;
+    border-radius: 3px;
 
-    font-size: 9px;
+    font-size: 8px;
 
-    color: #183f44;
-
-    background: #fff;
-
+    color: #294e53;
 }
 
 
@@ -530,16 +432,12 @@ body {
 
     outline: none;
 
-    border-color: #218a91;
-
-    box-shadow:
-        0 0 0 1px rgba(33, 138, 145, 0.15);
-
+    border-color: #258d95;
 }
 
 
 /* ============================================================
-   7. DATA SECTION
+   DATA
    ============================================================ */
 
 .data-button-grid {
@@ -548,61 +446,54 @@ body {
 
     grid-template-columns: 1fr 1fr;
 
-    gap: 5px;
+    gap: 4px;
 
-    padding: 7px;
-
+    padding: 6px;
 }
 
 
 .data-button-grid .control-button {
 
-    font-size: 8px;
-
-    min-height: 29px;
-
+    font-size: 7px;
 }
 
 
 /* ============================================================
-   8. SHORTCUTS
+   SHORTCUTS
    ============================================================ */
 
 .shortcut-grid {
 
-    display: flex;
+    display: grid;
 
-    flex-direction: column;
+    grid-template-columns: 1fr;
 
-    gap: 3px;
+    gap: 2px;
 
-    padding: 7px;
-
+    padding: 6px;
 }
 
 
 .shortcut-grid span {
 
-    font-size: 8.5px;
+    font-size: 7.5px;
 
-    color: #40595d;
-
+    color: #4a6266;
 }
 
 
 .shortcut-grid strong {
 
+    color: #12696e;
+
     display: inline-block;
 
-    min-width: 36px;
-
-    color: #12666b;
-
+    width: 30px;
 }
 
 
 /* ============================================================
-   9. CONTENT
+   CONTENT
    ============================================================ */
 
 .content {
@@ -614,86 +505,67 @@ body {
     flex-direction: column;
 
     gap: 7px;
-
 }
 
 
 /* ============================================================
-   10. GENERAL CARD
+   CARD
    ============================================================ */
 
 .card {
 
     background: white;
 
-    border: 1px solid #bddce0;
+    border: 1px solid #bdd9dc;
 
     border-radius: 6px;
 
     overflow: hidden;
 
     box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.07);
-
+        0 1px 2px rgba(0,0,0,0.07);
 }
 
 
 .card-header {
 
-    min-height: 28px;
+    min-height: 27px;
+
+    padding: 5px 8px;
+
+    background: #12696e;
+
+    color: white;
 
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
-
-    padding: 5px 8px;
-
-    background: #12666b;
-
-    color: white;
-
 }
 
 
 .card-header h2 {
 
-    font-size: 12px;
+    font-size: 11px;
 
     font-weight: 700;
-
-    line-height: 1.15;
-
-}
-
-
-.card-header p {
-
-    font-size: 8.5px;
-
-    margin-top: 1px;
-
-    opacity: 0.85;
-
 }
 
 
 /* ============================================================
-   11. SIMULATION CARD
+   SIMULATION
    ============================================================ */
 
 .simulation-card {
 
-    height: 192px;
-
+    height: 190px;
 }
 
 
 .simulation-header {
 
-    height: 35px;
-
+    height: 34px;
 }
 
 
@@ -703,52 +575,35 @@ body {
 
     align-items: center;
 
-    gap: 12px;
-
+    gap: 15px;
 }
 
 
 .simulation-status {
 
-    font-size: 9px;
-
-    font-weight: 600;
-
-}
-
-
-#statusText {
-
-    white-space: nowrap;
-
+    font-size: 8px;
 }
 
 
 .time-display {
 
-    font-size: 9px;
+    font-size: 8px;
 
     font-weight: 600;
-
 }
 
 
 .canvas-container {
 
-    height: calc(100% - 35px);
+    height: calc(100% - 34px);
 
-    width: 100%;
+    padding: 5px;
 
     display: flex;
 
-    justify-content: center;
-
     align-items: center;
 
-    padding: 6px;
-
-    background: #ffffff;
-
+    justify-content: center;
 }
 
 
@@ -760,17 +615,16 @@ body {
 
     height: 100%;
 
-    max-height: 170px;
+    border: 1px solid #d0e0e2;
 
     border-radius: 3px;
 
     background: #f8fbfc;
-
 }
 
 
 /* ============================================================
-   12. STATE + ENERGY GRID
+   STATE + ENERGY
    ============================================================ */
 
 .state-energy-grid {
@@ -778,19 +632,10 @@ body {
     display: grid;
 
     grid-template-columns:
-        minmax(0, 1.7fr)
-        minmax(270px, 1fr);
+        minmax(0, 1.65fr)
+        minmax(260px, 1fr);
 
     gap: 7px;
-
-}
-
-
-.state-card,
-.energy-card {
-
-    min-width: 0;
-
 }
 
 
@@ -798,18 +643,14 @@ body {
 
     display: grid;
 
-    grid-template-columns: repeat(5, 1fr);
-
+    grid-template-columns:
+        repeat(5, 1fr);
 }
 
 
 .result-card {
 
-    min-height: 46px;
-
-    border-right: 1px solid #d7e7e9;
-
-    border-bottom: 1px solid #d7e7e9;
+    height: 43px;
 
     display: flex;
 
@@ -821,41 +662,35 @@ body {
 
     text-align: center;
 
-    padding: 3px;
+    border-right: 1px solid #dce9eb;
 
+    border-bottom: 1px solid #dce9eb;
 }
 
 
 .result-card:nth-child(5n) {
 
     border-right: none;
-
 }
 
 
 .result-label {
 
-    color: #326067;
+    font-size: 7px;
 
-    font-size: 8px;
-
-    font-weight: 600;
+    color: #527075;
 
     margin-bottom: 2px;
-
 }
 
 
 .result-value {
 
-    color: #075b61;
-
-    font-size: 12px;
+    font-size: 11px;
 
     font-weight: 700;
 
-    line-height: 1.05;
-
+    color: #075e63;
 }
 
 
@@ -863,19 +698,16 @@ body {
 
     display: block;
 
-    font-size: 7px;
+    font-size: 6.5px;
+
+    color: #718689;
 
     font-weight: 400;
-
-    color: #60787b;
-
-    margin-top: 1px;
-
 }
 
 
 /* ============================================================
-   13. ENERGY VALIDATION
+   ENERGY
    ============================================================ */
 
 .energy-validation-grid {
@@ -885,20 +717,19 @@ body {
     grid-template-columns:
         repeat(3, 1fr);
 
-    gap: 5px;
+    gap: 4px;
 
-    padding: 6px;
-
+    padding: 5px;
 }
 
 
 .validation-item {
 
-    min-height: 44px;
+    min-height: 42px;
 
     border: 1px solid #dcebed;
 
-    border-radius: 4px;
+    border-radius: 3px;
 
     display: flex;
 
@@ -907,31 +738,24 @@ body {
     justify-content: center;
 
     align-items: center;
-
-    text-align: center;
-
-    padding: 4px;
-
 }
 
 
 .validation-item span {
 
-    font-size: 7.5px;
+    font-size: 7px;
 
-    color: #557176;
-
+    color: #5d7579;
 }
 
 
 .validation-item strong {
 
-    color: #075b61;
+    font-size: 10px;
 
-    font-size: 11px;
+    color: #075e63;
 
     margin-top: 2px;
-
 }
 
 
@@ -939,24 +763,23 @@ body {
 
     grid-column: 1 / -1;
 
-    min-height: 24px;
-
-    border-radius: 4px;
-
-    background: #ddf5df;
-
-    color: #287139;
+    height: 23px;
 
     display: flex;
 
     align-items: center;
 
-    padding: 5px 8px;
+    padding: 4px 7px;
 
-    font-size: 8px;
+    background: #dff4df;
+
+    color: #2b7437;
+
+    border-radius: 3px;
+
+    font-size: 7px;
 
     font-weight: 600;
-
 }
 
 
@@ -964,36 +787,25 @@ body {
 
     content: "";
 
-    width: 9px;
+    width: 8px;
 
-    height: 9px;
+    height: 8px;
+
+    background: #21a33c;
 
     border-radius: 50%;
 
-    background: #20a341;
-
     margin-right: 5px;
-
-    flex-shrink: 0;
-
 }
 
 
 /* ============================================================
-   14. GRAPHS
+   GRAPHS
    ============================================================ */
-
-.graphs-section {
-
-    overflow: visible;
-
-}
-
 
 .graphs-section > .card-header {
 
     height: 27px;
-
 }
 
 
@@ -1007,7 +819,6 @@ body {
     gap: 5px;
 
     padding: 5px;
-
 }
 
 
@@ -1019,16 +830,15 @@ body {
 
     border-radius: 4px;
 
-    background: white;
-
     overflow: hidden;
 
+    background: white;
 }
 
 
 .chart-title {
 
-    height: 21px;
+    height: 20px;
 
     display: flex;
 
@@ -1038,37 +848,38 @@ body {
 
     background: #edf5f6;
 
-    color: #23565c;
+    color: #315e63;
 
-    font-size: 8px;
+    font-size: 7.5px;
 
     font-weight: 700;
-
 }
 
 
 .chart-container {
 
-    height: 105px;
-
-    padding: 3px;
-
     position: relative;
 
+    height: 100px;
+
+    width: 100%;
+
+    padding: 2px;
 }
 
 
 .chart-container canvas {
 
+    display: block;
+
     width: 100% !important;
 
     height: 100% !important;
-
 }
 
 
 /* ============================================================
-   15. BOTTOM DASHBOARD
+   BOTTOM FOUR-CARD ROW
    ============================================================ */
 
 .bottom-dashboard-grid {
@@ -1076,15 +887,12 @@ body {
     display: grid;
 
     grid-template-columns:
-        minmax(300px, 1.7fr)
-        minmax(170px, 0.8fr)
-        minmax(170px, 0.8fr)
-        minmax(180px, 0.9fr);
+        1.65fr
+        0.8fr
+        0.8fr
+        0.9fr;
 
     gap: 7px;
-
-    align-items: stretch;
-
 }
 
 
@@ -1092,28 +900,21 @@ body {
 
     min-width: 0;
 
+    min-height: 180px;
 }
 
 
 /* ============================================================
-   16. OBSERVATION TABLE
+   OBSERVATION
    ============================================================ */
-
-.observation-card {
-
-    min-height: 190px;
-
-}
-
 
 .table-container {
 
-    position: relative;
-
-    max-height: 155px;
+    height: 145px;
 
     overflow: auto;
 
+    position: relative;
 }
 
 
@@ -1123,56 +924,33 @@ table {
 
     border-collapse: collapse;
 
-    font-size: 8px;
-
-}
-
-
-thead {
-
-    position: sticky;
-
-    top: 0;
-
-    z-index: 2;
-
+    font-size: 7px;
 }
 
 
 th {
 
+    position: sticky;
+
+    top: 0;
+
     background: #edf5f6;
 
-    color: #315d63;
+    color: #385e63;
 
-    border-bottom: 1px solid #c9dfe2;
+    padding: 4px 2px;
 
-    padding: 5px 3px;
-
-    text-align: center;
-
-    font-weight: 700;
-
+    border-bottom: 1px solid #cbdfe2;
 }
 
 
 td {
 
-    border-bottom: 1px solid #edf1f2;
-
-    padding: 4px 3px;
+    padding: 3px 2px;
 
     text-align: center;
 
-    color: #405b60;
-
-}
-
-
-tbody tr:hover {
-
-    background: #f4f9fa;
-
+    border-bottom: 1px solid #edf1f2;
 }
 
 
@@ -1180,58 +958,40 @@ tbody tr:hover {
 
     text-align: center;
 
-    color: #829497;
+    color: #87999c;
 
     font-size: 8px;
 
-    padding: 20px 5px;
-
+    padding: 18px 5px;
 }
 
 
 /* ============================================================
-   17. INFORMATION CARDS
+   INFORMATION CARDS
    ============================================================ */
-
-.info-card {
-
-    min-height: 190px;
-
-}
-
 
 .info-content {
 
     padding: 7px;
-
 }
 
 
 .info-content ul,
 .info-content ol {
 
-    padding-left: 15px;
-
+    padding-left: 14px;
 }
 
 
 .info-content li {
 
-    font-size: 8px;
+    font-size: 7.5px;
 
-    line-height: 1.45;
+    color: #496267;
+
+    line-height: 1.4;
 
     margin-bottom: 3px;
-
-    color: #405b60;
-
-}
-
-
-.info-content li::marker {
-
-    color: #147078;
-
 }
 
 
@@ -1241,75 +1001,157 @@ tbody tr:hover {
 
     margin-top: 5px;
 
-    border: 1px solid #c5d9dc;
-
-    background: #e9eff1;
-
-    color: #29565c;
+    border: 1px solid #c4d8db;
 
     border-radius: 3px;
 
+    background: #e8eff1;
+
+    color: #345b60;
+
     padding: 5px;
 
-    font-size: 8px;
+    font-size: 7px;
 
     font-weight: 600;
 
     cursor: pointer;
-
-}
-
-
-.secondary-button:hover {
-
-    background: #dce9eb;
-
 }
 
 
 /* ============================================================
-   18. THEORY
+   QUIZ
    ============================================================ */
+
+.quiz-content {
+
+    padding: 6px;
+}
+
+
+.quiz-question {
+
+    margin-bottom: 6px;
+}
+
+
+.quiz-question p {
+
+    font-size: 7px;
+
+    color: #36575c;
+
+    margin-bottom: 4px;
+}
+
+
+.quiz-question label {
+
+    display: block;
+
+    font-size: 6.8px;
+
+    color: #5c7074;
+
+    margin-bottom: 2px;
+
+    line-height: 1.25;
+}
+
+
+.quiz-question input {
+
+    width: 9px;
+
+    height: 9px;
+
+    margin-right: 2px;
+
+    vertical-align: middle;
+}
+
+
+.quiz-button {
+
+    width: 100%;
+
+    padding: 5px;
+
+    border: none;
+
+    border-radius: 3px;
+
+    background: #0a9994;
+
+    color: white;
+
+    font-size: 7px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.quiz-result {
+
+    text-align: center;
+
+    margin-top: 4px;
+
+    font-size: 7px;
+
+    font-weight: 700;
+}
+
+
+/* ============================================================
+   THEORY DETAILS
+   ============================================================ */
+
+.theory-equations,
+.procedure-details {
+
+    margin-top: 0;
+}
+
 
 .theory-content {
 
-    padding: 10px 12px;
+    padding: 12px;
 
 }
 
 
 .theory-content h3 {
 
-    color: #12666b;
+    color: #12696e;
 
-    font-size: 13px;
+    font-size: 12px;
 
-    margin: 12px 0 5px;
-
+    margin: 10px 0 4px;
 }
 
 
 .theory-content h3:first-child {
 
     margin-top: 0;
-
 }
 
 
 .theory-content p {
 
-    font-size: 11px;
+    font-size: 9px;
 
-    color: #425c61;
-
+    color: #4b6367;
 }
 
 
 .equation {
 
-    padding: 8px;
+    padding: 7px;
 
-    margin: 6px 0;
+    margin: 5px 0;
 
     background: #f5f9fa;
 
@@ -1318,277 +1160,89 @@ tbody tr:hover {
     border-radius: 4px;
 
     overflow-x: auto;
-
 }
 
-
-/* ============================================================
-   19. PROCEDURE DETAILS
-   ============================================================ */
 
 .procedure-content {
 
-    padding: 10px 15px;
-
-}
-
-
-.procedure-content ol {
-
-    padding-left: 18px;
-
+    padding: 12px;
 }
 
 
 .procedure-content li {
 
-    font-size: 10px;
-
-    margin-bottom: 5px;
-
-    color: #405b60;
-
-}
-
-
-/* ============================================================
-   20. QUIZ
-   ============================================================ */
-
-.quiz-content {
-
-    padding: 7px;
-
-}
-
-
-.quiz-question {
-
-    margin-bottom: 8px;
-
-}
-
-
-.quiz-question p {
-
-    font-size: 8px;
-
-    color: #31575c;
-
-    line-height: 1.35;
+    font-size: 9px;
 
     margin-bottom: 4px;
 
-}
-
-
-.quiz-question label {
-
-    display: block;
-
-    font-size: 7.5px;
-
-    color: #526b6f;
-
-    margin-bottom: 3px;
-
-    cursor: pointer;
-
-}
-
-
-.quiz-question input {
-
-    width: 10px;
-
-    height: 10px;
-
-    vertical-align: middle;
-
-    margin-right: 3px;
-
-}
-
-
-.quiz-button {
-
-    width: 100%;
-
-    border: none;
-
-    border-radius: 3px;
-
-    background: #0b9994;
-
-    color: white;
-
-    padding: 6px;
-
-    font-size: 8px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-}
-
-
-.quiz-button:hover {
-
-    background: #087f7b;
-
-}
-
-
-.quiz-result {
-
-    margin-top: 5px;
-
-    text-align: center;
-
-    font-size: 8px;
-
-    font-weight: 700;
-
-}
-
-
-.quiz-result.correct {
-
-    color: #23813a;
-
+    color: #4b6367;
 }
 
 
 /* ============================================================
-   21. FOOTER
+   FOOTER
    ============================================================ */
 
 .footer {
 
-    width: 100%;
-
     text-align: center;
 
-    padding: 10px;
+    padding: 8px;
 
-    margin-top: 5px;
+    font-size: 7px;
 
-    color: #60777b;
-
-    font-size: 8px;
-
+    color: #687e82;
 }
 
 
 .footer p + p {
 
     margin-top: 2px;
-
 }
 
 
 /* ============================================================
-   22. SCROLLBARS
+   SCROLLBAR
    ============================================================ */
 
 ::-webkit-scrollbar {
 
-    width: 7px;
+    width: 6px;
 
-    height: 7px;
-
+    height: 6px;
 }
 
 
 ::-webkit-scrollbar-track {
 
     background: #edf3f4;
-
 }
 
 
 ::-webkit-scrollbar-thumb {
 
-    background: #a9c4c8;
+    background: #a8c3c7;
 
     border-radius: 5px;
-
-}
-
-
-::-webkit-scrollbar-thumb:hover {
-
-    background: #7fa8ad;
-
 }
 
 
 /* ============================================================
-   23. FOCUS STATES
+   RESPONSIVE
    ============================================================ */
 
-button:focus-visible,
-input:focus-visible {
-
-    outline: 2px solid #238a91;
-
-    outline-offset: 1px;
-
-}
-
-
-/* ============================================================
-   24. RESPONSIVE - LARGE SCREENS
-   ============================================================ */
-
-@media (min-width: 1500px) {
+@media (max-width: 1100px) {
 
     .main-container {
 
-        max-width: 1600px;
-
-    }
-
-    .sidebar {
-
-        width: 175px;
-
-    }
-
-    .main-container {
-
-        grid-template-columns: 175px minmax(0, 1fr);
-
-    }
-
-}
-
-
-/* ============================================================
-   25. RESPONSIVE - MEDIUM SCREENS
-   ============================================================ */
-
-@media (max-width: 1250px) {
-
-    body {
-
-        min-width: 950px;
-
-    }
-
-
-    .main-container {
-
-        grid-template-columns: 145px minmax(0, 1fr);
-
+        grid-template-columns:
+            145px minmax(0, 1fr);
     }
 
 
     .sidebar {
 
         width: 145px;
-
     }
 
 
@@ -1598,37 +1252,17 @@ input:focus-visible {
             1.5fr
             0.8fr
             0.8fr
-            0.9fr;
-
-    }
-
-
-    .result-value {
-
-        font-size: 10px;
-
+            0.8fr;
     }
 
 }
 
 
-/* ============================================================
-   26. RESPONSIVE - SMALLER SCREENS
-   ============================================================ */
-
-@media (max-width: 1050px) {
-
-    body {
-
-        min-width: 0;
-
-    }
-
+@media (max-width: 900px) {
 
     .main-container {
 
         grid-template-columns: 1fr;
-
     }
 
 
@@ -1639,177 +1273,62 @@ input:focus-visible {
         display: grid;
 
         grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-        align-items: start;
-
+            repeat(2, 1fr);
     }
 
 
     .parameters-section {
 
         grid-column: 1 / -1;
-
-    }
-
-
-    .content {
-
-        width: 100%;
-
     }
 
 
     .charts-grid {
 
         grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-
+            repeat(3, 1fr);
     }
 
 
     .bottom-dashboard-grid {
 
         grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
+            repeat(2, 1fr);
     }
 
 }
 
 
-/* ============================================================
-   27. RESPONSIVE - MOBILE
-   ============================================================ */
-
-@media (max-width: 700px) {
-
-    .top-header {
-
-        height: auto;
-
-        min-height: 60px;
-
-    }
-
-
-    .header-right {
-
-        display: none;
-
-    }
-
+@media (max-width: 650px) {
 
     .sidebar {
 
         grid-template-columns: 1fr;
-
     }
 
 
     .parameters-section {
 
         grid-column: auto;
-
     }
 
 
     .state-energy-grid {
 
         grid-template-columns: 1fr;
-
-    }
-
-
-    .results-grid {
-
-        grid-template-columns:
-            repeat(3, 1fr);
-
-    }
-
-
-    .result-card:nth-child(5n) {
-
-        border-right: 1px solid #d7e7e9;
-
     }
 
 
     .charts-grid {
 
         grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
+            repeat(2, 1fr);
     }
 
 
     .bottom-dashboard-grid {
 
         grid-template-columns: 1fr;
-
     }
 
 }
-
-
-/* ============================================================
-   28. SIMULATION STATUS STATES
-   ============================================================ */
-
-.simulation-status.running {
-
-    color: #b9f4c7;
-
-}
-
-
-.simulation-status.paused {
-
-    color: #ffe39a;
-
-}
-
-
-.simulation-status.ready {
-
-    color: #d5eeee;
-
-}
-
-
-.simulation-status.error {
-
-    color: #ffb4b4;
-
-}
-
-
-/* ============================================================
-   29. UTILITY CLASSES
-   ============================================================ */
-
-.hidden {
-
-    display: none !important;
-
-}
-
-
-.text-center {
-
-    text-align: center;
-
-}
-
-
-.full-width {
-
-    width: 100%;
-
-}
-
-
-/* ============================================================
-   END OF STYLE SHEET
-   ============================================================ */
