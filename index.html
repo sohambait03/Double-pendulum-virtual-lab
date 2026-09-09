@@ -5,8 +5,7 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="description"
           content="Interactive Virtual Lab for Planar Double Pendulum Dynamics">
@@ -18,7 +17,7 @@
 
 
     <!-- =====================================================
-         CSS
+         STYLESHEET
          ===================================================== -->
 
     <link rel="stylesheet" href="css/style.css">
@@ -47,7 +46,6 @@
                     ['\\[', '\\]']
                 ]
             },
-
             svg: {
                 fontCache: 'global'
             }
@@ -74,7 +72,7 @@
             ⚙
         </div>
 
-        <div>
+        <div class="header-title">
 
             <h1>
                 Virtual Lab
@@ -91,8 +89,12 @@
 
     <div class="header-right">
 
-        <span class="engine-indicator">
-            ● Physics Engine
+        <strong>
+            Aeronautical Engineering
+        </strong>
+
+        <span>
+            Interactive Simulation • Nonlinear Dynamics
         </span>
 
     </div>
@@ -102,14 +104,14 @@
 
 
 <!-- =========================================================
-     MAIN CONTAINER
+     MAIN DASHBOARD
      ========================================================= -->
 
 <main class="main-container">
 
 
     <!-- =====================================================
-         SIDEBAR
+         LEFT SIDEBAR
          ===================================================== -->
 
     <aside class="sidebar">
@@ -119,23 +121,25 @@
              EXPERIMENT
              ================================================= -->
 
-        <section class="sidebar-section">
+        <section class="sidebar-section experiment-section">
 
             <h2>
                 Experiment
             </h2>
 
-            <p class="experiment-name">
-                Planar Double Pendulum
-            </p>
+            <div class="sidebar-card-content">
 
-            <p class="experiment-description">
+                <h3>
+                    Planar Double Pendulum
+                </h3>
 
-                Study the nonlinear dynamics,
-                coupled motion and chaotic behaviour
-                of a double pendulum.
+                <p>
+                    Study the nonlinear dynamics,
+                    coupled motion and chaotic behaviour
+                    of a double pendulum.
+                </p>
 
-            </p>
+            </div>
 
         </section>
 
@@ -152,40 +156,44 @@
             </h2>
 
 
-            <button
-                class="control-button start-button"
-                onclick="startSimulation()">
+            <div class="button-grid">
 
-                ▶ Start
+                <button
+                    class="control-button start-button"
+                    onclick="startSimulation()">
 
-            </button>
+                    ▶ Start
 
-
-            <button
-                class="control-button pause-button"
-                onclick="pauseSimulation()">
-
-                ⏸ Pause
-
-            </button>
+                </button>
 
 
-            <button
-                class="control-button reset-button"
-                onclick="resetSimulation()">
+                <button
+                    class="control-button pause-button"
+                    onclick="pauseSimulation()">
 
-                ↻ Reset
+                    ⏸ Pause
 
-            </button>
+                </button>
 
 
-            <button
-                class="control-button step-button"
-                onclick="stepSimulation()">
+                <button
+                    class="control-button reset-button"
+                    onclick="resetSimulation()">
 
-                ⏭ Step
+                    ↻ Reset
 
-            </button>
+                </button>
+
+
+                <button
+                    class="control-button step-button"
+                    onclick="stepSimulation()">
+
+                    ⏭ Step
+
+                </button>
+
+            </div>
 
 
             <div class="trail-control">
@@ -198,7 +206,9 @@
                         checked
                         onchange="toggleTrail()">
 
-                    Show Trail
+                    <span>
+                        Show Trail
+                    </span>
 
                 </label>
 
@@ -212,331 +222,450 @@
              PARAMETERS
              ================================================= -->
 
-        <section class="sidebar-section">
+        <section class="sidebar-section parameters-section">
 
             <h2>
                 Parameters
             </h2>
 
 
-            <!-- =============================================
-                 LINK 1 LENGTH
-                 ============================================= -->
+            <!-- =================================================
+                 LINK 1
+                 ================================================= -->
 
             <div class="parameter-control">
 
                 <div class="parameter-header">
 
                     <label for="l1Slider">
-                        Link 1 Length
+                        Link 1 Length (m)
                     </label>
 
-                    <span
-                        id="l1Value"
-                        class="parameter-value">
-
+                    <span id="l1Value">
                         0.80 m
-
                     </span>
 
                 </div>
 
 
-                <input
-                    type="range"
-                    id="l1Slider"
-                    min="0.20"
-                    max="2.00"
-                    step="0.01"
-                    value="0.80"
-                    oninput="updateSimulationParameter('l1')">
+                <div class="parameter-input-row">
+
+                    <div class="slider-wrapper">
+
+                        <input
+                            type="range"
+                            id="l1Slider"
+                            min="0.20"
+                            max="2.00"
+                            step="0.01"
+                            value="0.80"
+                            oninput="updateSimulationParameter('l1')">
+
+                        <div class="slider-range">
+
+                            <span>
+                                0.20
+                            </span>
+
+                            <span>
+                                2.00
+                            </span>
+
+                        </div>
+
+                    </div>
 
 
-                <input
-                    type="number"
-                    id="l1Input"
-                    min="0.20"
-                    max="2.00"
-                    step="0.01"
-                    value="0.80">
+                    <input
+                        type="number"
+                        id="l1Input"
+                        min="0.20"
+                        max="2.00"
+                        step="0.01"
+                        value="0.80"
+                        onchange="updateParameterFromInput('l1')">
+
+                </div>
 
             </div>
 
 
 
-            <!-- =============================================
-                 LINK 2 LENGTH
-                 ============================================= -->
+            <!-- =================================================
+                 LINK 2
+                 ================================================= -->
 
             <div class="parameter-control">
 
                 <div class="parameter-header">
 
                     <label for="l2Slider">
-                        Link 2 Length
+                        Link 2 Length (m)
                     </label>
 
-                    <span
-                        id="l2Value"
-                        class="parameter-value">
-
+                    <span id="l2Value">
                         0.80 m
-
                     </span>
 
                 </div>
 
 
-                <input
-                    type="range"
-                    id="l2Slider"
-                    min="0.20"
-                    max="2.00"
-                    step="0.01"
-                    value="0.80"
-                    oninput="updateSimulationParameter('l2')">
+                <div class="parameter-input-row">
+
+                    <div class="slider-wrapper">
+
+                        <input
+                            type="range"
+                            id="l2Slider"
+                            min="0.20"
+                            max="2.00"
+                            step="0.01"
+                            value="0.80"
+                            oninput="updateSimulationParameter('l2')">
+
+                        <div class="slider-range">
+
+                            <span>
+                                0.20
+                            </span>
+
+                            <span>
+                                2.00
+                            </span>
+
+                        </div>
+
+                    </div>
 
 
-                <input
-                    type="number"
-                    id="l2Input"
-                    min="0.20"
-                    max="2.00"
-                    step="0.01"
-                    value="0.80">
+                    <input
+                        type="number"
+                        id="l2Input"
+                        min="0.20"
+                        max="2.00"
+                        step="0.01"
+                        value="0.80"
+                        onchange="updateParameterFromInput('l2')">
+
+                </div>
 
             </div>
 
 
 
-            <!-- =============================================
+            <!-- =================================================
                  MASS 1
-                 ============================================= -->
+                 ================================================= -->
 
             <div class="parameter-control">
 
                 <div class="parameter-header">
 
                     <label for="m1Slider">
-                        Mass 1
+                        Mass 1 (kg)
                     </label>
 
-                    <span
-                        id="m1Value"
-                        class="parameter-value">
-
+                    <span id="m1Value">
                         1.00 kg
-
                     </span>
 
                 </div>
 
 
-                <input
-                    type="range"
-                    id="m1Slider"
-                    min="0.10"
-                    max="10.00"
-                    step="0.10"
-                    value="1.00"
-                    oninput="updateSimulationParameter('m1')">
+                <div class="parameter-input-row">
+
+                    <div class="slider-wrapper">
+
+                        <input
+                            type="range"
+                            id="m1Slider"
+                            min="0.10"
+                            max="10.00"
+                            step="0.10"
+                            value="1.00"
+                            oninput="updateSimulationParameter('m1')">
+
+                        <div class="slider-range">
+
+                            <span>
+                                0.10
+                            </span>
+
+                            <span>
+                                10.00
+                            </span>
+
+                        </div>
+
+                    </div>
 
 
-                <input
-                    type="number"
-                    id="m1Input"
-                    min="0.10"
-                    max="10.00"
-                    step="0.10"
-                    value="1.00">
+                    <input
+                        type="number"
+                        id="m1Input"
+                        min="0.10"
+                        max="10.00"
+                        step="0.10"
+                        value="1.00"
+                        onchange="updateParameterFromInput('m1')">
+
+                </div>
 
             </div>
 
 
 
-            <!-- =============================================
+            <!-- =================================================
                  MASS 2
-                 ============================================= -->
+                 ================================================= -->
 
             <div class="parameter-control">
 
                 <div class="parameter-header">
 
                     <label for="m2Slider">
-                        Mass 2
+                        Mass 2 (kg)
                     </label>
 
-                    <span
-                        id="m2Value"
-                        class="parameter-value">
-
+                    <span id="m2Value">
                         1.00 kg
-
                     </span>
 
                 </div>
 
 
-                <input
-                    type="range"
-                    id="m2Slider"
-                    min="0.10"
-                    max="10.00"
-                    step="0.10"
-                    value="1.00"
-                    oninput="updateSimulationParameter('m2')">
+                <div class="parameter-input-row">
+
+                    <div class="slider-wrapper">
+
+                        <input
+                            type="range"
+                            id="m2Slider"
+                            min="0.10"
+                            max="10.00"
+                            step="0.10"
+                            value="1.00"
+                            oninput="updateSimulationParameter('m2')">
+
+                        <div class="slider-range">
+
+                            <span>
+                                0.10
+                            </span>
+
+                            <span>
+                                10.00
+                            </span>
+
+                        </div>
+
+                    </div>
 
 
-                <input
-                    type="number"
-                    id="m2Input"
-                    min="0.10"
-                    max="10.00"
-                    step="0.10"
-                    value="1.00">
+                    <input
+                        type="number"
+                        id="m2Input"
+                        min="0.10"
+                        max="10.00"
+                        step="0.10"
+                        value="1.00"
+                        onchange="updateParameterFromInput('m2')">
+
+                </div>
 
             </div>
 
 
 
-            <!-- =============================================
+            <!-- =================================================
                  THETA 1
-                 ============================================= -->
+                 ================================================= -->
 
             <div class="parameter-control">
 
                 <div class="parameter-header">
 
                     <label for="theta1Slider">
-                        Angle θ₁
+                        Angle θ₁ (°)
                     </label>
 
-                    <span
-                        id="theta1Value"
-                        class="parameter-value">
-
+                    <span id="theta1Value">
                         30.0°
-
                     </span>
 
                 </div>
 
 
-                <input
-                    type="range"
-                    id="theta1Slider"
-                    min="-180"
-                    max="180"
-                    step="1"
-                    value="30"
-                    oninput="updateSimulationParameter('theta1')">
+                <div class="parameter-input-row">
+
+                    <div class="slider-wrapper">
+
+                        <input
+                            type="range"
+                            id="theta1Slider"
+                            min="-180"
+                            max="180"
+                            step="1"
+                            value="30"
+                            oninput="updateSimulationParameter('theta1')">
+
+                        <div class="slider-range">
+
+                            <span>
+                                -180
+                            </span>
+
+                            <span>
+                                180
+                            </span>
+
+                        </div>
+
+                    </div>
 
 
-                <input
-                    type="number"
-                    id="theta1Input"
-                    min="-180"
-                    max="180"
-                    step="1"
-                    value="30">
+                    <input
+                        type="number"
+                        id="theta1Input"
+                        min="-180"
+                        max="180"
+                        step="1"
+                        value="30"
+                        onchange="updateParameterFromInput('theta1')">
+
+                </div>
 
             </div>
 
 
 
-            <!-- =============================================
+            <!-- =================================================
                  THETA 2
-                 ============================================= -->
+                 ================================================= -->
 
             <div class="parameter-control">
 
                 <div class="parameter-header">
 
                     <label for="theta2Slider">
-                        Angle θ₂
+                        Angle θ₂ (°)
                     </label>
 
-                    <span
-                        id="theta2Value"
-                        class="parameter-value">
-
+                    <span id="theta2Value">
                         40.0°
-
                     </span>
 
                 </div>
 
 
-                <input
-                    type="range"
-                    id="theta2Slider"
-                    min="-180"
-                    max="180"
-                    step="1"
-                    value="40"
-                    oninput="updateSimulationParameter('theta2')">
+                <div class="parameter-input-row">
+
+                    <div class="slider-wrapper">
+
+                        <input
+                            type="range"
+                            id="theta2Slider"
+                            min="-180"
+                            max="180"
+                            step="1"
+                            value="40"
+                            oninput="updateSimulationParameter('theta2')">
+
+                        <div class="slider-range">
+
+                            <span>
+                                -180
+                            </span>
+
+                            <span>
+                                180
+                            </span>
+
+                        </div>
+
+                    </div>
 
 
-                <input
-                    type="number"
-                    id="theta2Input"
-                    min="-180"
-                    max="180"
-                    step="1"
-                    value="40">
+                    <input
+                        type="number"
+                        id="theta2Input"
+                        min="-180"
+                        max="180"
+                        step="1"
+                        value="40"
+                        onchange="updateParameterFromInput('theta2')">
+
+                </div>
 
             </div>
 
 
 
-            <!-- =============================================
+            <!-- =================================================
                  GRAVITY
-                 ============================================= -->
+                 ================================================= -->
 
             <div class="parameter-control">
 
                 <div class="parameter-header">
 
                     <label for="gSlider">
-                        Gravity
+                        Gravity (m/s²)
                     </label>
 
-                    <span
-                        id="gValue"
-                        class="parameter-value">
-
+                    <span id="gValue">
                         9.81 m/s²
-
                     </span>
 
                 </div>
 
 
-                <input
-                    type="range"
-                    id="gSlider"
-                    min="1.00"
-                    max="20.00"
-                    step="0.01"
-                    value="9.81"
-                    oninput="updateSimulationParameter('g')">
+                <div class="parameter-input-row">
+
+                    <div class="slider-wrapper">
+
+                        <input
+                            type="range"
+                            id="gSlider"
+                            min="1.00"
+                            max="20.00"
+                            step="0.01"
+                            value="9.81"
+                            oninput="updateSimulationParameter('g')">
+
+                        <div class="slider-range">
+
+                            <span>
+                                1.00
+                            </span>
+
+                            <span>
+                                20.00
+                            </span>
+
+                        </div>
+
+                    </div>
 
 
-                <input
-                    type="number"
-                    id="gInput"
-                    min="1.00"
-                    max="20.00"
-                    step="0.01"
-                    value="9.81">
+                    <input
+                        type="number"
+                        id="gInput"
+                        min="1.00"
+                        max="20.00"
+                        step="0.01"
+                        value="9.81"
+                        onchange="updateParameterFromInput('g')">
+
+                </div>
 
             </div>
 
 
 
-            <!-- =============================================
+            <!-- =================================================
                  SIMULATION SPEED
-                 ============================================= -->
+                 ================================================= -->
 
             <div class="parameter-control">
 
@@ -546,34 +675,51 @@
                         Simulation Speed
                     </label>
 
-                    <span
-                        id="speedValue"
-                        class="parameter-value">
-
+                    <span id="speedValue">
                         1.0×
-
                     </span>
 
                 </div>
 
 
-                <input
-                    type="range"
-                    id="speedSlider"
-                    min="0.10"
-                    max="5.00"
-                    step="0.10"
-                    value="1.00"
-                    oninput="updateSimulationParameter('speed')">
+                <div class="parameter-input-row">
+
+                    <div class="slider-wrapper">
+
+                        <input
+                            type="range"
+                            id="speedSlider"
+                            min="0.10"
+                            max="5.00"
+                            step="0.10"
+                            value="1.00"
+                            oninput="updateSimulationParameter('speed')">
+
+                        <div class="slider-range">
+
+                            <span>
+                                0.10
+                            </span>
+
+                            <span>
+                                5.00
+                            </span>
+
+                        </div>
+
+                    </div>
 
 
-                <input
-                    type="number"
-                    id="speedInput"
-                    min="0.10"
-                    max="5.00"
-                    step="0.10"
-                    value="1.00">
+                    <input
+                        type="number"
+                        id="speedInput"
+                        min="0.10"
+                        max="5.00"
+                        step="0.10"
+                        value="1.00"
+                        onchange="updateParameterFromInput('speed')">
+
+                </div>
 
             </div>
 
@@ -585,36 +731,40 @@
              DATA
              ================================================= -->
 
-        <section class="sidebar-section">
+        <section class="sidebar-section data-section">
 
             <h2>
                 Data
             </h2>
 
 
-            <button
-                class="control-button"
-                onclick="downloadCSV()">
+            <div class="data-button-grid">
 
-                ↓ Download CSV
+                <button
+                    class="control-button"
+                    onclick="downloadCSV()">
 
-            </button>
+                    ↓ Download CSV
+
+                </button>
 
 
-            <button
-                class="control-button"
-                onclick="clearData()">
+                <button
+                    class="control-button"
+                    onclick="clearData()">
 
-                ✕ Clear Data
+                    ✕ Clear Data
 
-            </button>
+                </button>
+
+            </div>
 
         </section>
 
 
 
         <!-- =================================================
-             KEYBOARD SHORTCUTS
+             SHORTCUTS
              ================================================= -->
 
         <section class="sidebar-section shortcuts">
@@ -624,28 +774,29 @@
             </h2>
 
 
-            <p>
-                <strong>Space</strong>
-                — Start / Pause
-            </p>
+            <div class="shortcut-grid">
 
+                <span>
+                    <strong>Space</strong>
+                    Start / Pause
+                </span>
 
-            <p>
-                <strong>R</strong>
-                — Reset
-            </p>
+                <span>
+                    <strong>R</strong>
+                    Reset
+                </span>
 
+                <span>
+                    <strong>S</strong>
+                    Step
+                </span>
 
-            <p>
-                <strong>S</strong>
-                — Step
-            </p>
+                <span>
+                    <strong>T</strong>
+                    Toggle Trail
+                </span>
 
-
-            <p>
-                <strong>T</strong>
-                — Toggle Trail
-            </p>
+            </div>
 
         </section>
 
@@ -661,13 +812,13 @@
 
 
         <!-- =================================================
-             SIMULATION CARD
+             SIMULATION
              ================================================= -->
 
         <section class="card simulation-card">
 
 
-            <div class="card-header">
+            <div class="card-header simulation-header">
 
                 <div>
 
@@ -675,31 +826,31 @@
                         Double Pendulum Simulation
                     </h2>
 
-                    <p>
-                        Nonlinear coupled pendulum dynamics
-                    </p>
-
                 </div>
 
 
-                <div
-                    id="simulationStatus"
-                    class="simulation-status">
+                <div class="simulation-header-right">
 
-                    <span id="statusText">
-                        Ready
+                    <div
+                        id="simulationStatus"
+                        class="simulation-status">
+
+                        <span id="statusText">
+                            Ready
+                        </span>
+
+                    </div>
+
+
+                    <span
+                        id="timeDisplay"
+                        class="time-display">
+
+                        Time: 0.00 s
+
                     </span>
 
                 </div>
-
-            </div>
-
-
-            <div class="simulation-info">
-
-                <span id="timeDisplay">
-                    Time: 0.00 s
-                </span>
 
             </div>
 
@@ -711,7 +862,8 @@
                     width="1050"
                     height="400">
 
-                    Your browser does not support HTML5 Canvas.
+                    Your browser does not support
+                    HTML5 Canvas.
 
                 </canvas>
 
@@ -722,496 +874,775 @@
 
 
         <!-- =================================================
-             CURRENT STATE
+             CURRENT STATE + ENERGY
              ================================================= -->
 
-        <section class="card">
+        <div class="state-energy-grid">
 
-            <div class="card-header">
 
-                <div>
+            <!-- =================================================
+                 CURRENT STATE
+                 ================================================= -->
+
+            <section class="card state-card">
+
+                <div class="card-header">
 
                     <h2>
                         Current State
                     </h2>
 
-                    <p>
-                        Instantaneous simulation values
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="results-grid">
-
-
-                <!-- THETA 1 -->
-
-                <div class="result-card">
-
-                    <span class="result-label">
-                        θ₁
-                    </span>
-
-                    <span
-                        id="resultTheta1"
-                        class="result-value">
-
-                        30.00°
-
-                    </span>
-
                 </div>
 
 
-                <!-- THETA 2 -->
+                <div class="results-grid">
 
-                <div class="result-card">
 
-                    <span class="result-label">
-                        θ₂
-                    </span>
+                    <!-- θ1 -->
 
-                    <span
-                        id="resultTheta2"
-                        class="result-value">
+                    <div class="result-card">
 
-                        40.00°
+                        <span class="result-label">
+                            θ₁
+                        </span>
 
-                    </span>
+                        <span
+                            id="resultTheta1"
+                            class="result-value">
+
+                            30.00°
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- θ2 -->
+
+                    <div class="result-card">
+
+                        <span class="result-label">
+                            θ₂
+                        </span>
+
+                        <span
+                            id="resultTheta2"
+                            class="result-value">
+
+                            40.00°
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- ω1 -->
+
+                    <div class="result-card">
+
+                        <span class="result-label">
+                            ω₁
+                        </span>
+
+                        <span
+                            id="resultOmega1"
+                            class="result-value">
+
+                            0.000
+                            <small>rad/s</small>
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- ω2 -->
+
+                    <div class="result-card">
+
+                        <span class="result-label">
+                            ω₂
+                        </span>
+
+                        <span
+                            id="resultOmega2"
+                            class="result-value">
+
+                            0.000
+                            <small>rad/s</small>
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- α1 -->
+
+                    <div class="result-card">
+
+                        <span class="result-label">
+                            α₁
+                        </span>
+
+                        <span
+                            id="resultAlpha1"
+                            class="result-value">
+
+                            0.000
+                            <small>rad/s²</small>
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- α2 -->
+
+                    <div class="result-card">
+
+                        <span class="result-label">
+                            α₂
+                        </span>
+
+                        <span
+                            id="resultAlpha2"
+                            class="result-value">
+
+                            0.000
+                            <small>rad/s²</small>
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- KE -->
+
+                    <div class="result-card">
+
+                        <span class="result-label">
+                            Kinetic Energy
+                        </span>
+
+                        <span
+                            id="resultKE"
+                            class="result-value">
+
+                            0.0000
+                            <small>J</small>
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- PE -->
+
+                    <div class="result-card">
+
+                        <span class="result-label">
+                            Potential Energy
+                        </span>
+
+                        <span
+                            id="resultPE"
+                            class="result-value">
+
+                            0.0000
+                            <small>J</small>
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- Total Energy -->
+
+                    <div class="result-card">
+
+                        <span class="result-label">
+                            Total Energy
+                        </span>
+
+                        <span
+                            id="resultTotalEnergy"
+                            class="result-value">
+
+                            0.0000
+                            <small>J</small>
+
+                        </span>
+
+                    </div>
 
                 </div>
 
+            </section>
 
-                <!-- OMEGA 1 -->
 
-                <div class="result-card">
 
-                    <span class="result-label">
-                        ω₁
-                    </span>
+            <!-- =================================================
+                 ENERGY VALIDATION
+                 ================================================= -->
 
-                    <span
-                        id="resultOmega1"
-                        class="result-value">
+            <section class="card energy-card">
 
-                        0.000 rad/s
-
-                    </span>
-
-                </div>
-
-
-                <!-- OMEGA 2 -->
-
-                <div class="result-card">
-
-                    <span class="result-label">
-                        ω₂
-                    </span>
-
-                    <span
-                        id="resultOmega2"
-                        class="result-value">
-
-                        0.000 rad/s
-
-                    </span>
-
-                </div>
-
-
-                <!-- ALPHA 1 -->
-
-                <div class="result-card">
-
-                    <span class="result-label">
-                        α₁
-                    </span>
-
-                    <span
-                        id="resultAlpha1"
-                        class="result-value">
-
-                        0.000 rad/s²
-
-                    </span>
-
-                </div>
-
-
-                <!-- ALPHA 2 -->
-
-                <div class="result-card">
-
-                    <span class="result-label">
-                        α₂
-                    </span>
-
-                    <span
-                        id="resultAlpha2"
-                        class="result-value">
-
-                        0.000 rad/s²
-
-                    </span>
-
-                </div>
-
-
-                <!-- KINETIC ENERGY -->
-
-                <div class="result-card">
-
-                    <span class="result-label">
-                        Kinetic Energy
-                    </span>
-
-                    <span
-                        id="resultKE"
-                        class="result-value">
-
-                        0.0000 J
-
-                    </span>
-
-                </div>
-
-
-                <!-- POTENTIAL ENERGY -->
-
-                <div class="result-card">
-
-                    <span class="result-label">
-                        Potential Energy
-                    </span>
-
-                    <span
-                        id="resultPE"
-                        class="result-value">
-
-                        0.0000 J
-
-                    </span>
-
-                </div>
-
-
-                <!-- TOTAL ENERGY -->
-
-                <div class="result-card">
-
-                    <span class="result-label">
-                        Total Energy
-                    </span>
-
-                    <span
-                        id="resultTotalEnergy"
-                        class="result-value">
-
-                        0.0000 J
-
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             ENERGY VALIDATION
-             ================================================= -->
-
-        <section class="card">
-
-
-            <div class="card-header">
-
-                <div>
+                <div class="card-header">
 
                     <h2>
                         Energy Conservation Validation
                     </h2>
 
-                    <p>
-                        Validation of numerical integration
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="energy-validation-grid">
-
-
-                <div class="validation-item">
-
-                    <span>
-                        Initial Energy
-                    </span>
-
-                    <strong id="initialEnergy">
-                        0.0000 J
-                    </strong>
-
                 </div>
 
 
-                <div class="validation-item">
+                <div class="energy-validation-grid">
 
-                    <span>
-                        Current Energy
-                    </span>
 
-                    <strong id="currentEnergy">
-                        0.0000 J
-                    </strong>
+                    <div class="validation-item">
+
+                        <span>
+                            Initial Energy
+                        </span>
+
+                        <strong id="initialEnergy">
+                            0.0000 J
+                        </strong>
+
+                    </div>
+
+
+                    <div class="validation-item">
+
+                        <span>
+                            Current Energy
+                        </span>
+
+                        <strong id="currentEnergy">
+                            0.0000 J
+                        </strong>
+
+                    </div>
+
+
+                    <div class="validation-item">
+
+                        <span>
+                            Energy Error
+                        </span>
+
+                        <strong id="energyError">
+                            0.0000 %
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        id="energyStatus"
+                        class="energy-status">
+
+                        <span id="energyStatusText">
+                            Waiting for simulation
+                        </span>
+
+                    </div>
 
                 </div>
 
+            </section>
 
-                <div class="validation-item">
-
-                    <span>
-                        Energy Error
-                    </span>
-
-                    <strong id="energyError">
-                        0.0000 %
-                    </strong>
-
-                </div>
-
-
-                <div
-                    id="energyStatus"
-                    class="energy-status">
-
-                    <span id="energyStatusText">
-                        Waiting for simulation
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
+        </div>
 
 
 
         <!-- =================================================
-             CHARTS
+             GRAPHS
              ================================================= -->
 
-        <section class="charts-grid">
+        <section class="card graphs-section">
 
-
-            <!-- THETA 1 -->
-
-            <div class="card chart-card">
-
-                <div class="card-header">
-
-                    <h2>
-                        θ₁ vs Time
-                    </h2>
-
-                </div>
-
-
-                <div class="chart-container">
-
-                    <canvas id="theta1Chart"></canvas>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- THETA 2 -->
-
-            <div class="card chart-card">
-
-                <div class="card-header">
-
-                    <h2>
-                        θ₂ vs Time
-                    </h2>
-
-                </div>
-
-
-                <div class="chart-container">
-
-                    <canvas id="theta2Chart"></canvas>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- OMEGA 1 -->
-
-            <div class="card chart-card">
-
-                <div class="card-header">
-
-                    <h2>
-                        ω₁ vs Time
-                    </h2>
-
-                </div>
-
-
-                <div class="chart-container">
-
-                    <canvas id="omega1Chart"></canvas>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- OMEGA 2 -->
-
-            <div class="card chart-card">
-
-                <div class="card-header">
-
-                    <h2>
-                        ω₂ vs Time
-                    </h2>
-
-                </div>
-
-
-                <div class="chart-container">
-
-                    <canvas id="omega2Chart"></canvas>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- ENERGY -->
-
-            <div class="card chart-card chart-wide">
-
-                <div class="card-header">
-
-                    <h2>
-                        Energy vs Time
-                    </h2>
-
-                </div>
-
-
-                <div class="chart-container">
-
-                    <canvas id="energyChart"></canvas>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             OBSERVATION TABLE
-             ================================================= -->
-
-        <section class="card">
 
             <div class="card-header">
 
-                <div>
+                <h2>
+                    Graphs
+                </h2>
+
+            </div>
+
+
+            <div class="charts-grid">
+
+
+                <!-- θ1 -->
+
+                <div class="chart-card">
+
+                    <div class="chart-title">
+                        θ₁ vs Time
+                    </div>
+
+                    <div class="chart-container">
+
+                        <canvas id="theta1Chart"></canvas>
+
+                    </div>
+
+                </div>
+
+
+                <!-- θ2 -->
+
+                <div class="chart-card">
+
+                    <div class="chart-title">
+                        θ₂ vs Time
+                    </div>
+
+                    <div class="chart-container">
+
+                        <canvas id="theta2Chart"></canvas>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ω1 -->
+
+                <div class="chart-card">
+
+                    <div class="chart-title">
+                        ω₁ vs Time
+                    </div>
+
+                    <div class="chart-container">
+
+                        <canvas id="omega1Chart"></canvas>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ω2 -->
+
+                <div class="chart-card">
+
+                    <div class="chart-title">
+                        ω₂ vs Time
+                    </div>
+
+                    <div class="chart-container">
+
+                        <canvas id="omega2Chart"></canvas>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Energy -->
+
+                <div class="chart-card">
+
+                    <div class="chart-title">
+                        Energy vs Time
+                    </div>
+
+                    <div class="chart-container">
+
+                        <canvas id="energyChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             BOTTOM INFORMATION GRID
+             ================================================= -->
+
+        <div class="bottom-dashboard-grid">
+
+
+            <!-- =================================================
+                 OBSERVATION TABLE
+                 ================================================= -->
+
+            <section class="card observation-card">
+
+                <div class="card-header">
 
                     <h2>
                         Observation Table
                     </h2>
 
-                    <p>
-                        Numerical simulation data
-                    </p>
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Time (s)
+                                </th>
+
+                                <th>
+                                    θ₁ (°)
+                                </th>
+
+                                <th>
+                                    θ₂ (°)
+                                </th>
+
+                                <th>
+                                    ω₁ (rad/s)
+                                </th>
+
+                                <th>
+                                    ω₂ (rad/s)
+                                </th>
+
+                                <th>
+                                    Energy (J)
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="observationTableBody">
+
+                        </tbody>
+
+                    </table>
+
+                    <div class="empty-table-message">
+
+                        No data yet.
+                        Start the simulation to collect data.
+
+                    </div>
 
                 </div>
 
-            </div>
+            </section>
 
 
-            <div class="table-container">
 
-                <table>
+            <!-- =================================================
+                 THEORY
+                 ================================================= -->
 
-                    <thead>
+            <section class="card info-card theory-card">
 
-                        <tr>
+                <div class="card-header">
 
-                            <th>
-                                Time (s)
-                            </th>
+                    <h2>
+                        Theory
+                    </h2>
 
-                            <th>
-                                θ₁ (°)
-                            </th>
-
-                            <th>
-                                θ₂ (°)
-                            </th>
-
-                            <th>
-                                ω₁ (rad/s)
-                            </th>
-
-                            <th>
-                                ω₂ (rad/s)
-                            </th>
-
-                            <th>
-                                Energy (J)
-                            </th>
-
-                        </tr>
-
-                    </thead>
+                </div>
 
 
-                    <tbody
-                        id="observationTableBody">
+                <div class="info-content">
 
-                    </tbody>
+                    <ul>
 
-                </table>
+                        <li>
+                            Links are rigid and massless.
+                        </li>
 
-            </div>
+                        <li>
+                            Masses are concentrated at
+                            the ends of the links.
+                        </li>
 
-        </section>
+                        <li>
+                            Joints are frictionless.
+                        </li>
+
+                        <li>
+                            Air resistance is neglected.
+                        </li>
+
+                        <li>
+                            Motion is planar.
+                        </li>
+
+                        <li>
+                            Gravitational acceleration
+                            is constant.
+                        </li>
+
+                    </ul>
+
+
+                    <button
+                        class="secondary-button"
+                        onclick="document.querySelector('.theory-equations').scrollIntoView({behavior:'smooth'})">
+
+                        View Equations
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 PROCEDURE
+                 ================================================= -->
+
+            <section class="card info-card procedure-card">
+
+                <div class="card-header">
+
+                    <h2>
+                        Procedure
+                    </h2>
+
+                </div>
+
+
+                <div class="info-content">
+
+                    <ol>
+
+                        <li>
+                            Set the parameters.
+                        </li>
+
+                        <li>
+                            Choose initial angles.
+                        </li>
+
+                        <li>
+                            Click Start.
+                        </li>
+
+                        <li>
+                            Observe the motion.
+                        </li>
+
+                        <li>
+                            Analyze the graphs.
+                        </li>
+
+                        <li>
+                            Download data.
+                        </li>
+
+                    </ol>
+
+
+                    <button
+                        class="secondary-button"
+                        onclick="document.querySelector('.procedure-details').scrollIntoView({behavior:'smooth'})">
+
+                        Full Procedure
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 QUIZ
+                 ================================================= -->
+
+            <section class="card info-card quiz-card">
+
+                <div class="card-header">
+
+                    <h2>
+                        Quiz
+                    </h2>
+
+                </div>
+
+
+                <div class="quiz-content">
+
+
+                    <!-- QUESTION 1 -->
+
+                    <div class="quiz-question">
+
+                        <p>
+                            <strong>
+                                1. Why is the double pendulum
+                                a nonlinear system?
+                            </strong>
+                        </p>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="q1"
+                                value="a">
+
+                            Trigonometric nonlinearities
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="q1"
+                                value="b">
+
+                            Gravity is constant
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="q1"
+                                value="c">
+
+                            Links are rigid
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="q1"
+                                value="d">
+
+                            Masses are point masses
+
+                        </label>
+
+                    </div>
+
+
+
+                    <!-- QUESTION 2 -->
+
+                    <div class="quiz-question">
+
+                        <p>
+                            <strong>
+                                2. What happens to total
+                                mechanical energy in an ideal
+                                frictionless system?
+                            </strong>
+                        </p>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="q2"
+                                value="a">
+
+                            It remains approximately constant
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="q2"
+                                value="b">
+
+                            It continuously increases
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="q2"
+                                value="c">
+
+                            It continuously decreases
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="q2"
+                                value="d">
+
+                            It becomes zero
+
+                        </label>
+
+                    </div>
+
+
+                    <button
+                        class="quiz-button"
+                        onclick="checkQuiz()">
+
+                        Check Answer
+
+                    </button>
+
+
+                    <div
+                        id="quizResult"
+                        class="quiz-result">
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
 
 
 
         <!-- =================================================
-             THEORY
+             THEORY DETAILS
              ================================================= -->
 
-        <section class="card">
+        <section
+            class="card theory-equations">
 
             <div class="card-header">
 
                 <h2>
-                    Theory
+                    Theory & Equations
                 </h2>
 
             </div>
@@ -1219,53 +1650,13 @@
 
             <div class="theory-content">
 
-
-                <h3>
-                    System Assumptions
-                </h3>
-
-
-                <ul>
-
-                    <li>
-                        Links are rigid and massless.
-                    </li>
-
-                    <li>
-                        Masses are concentrated at
-                        the ends of the links.
-                    </li>
-
-                    <li>
-                        Joints are frictionless.
-                    </li>
-
-                    <li>
-                        Air resistance is neglected.
-                    </li>
-
-                    <li>
-                        Motion is planar.
-                    </li>
-
-                    <li>
-                        Gravitational acceleration is constant.
-                    </li>
-
-                </ul>
-
-
-
                 <h3>
                     Generalized Coordinates
                 </h3>
 
-
                 <p>
-
                     The angles θ₁ and θ₂ are measured
                     from the downward vertical.
-
                 </p>
 
 
@@ -1311,7 +1702,6 @@
                 </div>
 
 
-
                 <h3>
                     Kinetic Energy
                 </h3>
@@ -1333,7 +1723,6 @@
                 </div>
 
 
-
                 <h3>
                     Potential Energy
                 </h3>
@@ -1351,9 +1740,8 @@
                 </div>
 
 
-
                 <h3>
-                    Total Mechanical Energy
+                    Total Energy
                 </h3>
 
 
@@ -1366,19 +1754,9 @@
                 </div>
 
 
-
                 <h3>
                     Equations of Motion
                 </h3>
-
-
-                <p>
-
-                    The nonlinear equations are solved
-                    numerically using fourth-order
-                    Runge-Kutta integration.
-
-                </p>
 
 
                 <div class="equation">
@@ -1396,244 +1774,87 @@
 
 
         <!-- =================================================
-             PROCEDURE
+             PROCEDURE DETAILS
              ================================================= -->
 
-        <section class="card">
+        <section
+            class="card procedure-details">
 
             <div class="card-header">
 
                 <h2>
-                    Experimental Procedure
+                    Full Experimental Procedure
                 </h2>
 
             </div>
 
 
-            <ol class="procedure-list">
+            <div class="procedure-content">
 
-                <li>
-                    Set the length of link 1.
-                </li>
+                <ol>
 
-                <li>
-                    Set the length of link 2.
-                </li>
+                    <li>
+                        Set Link 1 length.
+                    </li>
 
-                <li>
-                    Set mass m₁.
-                </li>
+                    <li>
+                        Set Link 2 length.
+                    </li>
 
-                <li>
-                    Set mass m₂.
-                </li>
+                    <li>
+                        Set Mass 1.
+                    </li>
 
-                <li>
-                    Set the initial angle θ₁.
-                </li>
+                    <li>
+                        Set Mass 2.
+                    </li>
 
-                <li>
-                    Set the initial angle θ₂.
-                </li>
+                    <li>
+                        Set initial angle θ₁.
+                    </li>
 
-                <li>
-                    Set gravitational acceleration.
-                </li>
+                    <li>
+                        Set initial angle θ₂.
+                    </li>
 
-                <li>
-                    Select the desired simulation speed.
-                </li>
+                    <li>
+                        Set gravitational acceleration.
+                    </li>
 
-                <li>
-                    Click <strong>Start</strong>.
-                </li>
+                    <li>
+                        Select simulation speed.
+                    </li>
 
-                <li>
-                    Observe the motion of both pendulum links.
-                </li>
+                    <li>
+                        Enable or disable the trail.
+                    </li>
 
-                <li>
-                    Observe angular displacement,
-                    angular velocity and angular acceleration.
-                </li>
+                    <li>
+                        Click <strong>Start</strong>.
+                    </li>
 
-                <li>
-                    Observe the energy conservation behaviour.
-                </li>
+                    <li>
+                        Observe the motion of the pendulum.
+                    </li>
 
-                <li>
-                    Analyze the generated graphs.
-                </li>
+                    <li>
+                        Observe angular displacement,
+                        angular velocity and angular acceleration.
+                    </li>
 
-                <li>
-                    Download the observation data.
-                </li>
+                    <li>
+                        Monitor energy conservation.
+                    </li>
 
-            </ol>
+                    <li>
+                        Analyze the generated graphs.
+                    </li>
 
-        </section>
+                    <li>
+                        Download the observation data as CSV.
+                    </li>
 
-
-
-        <!-- =================================================
-             QUIZ
-             ================================================= -->
-
-        <section class="card quiz-card">
-
-            <div class="card-header">
-
-                <h2>
-                    Quiz
-                </h2>
-
-            </div>
-
-
-
-            <!-- QUESTION 1 -->
-
-            <div class="quiz-question">
-
-                <p>
-
-                    <strong>
-                        1. Why is the double pendulum
-                        a nonlinear system?
-                    </strong>
-
-                </p>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="q1"
-                        value="a">
-
-                    The equations contain
-                    trigonometric nonlinearities
-
-                </label>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="q1"
-                        value="b">
-
-                    Gravity is constant
-
-                </label>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="q1"
-                        value="c">
-
-                    The links are rigid
-
-                </label>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="q1"
-                        value="d">
-
-                    The masses are point masses
-
-                </label>
-
-            </div>
-
-
-
-            <!-- QUESTION 2 -->
-
-            <div class="quiz-question">
-
-                <p>
-
-                    <strong>
-                        2. What happens to total mechanical
-                        energy in an ideal frictionless system?
-                    </strong>
-
-                </p>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="q2"
-                        value="a">
-
-                    It remains approximately constant
-
-                </label>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="q2"
-                        value="b">
-
-                    It continuously increases
-
-                </label>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="q2"
-                        value="c">
-
-                    It continuously decreases
-
-                </label>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="q2"
-                        value="d">
-
-                    It becomes zero
-
-                </label>
-
-            </div>
-
-
-
-            <button
-                class="control-button"
-                onclick="checkQuiz()">
-
-                Check Answers
-
-            </button>
-
-
-            <div
-                id="quizResult"
-                class="quiz-result">
+                </ol>
 
             </div>
 
@@ -1652,10 +1873,9 @@
 <footer class="footer">
 
     <p>
-        Double Pendulum Virtual Lab |
-        Aeronautical Engineering
+        Double Pendulum Virtual Lab
+        • Aeronautical Engineering
     </p>
-
 
     <p>
         Numerical Integration:
@@ -1669,12 +1889,8 @@
 <!-- =========================================================
      JAVASCRIPT
      
-     IMPORTANT LOAD ORDER:
-     
-     1. physics.js
-     2. charts.js
-     3. simulation.js
-     4. controls.js
+     IMPORTANT:
+     KEEP THIS ORDER
      ========================================================= -->
 
 <script src="js/physics.js"></script>
@@ -1710,22 +1926,15 @@ function checkQuiz() {
         );
 
 
-    /*
-       Question 1
-    */
-
     if (
         q1 &&
         q1.value === "a"
     ) {
 
         score++;
+
     }
 
-
-    /*
-       Question 2
-    */
 
     if (
         q2 &&
@@ -1733,12 +1942,9 @@ function checkQuiz() {
     ) {
 
         score++;
+
     }
 
-
-    /*
-       Result element
-    */
 
     const result =
         document.getElementById(
@@ -1757,10 +1963,6 @@ function checkQuiz() {
         score +
         " / 2";
 
-
-    /*
-       Visual feedback
-    */
 
     if (score === 2) {
 
