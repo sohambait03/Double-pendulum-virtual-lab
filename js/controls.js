@@ -1,7 +1,16 @@
 /* ============================================================
    DOUBLE PENDULUM VIRTUAL LAB
    controls.js
-   Parameter controls, sliders, inputs, buttons and UI
+
+   Handles:
+   - Sliders
+   - Number inputs
+   - Parameter displays
+   - Start / Pause / Reset / Step
+   - Simulation speed
+   - Trail
+   - CSV controls
+   - Keyboard shortcuts
    ============================================================ */
 
 
@@ -10,13 +19,21 @@
    ============================================================ */
 
 const simulationParameters = {
+
     m1: 1.0,
+
     m2: 1.0,
+
     l1: 0.8,
+
     l2: 0.8,
+
     theta1: 30.0,
+
     theta2: 40.0,
+
     g: 9.81,
+
     speed: 1.0
 };
 
@@ -26,31 +43,47 @@ const simulationParameters = {
    ============================================================ */
 
 const DEFAULT_PARAMETERS = {
+
     m1: 1.0,
+
     m2: 1.0,
+
     l1: 0.8,
+
     l2: 0.8,
+
     theta1: 30.0,
+
     theta2: 40.0,
+
     g: 9.81,
+
     speed: 1.0
 };
 
 
 /* ============================================================
-   3. GET CURRENT PARAMETERS
+   3. GET SIMULATION PARAMETERS
    ============================================================ */
 
 function getSimulationParameters() {
 
     return {
+
         m1: simulationParameters.m1,
+
         m2: simulationParameters.m2,
+
         l1: simulationParameters.l1,
+
         l2: simulationParameters.l2,
+
         theta1: simulationParameters.theta1,
+
         theta2: simulationParameters.theta2,
+
         g: simulationParameters.g,
+
         speed: simulationParameters.speed
     };
 }
@@ -62,77 +95,156 @@ function getSimulationParameters() {
 
 function initializeControls() {
 
-    console.log("Initializing controls...");
+    console.log(
+        "Initializing controls..."
+    );
+
+
+    /*
+       Synchronize HTML controls
+    */
 
     syncAllInputs();
 
+
+    /*
+       Update displayed values
+    */
+
     updateAllParameterDisplays();
 
-    updateSimulationSpeed(simulationParameters.speed);
+
+    /*
+       Set simulation speed
+    */
+
+    updateSimulationSpeed(
+        simulationParameters.speed
+    );
+
+
+    /*
+       Add event listeners
+    */
 
     setupControlListeners();
 
+
+    /*
+       Keyboard shortcuts
+    */
+
     setupKeyboardControls();
 
-    console.log("Controls initialized successfully.");
+
+    console.log(
+        "Controls initialized successfully."
+    );
 }
 
 
 /* ============================================================
-   5. SYNCHRONIZE SLIDERS AND NUMBER INPUTS
+   5. SYNCHRONIZE ALL INPUTS
    ============================================================ */
 
 function syncAllInputs() {
 
     const parameters = [
+
         "l1",
+
         "l2",
+
         "m1",
+
         "m2",
+
         "theta1",
+
         "theta2",
+
         "g",
+
         "speed"
     ];
 
-    parameters.forEach(parameter => {
-        syncInput(parameter);
-    });
+
+    parameters.forEach(
+        parameter => {
+
+            syncInput(parameter);
+
+        }
+    );
 }
 
 
+/* ============================================================
+   6. SYNCHRONIZE ONE INPUT
+   ============================================================ */
+
 function syncInput(parameter) {
 
-    const slider = document.getElementById(parameter + "Slider");
-    const input = document.getElementById(parameter + "Input");
+    const slider =
+        document.getElementById(
+            parameter + "Slider"
+        );
 
-    const value = simulationParameters[parameter];
+
+    const input =
+        document.getElementById(
+            parameter + "Input"
+        );
+
+
+    const value =
+        simulationParameters[parameter];
+
 
     if (slider) {
+
         slider.value = value;
     }
 
+
     if (input) {
+
         input.value = value;
     }
 }
 
 
 /* ============================================================
-   6. MAIN PARAMETER UPDATE FUNCTION
-   ============================================================ */
+   7. UPDATE SIMULATION PARAMETER
+   ============================================================
 
-/*
-   This is the most important function for the sliders.
+   This function is called by the HTML sliders.
 
    Example:
+
    oninput="updateSimulationParameter('l1')"
-*/
 
-function updateSimulationParameter(parameter) {
+   ============================================================ */
 
-    const slider = document.getElementById(parameter + "Slider");
-    const input = document.getElementById(parameter + "Input");
+function updateSimulationParameter(
+    parameter
+) {
+
+    const slider =
+        document.getElementById(
+            parameter + "Slider"
+        );
+
+
+    const input =
+        document.getElementById(
+            parameter + "Input"
+        );
+
+
+    /*
+       Check slider
+    */
 
     if (!slider) {
 
@@ -144,23 +256,38 @@ function updateSimulationParameter(parameter) {
         return;
     }
 
-    const value = parseFloat(slider.value);
+
+    /*
+       Read slider value
+    */
+
+    const value =
+        parseFloat(
+            slider.value
+        );
+
+
+    /*
+       Validate
+    */
 
     if (!Number.isFinite(value)) {
 
         console.error(
-            "Invalid slider value for:",
+            "Invalid value for:",
             parameter
         );
 
         return;
     }
 
+
     /*
-       Store the new value
+       Store parameter
     */
 
-    simulationParameters[parameter] = value;
+    simulationParameters[parameter] =
+        value;
 
 
     /*
@@ -168,54 +295,215 @@ function updateSimulationParameter(parameter) {
     */
 
     if (input) {
+
         input.value = value;
     }
 
 
     /*
-       Update text displayed beside slider
+       Update visible value
     */
 
-    updateParameterDisplay(parameter, value);
+    updateParameterDisplay(
+        parameter,
+        value
+    );
 
 
     /*
-       Update simulation speed separately
+       Speed requires special handling
     */
 
     if (parameter === "speed") {
 
-        updateSimulationSpeed(value);
+        updateSimulationSpeed(
+            value
+        );
 
         return;
     }
 
 
     /*
-       Tell simulation engine that a parameter changed
+       Update stopped simulation
     */
 
-    if (typeof updateStaticSimulation === "function") {
+    if (
+        typeof updateStaticSimulation ===
+        "function"
+    ) {
 
         updateStaticSimulation();
-
-    } else {
-
-        console.warn(
-            "updateStaticSimulation() is not available yet."
-        );
     }
 }
 
 
 /* ============================================================
-   7. UPDATE PARAMETER DISPLAY
+   8. UPDATE PARAMETER FROM NUMBER INPUT
    ============================================================ */
 
-function updateParameterDisplay(parameter, value) {
+function updateParameterFromInput(
+    parameter
+) {
+
+    const input =
+        document.getElementById(
+            parameter + "Input"
+        );
+
+
+    const slider =
+        document.getElementById(
+            parameter + "Slider"
+        );
+
+
+    if (!input) {
+
+        console.error(
+            "Input not found:",
+            parameter + "Input"
+        );
+
+        return;
+    }
+
+
+    let value =
+        parseFloat(
+            input.value
+        );
+
+
+    /*
+       Validate
+    */
+
+    if (!Number.isFinite(value)) {
+
+        syncInput(parameter);
+
+        updateParameterDisplay(
+            parameter,
+            simulationParameters[parameter]
+        );
+
+        return;
+    }
+
+
+    /*
+       Respect slider minimum
+       and maximum
+    */
+
+    if (slider) {
+
+        const min =
+            parseFloat(
+                slider.min
+            );
+
+
+        const max =
+            parseFloat(
+                slider.max
+            );
+
+
+        if (
+            Number.isFinite(min) &&
+            value < min
+        ) {
+
+            value = min;
+        }
+
+
+        if (
+            Number.isFinite(max) &&
+            value > max
+        ) {
+
+            value = max;
+        }
+
+
+        /*
+           Update slider
+        */
+
+        slider.value = value;
+    }
+
+
+    /*
+       Store value
+    */
+
+    simulationParameters[parameter] =
+        value;
+
+
+    /*
+       Update input
+    */
+
+    input.value = value;
+
+
+    /*
+       Update display
+    */
+
+    updateParameterDisplay(
+        parameter,
+        value
+    );
+
+
+    /*
+       Update speed
+    */
+
+    if (parameter === "speed") {
+
+        updateSimulationSpeed(
+            value
+        );
+
+        return;
+    }
+
+
+    /*
+       Update simulation
+    */
+
+    if (
+        typeof updateStaticSimulation ===
+        "function"
+    ) {
+
+        updateStaticSimulation();
+    }
+}
+
+
+/* ============================================================
+   9. UPDATE PARAMETER DISPLAY
+   ============================================================ */
+
+function updateParameterDisplay(
+    parameter,
+    value
+) {
 
     const display =
-        document.getElementById(parameter + "Value");
+        document.getElementById(
+            parameter + "Value"
+        );
+
 
     if (!display) {
 
@@ -230,29 +518,36 @@ function updateParameterDisplay(parameter, value) {
 
     switch (parameter) {
 
+
         case "l1":
+
         case "l2":
 
             display.textContent =
-                value.toFixed(2) + " m";
+                value.toFixed(2) +
+                " m";
 
             break;
 
 
         case "m1":
+
         case "m2":
 
             display.textContent =
-                value.toFixed(2) + " kg";
+                value.toFixed(2) +
+                " kg";
 
             break;
 
 
         case "theta1":
+
         case "theta2":
 
             display.textContent =
-                value.toFixed(1) + "°";
+                value.toFixed(1) +
+                "°";
 
             break;
 
@@ -260,7 +555,8 @@ function updateParameterDisplay(parameter, value) {
         case "g":
 
             display.textContent =
-                value.toFixed(2) + " m/s²";
+                value.toFixed(2) +
+                " m/s²";
 
             break;
 
@@ -268,7 +564,8 @@ function updateParameterDisplay(parameter, value) {
         case "speed":
 
             display.textContent =
-                value.toFixed(1) + "×";
+                value.toFixed(1) +
+                "×";
 
             break;
 
@@ -282,132 +579,46 @@ function updateParameterDisplay(parameter, value) {
 
 
 /* ============================================================
-   8. UPDATE ALL PARAMETER DISPLAYS
+   10. UPDATE ALL PARAMETER DISPLAYS
    ============================================================ */
 
 function updateAllParameterDisplays() {
 
-    Object.keys(simulationParameters).forEach(parameter => {
+    Object.keys(
+        simulationParameters
+    ).forEach(
+        parameter => {
 
-        updateParameterDisplay(
-            parameter,
-            simulationParameters[parameter]
-        );
+            updateParameterDisplay(
+                parameter,
+                simulationParameters[parameter]
+            );
 
-    });
-}
-
-
-/* ============================================================
-   9. UPDATE PARAMETER FROM NUMBER INPUT
-   ============================================================ */
-
-function updateParameterFromInput(parameter) {
-
-    const input =
-        document.getElementById(parameter + "Input");
-
-    const slider =
-        document.getElementById(parameter + "Slider");
-
-    if (!input) {
-
-        console.error(
-            "Input not found:",
-            parameter + "Input"
-        );
-
-        return;
-    }
-
-    const value = parseFloat(input.value);
-
-    if (!Number.isFinite(value)) {
-
-        syncInput(parameter);
-
-        return;
-    }
-
-
-    /*
-       If slider exists, respect its minimum and maximum.
-    */
-
-    if (slider) {
-
-        const min = parseFloat(slider.min);
-        const max = parseFloat(slider.max);
-
-        if (Number.isFinite(min) && value < min) {
-
-            input.value = min;
-
-            simulationParameters[parameter] = min;
-
-        } else if (Number.isFinite(max) && value > max) {
-
-            input.value = max;
-
-            simulationParameters[parameter] = max;
-
-        } else {
-
-            simulationParameters[parameter] = value;
         }
-
-
-        /*
-           Synchronize slider
-        */
-
-        slider.value =
-            simulationParameters[parameter];
-
-    } else {
-
-        simulationParameters[parameter] = value;
-    }
-
-
-    updateParameterDisplay(
-        parameter,
-        simulationParameters[parameter]
     );
-
-
-    /*
-       Update simulation
-    */
-
-    if (parameter === "speed") {
-
-        updateSimulationSpeed(
-            simulationParameters[parameter]
-        );
-
-    } else if (
-        typeof updateStaticSimulation === "function"
-    ) {
-
-        updateStaticSimulation();
-    }
 }
 
 
 /* ============================================================
-   10. SIMULATION SPEED
+   11. UPDATE SIMULATION SPEED
    ============================================================ */
 
-function updateSimulationSpeed(value) {
+function updateSimulationSpeed(
+    value
+) {
 
-    const speed = parseFloat(value);
+    const speed =
+        parseFloat(value);
+
 
     if (!Number.isFinite(speed)) {
+
         return;
     }
 
-    simulationParameters.speed = speed;
+
+    simulationParameters.speed =
+        speed;
 
 
     /*
@@ -415,22 +626,32 @@ function updateSimulationSpeed(value) {
     */
 
     const slider =
-        document.getElementById("speedSlider");
+        document.getElementById(
+            "speedSlider"
+        );
+
 
     if (slider) {
-        slider.value = speed;
+
+        slider.value =
+            speed;
     }
 
 
     /*
-       Update input
+       Update number input
     */
 
     const input =
-        document.getElementById("speedInput");
+        document.getElementById(
+            "speedInput"
+        );
+
 
     if (input) {
-        input.value = speed;
+
+        input.value =
+            speed;
     }
 
 
@@ -439,56 +660,57 @@ function updateSimulationSpeed(value) {
     */
 
     const display =
-        document.getElementById("speedValue");
+        document.getElementById(
+            "speedValue"
+        );
+
 
     if (display) {
 
         display.textContent =
-            speed.toFixed(1) + "×";
+            speed.toFixed(1) +
+            "×";
     }
 
 
     /*
-       Send speed to simulation engine
+       Tell simulation engine
     */
 
-    if (typeof setSimulationSpeed === "function") {
+    if (
+        typeof setSimulationSpeed ===
+        "function"
+    ) {
 
-        setSimulationSpeed(speed);
-
+        setSimulationSpeed(
+            speed
+        );
     }
-}
-
-
-/*
-   Compatibility wrapper.
-
-   Your HTML may call:
-   updateSpeed()
-*/
-
-function updateSpeed() {
-
-    const slider =
-        document.getElementById("speedSlider");
-
-    if (!slider) {
-        return;
-    }
-
-    updateSimulationParameter("speed");
 }
 
 
 /* ============================================================
-   11. BUTTON FUNCTIONS
+   12. SPEED COMPATIBILITY FUNCTION
    ============================================================ */
 
-/*
-   START
-*/
+function updateSpeed() {
+
+    updateSimulationParameter(
+        "speed"
+    );
+}
+
+
+/* ============================================================
+   13. START SIMULATION
+   ============================================================ */
 
 function startSimulation() {
+
+    console.log(
+        "Start button pressed."
+    );
+
 
     if (
         typeof startSimulationEngineCore ===
@@ -500,22 +722,27 @@ function startSimulation() {
     } else {
 
         console.error(
-            "Simulation engine is not loaded."
+            "startSimulationEngineCore() is not available."
         );
 
         alert(
-            "Simulation engine is not loaded. " +
+            "Simulation engine is not loaded.\n\n" +
             "Please check js/simulation.js."
         );
     }
 }
 
 
-/*
-   PAUSE
-*/
+/* ============================================================
+   14. PAUSE SIMULATION
+   ============================================================ */
 
 function pauseSimulation() {
+
+    console.log(
+        "Pause button pressed."
+    );
+
 
     if (
         typeof pauseSimulationEngineCore ===
@@ -527,17 +754,22 @@ function pauseSimulation() {
     } else {
 
         console.error(
-            "Simulation engine is not loaded."
+            "pauseSimulationEngineCore() is not available."
         );
     }
 }
 
 
-/*
-   RESET
-*/
+/* ============================================================
+   15. RESET SIMULATION
+   ============================================================ */
 
 function resetSimulation() {
+
+    console.log(
+        "Reset button pressed."
+    );
+
 
     if (
         typeof resetSimulationEngineCore ===
@@ -549,17 +781,22 @@ function resetSimulation() {
     } else {
 
         console.error(
-            "Simulation engine is not loaded."
+            "resetSimulationEngineCore() is not available."
         );
     }
 }
 
 
-/*
-   STEP
-*/
+/* ============================================================
+   16. STEP SIMULATION
+   ============================================================ */
 
 function stepSimulation() {
+
+    console.log(
+        "Step button pressed."
+    );
+
 
     if (
         typeof performSimulationStep ===
@@ -571,190 +808,278 @@ function stepSimulation() {
     } else {
 
         console.error(
-            "Simulation engine is not loaded."
+            "performSimulationStep() is not available."
         );
     }
 }
 
 
 /* ============================================================
-   12. TRAIL CONTROL
+   17. TRAIL TOGGLE
    ============================================================ */
 
 function toggleTrail() {
 
     const checkbox =
-        document.getElementById("trailToggle");
+        document.getElementById(
+            "trailToggle"
+        );
+
 
     let enabled = true;
 
+
     if (checkbox) {
 
-        enabled = checkbox.checked;
-
-    } else if (
-        typeof trailEnabled !== "undefined"
-    ) {
-
-        enabled = !trailEnabled;
+        enabled =
+            checkbox.checked;
     }
 
 
-    if (typeof setTrailEnabled === "function") {
+    if (
+        typeof setTrailEnabled ===
+        "function"
+    ) {
 
-        setTrailEnabled(enabled);
+        setTrailEnabled(
+            enabled
+        );
 
+    } else {
+
+        console.error(
+            "setTrailEnabled() is not available."
+        );
     }
 }
 
 
 /* ============================================================
-   13. SIMULATION STATUS
+   18. SIMULATION STATUS
    ============================================================ */
 
-function updateSimulationStatus(status, text) {
+function updateSimulationStatus(
+    status,
+    text
+) {
 
     const statusElement =
-        document.getElementById("simulationStatus");
+        document.getElementById(
+            "simulationStatus"
+        );
+
 
     const statusText =
-        document.getElementById("statusText");
+        document.getElementById(
+            "statusText"
+        );
 
 
     if (statusElement) {
 
         statusElement.className =
-            "simulation-status " + status;
+            "simulation-status " +
+            status;
     }
 
 
-    if (statusText && text) {
+    if (statusText) {
 
-        statusText.textContent = text;
+        statusText.textContent =
+            text;
     }
 }
 
 
 /* ============================================================
-   14. TIME DISPLAY
+   19. UPDATE TIME DISPLAY
    ============================================================ */
 
-function updateTimeDisplay(time) {
+function updateTimeDisplay(
+    time
+) {
 
     const element =
-        document.getElementById("timeDisplay");
+        document.getElementById(
+            "timeDisplay"
+        );
+
 
     if (!element) {
+
         return;
     }
 
-    const t = parseFloat(time);
 
-    if (!Number.isFinite(t)) {
+    const value =
+        parseFloat(time);
+
+
+    if (!Number.isFinite(value)) {
+
         return;
     }
+
 
     element.textContent =
-        "Time: " + t.toFixed(2) + " s";
+        "Time: " +
+        value.toFixed(2) +
+        " s";
 }
 
 
 /* ============================================================
-   15. RESULT DISPLAY
+   20. UPDATE RESULT DISPLAY
    ============================================================ */
 
-function updateResultDisplay(results) {
+function updateResultDisplay(
+    results
+) {
 
     if (!results) {
+
         return;
     }
 
 
     updateElement(
         "resultTheta1",
-        formatNumber(results.theta1, 2) + "°"
+        formatNumber(
+            results.theta1,
+            2
+        ) + "°"
     );
+
 
     updateElement(
         "resultTheta2",
-        formatNumber(results.theta2, 2) + "°"
+        formatNumber(
+            results.theta2,
+            2
+        ) + "°"
     );
+
 
     updateElement(
         "resultOmega1",
-        formatNumber(results.omega1, 3) + " rad/s"
+        formatNumber(
+            results.omega1,
+            3
+        ) + " rad/s"
     );
+
 
     updateElement(
         "resultOmega2",
-        formatNumber(results.omega2, 3) + " rad/s"
+        formatNumber(
+            results.omega2,
+            3
+        ) + " rad/s"
     );
+
 
     updateElement(
         "resultAlpha1",
-        formatNumber(results.alpha1, 3) + " rad/s²"
+        formatNumber(
+            results.alpha1,
+            3
+        ) + " rad/s²"
     );
+
 
     updateElement(
         "resultAlpha2",
-        formatNumber(results.alpha2, 3) + " rad/s²"
+        formatNumber(
+            results.alpha2,
+            3
+        ) + " rad/s²"
     );
+
 
     updateElement(
         "resultKE",
-        formatNumber(results.kineticEnergy, 4) + " J"
+        formatNumber(
+            results.kineticEnergy,
+            4
+        ) + " J"
     );
+
 
     updateElement(
         "resultPE",
-        formatNumber(results.potentialEnergy, 4) + " J"
+        formatNumber(
+            results.potentialEnergy,
+            4
+        ) + " J"
     );
+
 
     updateElement(
         "resultTotalEnergy",
-        formatNumber(results.totalEnergy, 4) + " J"
+        formatNumber(
+            results.totalEnergy,
+            4
+        ) + " J"
     );
 }
 
 
 /* ============================================================
-   16. SAFE DOM UPDATE
+   21. SAFE ELEMENT UPDATE
    ============================================================ */
 
-function updateElement(id, value) {
+function updateElement(
+    id,
+    value
+) {
 
     const element =
         document.getElementById(id);
 
+
     if (element) {
 
-        element.textContent = value;
+        element.textContent =
+            value;
     }
 }
 
 
 /* ============================================================
-   17. NUMBER FORMATTING
+   22. NUMBER FORMATTING
    ============================================================ */
 
-function formatNumber(value, decimals = 2) {
+function formatNumber(
+    value,
+    decimals = 2
+) {
 
-    const number = parseFloat(value);
+    const number =
+        parseFloat(value);
+
 
     if (!Number.isFinite(number)) {
 
         return "0";
     }
 
-    return number.toFixed(decimals);
+
+    return number.toFixed(
+        decimals
+    );
 }
 
 
 /* ============================================================
-   18. CLEAR DATA
+   23. CLEAR DATA
    ============================================================ */
 
 function clearData() {
+
+    console.log(
+        "Clearing simulation data..."
+    );
+
 
     if (
         typeof clearChartData ===
@@ -764,6 +1089,7 @@ function clearData() {
         clearChartData();
     }
 
+
     if (
         typeof resetCharts ===
         "function"
@@ -772,15 +1098,39 @@ function clearData() {
         resetCharts();
     }
 
-    console.log("Simulation data cleared.");
+
+    /*
+       Clear observation table
+    */
+
+    const tableBody =
+        document.getElementById(
+            "observationTableBody"
+        );
+
+
+    if (tableBody) {
+
+        tableBody.innerHTML = "";
+    }
+
+
+    console.log(
+        "Simulation data cleared."
+    );
 }
 
 
 /* ============================================================
-   19. DOWNLOAD CSV
+   24. DOWNLOAD CSV
    ============================================================ */
 
 function downloadCSV() {
+
+    console.log(
+        "Downloading simulation data..."
+    );
+
 
     if (
         typeof exportChartsDataCSV ===
@@ -792,7 +1142,7 @@ function downloadCSV() {
     } else {
 
         console.error(
-            "Chart export function is not available."
+            "exportChartsDataCSV() is not available."
         );
 
         alert(
@@ -803,22 +1153,27 @@ function downloadCSV() {
 
 
 /* ============================================================
-   20. SET DEFAULT PARAMETERS
+   25. RESET PARAMETER VALUES
    ============================================================ */
 
 function resetParameterValues() {
 
-    Object.keys(DEFAULT_PARAMETERS).forEach(parameter => {
+    Object.keys(
+        DEFAULT_PARAMETERS
+    ).forEach(
+        parameter => {
 
-        simulationParameters[parameter] =
-            DEFAULT_PARAMETERS[parameter];
+            simulationParameters[parameter] =
+                DEFAULT_PARAMETERS[parameter];
 
-    });
+        }
+    );
 
 
     syncAllInputs();
 
     updateAllParameterDisplays();
+
 
     updateSimulationSpeed(
         simulationParameters.speed
@@ -836,88 +1191,103 @@ function resetParameterValues() {
 
 
 /* ============================================================
-   21. CONTROL EVENT LISTENERS
+   26. SETUP CONTROL LISTENERS
    ============================================================ */
 
 function setupControlListeners() {
 
     const parameters = [
+
         "l1",
+
         "l2",
+
         "m1",
+
         "m2",
+
         "theta1",
+
         "theta2",
+
         "g"
     ];
 
 
     /*
-       Slider listeners
+       Sliders
     */
 
-    parameters.forEach(parameter => {
+    parameters.forEach(
+        parameter => {
 
-        const slider =
-            document.getElementById(
-                parameter + "Slider"
-            );
-
-        if (slider) {
-
-            slider.addEventListener(
-                "input",
-                function () {
-
-                    updateSimulationParameter(
-                        parameter
-                    );
-
-                }
-            );
-        }
+            const slider =
+                document.getElementById(
+                    parameter + "Slider"
+                );
 
 
-        /*
-           Number input listeners
-        */
+            if (slider) {
 
-        const input =
-            document.getElementById(
-                parameter + "Input"
-            );
+                slider.addEventListener(
+                    "input",
+                    function () {
 
-        if (input) {
+                        updateSimulationParameter(
+                            parameter
+                        );
 
-            input.addEventListener(
-                "change",
-                function () {
+                    }
+                );
+            }
 
-                    updateParameterFromInput(
-                        parameter
-                    );
 
-                }
-            );
+            /*
+               Number input
+            */
 
-            input.addEventListener(
-                "keydown",
-                function (event) {
+            const input =
+                document.getElementById(
+                    parameter + "Input"
+                );
 
-                    if (event.key === "Enter") {
 
-                        event.preventDefault();
+            if (input) {
+
+                input.addEventListener(
+                    "change",
+                    function () {
 
                         updateParameterFromInput(
                             parameter
                         );
+
                     }
+                );
 
-                }
-            );
+
+                input.addEventListener(
+                    "keydown",
+                    function (event) {
+
+                        if (
+                            event.key ===
+                            "Enter"
+                        ) {
+
+                            event.preventDefault();
+
+                            updateParameterFromInput(
+                                parameter
+                            );
+                        }
+
+                    }
+                );
+            }
+
         }
-
-    });
+    );
 
 
     /*
@@ -925,7 +1295,10 @@ function setupControlListeners() {
     */
 
     const speedSlider =
-        document.getElementById("speedSlider");
+        document.getElementById(
+            "speedSlider"
+        );
+
 
     if (speedSlider) {
 
@@ -943,11 +1316,14 @@ function setupControlListeners() {
 
 
     /*
-       Speed input
+       Speed number input
     */
 
     const speedInput =
-        document.getElementById("speedInput");
+        document.getElementById(
+            "speedInput"
+        );
+
 
     if (speedInput) {
 
@@ -961,12 +1337,32 @@ function setupControlListeners() {
 
             }
         );
+
+
+        speedInput.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+
+                    event.preventDefault();
+
+                    updateParameterFromInput(
+                        "speed"
+                    );
+                }
+
+            }
+        );
     }
 }
 
 
 /* ============================================================
-   22. KEYBOARD CONTROLS
+   27. KEYBOARD SHORTCUTS
    ============================================================ */
 
 function setupKeyboardControls() {
@@ -976,18 +1372,24 @@ function setupKeyboardControls() {
         function (event) {
 
             /*
-               Ignore keyboard shortcuts when typing
+               Ignore shortcuts when typing.
             */
 
             const target =
                 event.target;
 
+
             if (
                 target &&
                 (
-                    target.tagName === "INPUT" ||
-                    target.tagName === "TEXTAREA" ||
-                    target.tagName === "SELECT"
+                    target.tagName ===
+                    "INPUT" ||
+
+                    target.tagName ===
+                    "TEXTAREA" ||
+
+                    target.tagName ===
+                    "SELECT"
                 )
             ) {
 
@@ -995,22 +1397,24 @@ function setupKeyboardControls() {
             }
 
 
-            switch (event.key.toLowerCase()) {
+            switch (
+                event.key.toLowerCase()
+            ) {
+
 
                 case " ":
 
                     event.preventDefault();
 
-                    /*
-                       Check simulation state
-                    */
 
                     if (
-                        typeof simulationRunning !==
-                        "undefined"
+                        typeof isSimulationRunning ===
+                        "function"
                     ) {
 
-                        if (simulationRunning) {
+                        if (
+                            isSimulationRunning()
+                        ) {
 
                             pauseSimulation();
 
@@ -1047,14 +1451,13 @@ function setupKeyboardControls() {
 
                     break;
             }
-
         }
     );
 }
 
 
 /* ============================================================
-   23. PAGE VISIBILITY
+   28. PAGE VISIBILITY
    ============================================================ */
 
 function setupVisibilityHandler() {
@@ -1064,18 +1467,22 @@ function setupVisibilityHandler() {
         function () {
 
             /*
-               Pause automatically when the tab
+               Pause simulation if browser tab
                becomes hidden.
             */
 
             if (
                 document.hidden &&
-                typeof simulationRunning !==
-                "undefined" &&
-                simulationRunning
+                typeof isSimulationRunning ===
+                "function"
             ) {
 
-                pauseSimulation();
+                if (
+                    isSimulationRunning()
+                ) {
+
+                    pauseSimulation();
+                }
             }
 
         }
@@ -1084,7 +1491,124 @@ function setupVisibilityHandler() {
 
 
 /* ============================================================
-   24. INITIALIZE WHEN PAGE LOADS
+   29. DEBUG CONTROLS
+   ============================================================ */
+
+function debugControls() {
+
+    console.log(
+        "===================================="
+    );
+
+    console.log(
+        "DOUBLE PENDULUM CONTROLS DEBUG"
+    );
+
+    console.log(
+        "===================================="
+    );
+
+
+    console.log(
+        "Parameters:",
+        simulationParameters
+    );
+
+
+    const parameters = [
+
+        "l1",
+
+        "l2",
+
+        "m1",
+
+        "m2",
+
+        "theta1",
+
+        "theta2",
+
+        "g",
+
+        "speed"
+    ];
+
+
+    parameters.forEach(
+        parameter => {
+
+            const slider =
+                document.getElementById(
+                    parameter + "Slider"
+                );
+
+
+            const input =
+                document.getElementById(
+                    parameter + "Input"
+                );
+
+
+            const display =
+                document.getElementById(
+                    parameter + "Value"
+                );
+
+
+            console.log(
+                parameter,
+                {
+
+                    sliderExists:
+                        !!slider,
+
+                    sliderValue:
+                        slider
+                            ? slider.value
+                            : null,
+
+                    inputExists:
+                        !!input,
+
+                    inputValue:
+                        input
+                            ? input.value
+                            : null,
+
+                    displayExists:
+                        !!display,
+
+                    displayValue:
+                        display
+                            ? display.textContent
+                            : null
+                }
+            );
+        }
+    );
+
+
+    console.log(
+        "Simulation engine:",
+        typeof startSimulationEngineCore
+    );
+
+
+    console.log(
+        "Physics engine:",
+        typeof calculatePhysics
+    );
+
+
+    console.log(
+        "===================================="
+    );
+}
+
+
+/* ============================================================
+   30. VISIBILITY INITIALIZATION
    ============================================================ */
 
 document.addEventListener(
@@ -1095,7 +1619,9 @@ document.addEventListener(
             "controls.js loaded successfully."
         );
 
+
         initializeControls();
+
 
         setupVisibilityHandler();
 
@@ -1104,88 +1630,7 @@ document.addEventListener(
 
 
 /* ============================================================
-   25. DEBUG FUNCTION
-   ============================================================ */
-
-function debugControls() {
-
-    console.log(
-        "=============================="
-    );
-
-    console.log(
-        "DOUBLE PENDULUM CONTROLS"
-    );
-
-    console.log(
-        "=============================="
-    );
-
-    console.log(
-        "Current Parameters:",
-        simulationParameters
-    );
-
-
-    const parameters = [
-        "l1",
-        "l2",
-        "m1",
-        "m2",
-        "theta1",
-        "theta2",
-        "g",
-        "speed"
-    ];
-
-
-    parameters.forEach(parameter => {
-
-        const slider =
-            document.getElementById(
-                parameter + "Slider"
-            );
-
-        const input =
-            document.getElementById(
-                parameter + "Input"
-            );
-
-        const display =
-            document.getElementById(
-                parameter + "Value"
-            );
-
-
-        console.log(parameter, {
-
-            sliderExists: !!slider,
-
-            sliderValue:
-                slider ? slider.value : null,
-
-            inputExists: !!input,
-
-            inputValue:
-                input ? input.value : null,
-
-            displayExists: !!display,
-
-            displayValue:
-                display ? display.textContent : null
-
-        });
-
-    });
-
-    console.log(
-        "=============================="
-    );
-}
-
-
-/* ============================================================
-   26. EXPORT GLOBAL FUNCTIONS
+   31. GLOBAL FUNCTIONS
    ============================================================ */
 
 window.getSimulationParameters =
@@ -1247,9 +1692,17 @@ window.debugControls =
 
 
 /* ============================================================
-   END OF controls.js
+   32. LOADED MESSAGE
    ============================================================ */
 
 console.log(
+    "=========================================="
+);
+
+console.log(
     "Double Pendulum Controls Engine Loaded"
+);
+
+console.log(
+    "=========================================="
 );
