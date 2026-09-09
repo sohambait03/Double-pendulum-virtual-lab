@@ -502,7 +502,7 @@ function startSimulationEngineCore() {
        Update status
     */
 
-    updateSimulationStatus(
+    updateSimulationCanvasStatus(
         "running",
         "Simulation Running"
     );
@@ -543,7 +543,7 @@ function pauseSimulationEngineCore() {
     accumulatedTime = 0;
 
 
-    updateSimulationStatus(
+    updateSimulationCanvasStatus(
         "paused",
         "Simulation Paused"
     );
@@ -662,7 +662,7 @@ function resetSimulationEngineCore() {
     );
 
 
-    updateSimulationStatus(
+    updateSimulationCanvasStatus(
         "ready",
         "Ready"
     );
@@ -1938,7 +1938,7 @@ function updateTimeDisplay(
    STATUS
    ========================================================= */
 
-function updateSimulationStatus(
+function updateSimulationCanvasStatus(
     status,
     text
 ) {
