@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport"
@@ -17,26 +18,36 @@
 
 
     <!-- =====================================================
-         STYLESHEET
+         CSS
          ===================================================== -->
 
     <link rel="stylesheet" href="css/style.css">
 
 
     <!-- =====================================================
-         EXTERNAL LIBRARIES
+         CHART.JS
          ===================================================== -->
 
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- MathJax -->
+
+    <!-- =====================================================
+         MATHJAX
+         ===================================================== -->
+
     <script>
         window.MathJax = {
             tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+                inlineMath: [
+                    ['$', '$'],
+                    ['\\(', '\\)']
+                ],
+                displayMath: [
+                    ['$$', '$$'],
+                    ['\\[', '\\]']
+                ]
             },
+
             svg: {
                 fontCache: 'global'
             }
@@ -64,8 +75,15 @@
         </div>
 
         <div>
-            <h1>Virtual Lab</h1>
-            <p>Double Pendulum Dynamics</p>
+
+            <h1>
+                Virtual Lab
+            </h1>
+
+            <p>
+                Double Pendulum Dynamics
+            </p>
+
         </div>
 
     </div>
@@ -82,47 +100,56 @@
 </header>
 
 
+
 <!-- =========================================================
-     MAIN LAYOUT
+     MAIN CONTAINER
      ========================================================= -->
 
 <main class="main-container">
 
 
     <!-- =====================================================
-         LEFT SIDEBAR
+         SIDEBAR
          ===================================================== -->
 
     <aside class="sidebar">
 
 
-        <!-- -----------------------------------------------
+        <!-- =================================================
              EXPERIMENT
-             ----------------------------------------------- -->
+             ================================================= -->
 
         <section class="sidebar-section">
 
-            <h2>Experiment</h2>
+            <h2>
+                Experiment
+            </h2>
 
             <p class="experiment-name">
                 Planar Double Pendulum
             </p>
 
             <p class="experiment-description">
-                Study the nonlinear dynamics and chaotic
-                motion of a coupled double pendulum.
+
+                Study the nonlinear dynamics,
+                coupled motion and chaotic behaviour
+                of a double pendulum.
+
             </p>
 
         </section>
 
 
-        <!-- -----------------------------------------------
+
+        <!-- =================================================
              SIMULATION CONTROLS
-             ----------------------------------------------- -->
+             ================================================= -->
 
         <section class="sidebar-section">
 
-            <h2>Simulation Controls</h2>
+            <h2>
+                Simulation Controls
+            </h2>
 
 
             <button
@@ -180,16 +207,21 @@
         </section>
 
 
-        <!-- -----------------------------------------------
+
+        <!-- =================================================
              PARAMETERS
-             ----------------------------------------------- -->
+             ================================================= -->
 
         <section class="sidebar-section">
 
-            <h2>Parameters</h2>
+            <h2>
+                Parameters
+            </h2>
 
 
-            <!-- ================= L1 ================= -->
+            <!-- =============================================
+                 LINK 1 LENGTH
+                 ============================================= -->
 
             <div class="parameter-control">
 
@@ -202,7 +234,9 @@
                     <span
                         id="l1Value"
                         class="parameter-value">
+
                         0.80 m
+
                     </span>
 
                 </div>
@@ -229,7 +263,10 @@
             </div>
 
 
-            <!-- ================= L2 ================= -->
+
+            <!-- =============================================
+                 LINK 2 LENGTH
+                 ============================================= -->
 
             <div class="parameter-control">
 
@@ -242,7 +279,9 @@
                     <span
                         id="l2Value"
                         class="parameter-value">
+
                         0.80 m
+
                     </span>
 
                 </div>
@@ -269,7 +308,10 @@
             </div>
 
 
-            <!-- ================= M1 ================= -->
+
+            <!-- =============================================
+                 MASS 1
+                 ============================================= -->
 
             <div class="parameter-control">
 
@@ -282,7 +324,9 @@
                     <span
                         id="m1Value"
                         class="parameter-value">
+
                         1.00 kg
+
                     </span>
 
                 </div>
@@ -309,7 +353,10 @@
             </div>
 
 
-            <!-- ================= M2 ================= -->
+
+            <!-- =============================================
+                 MASS 2
+                 ============================================= -->
 
             <div class="parameter-control">
 
@@ -322,7 +369,9 @@
                     <span
                         id="m2Value"
                         class="parameter-value">
+
                         1.00 kg
+
                     </span>
 
                 </div>
@@ -349,7 +398,10 @@
             </div>
 
 
-            <!-- ================= THETA 1 ================= -->
+
+            <!-- =============================================
+                 THETA 1
+                 ============================================= -->
 
             <div class="parameter-control">
 
@@ -362,7 +414,9 @@
                     <span
                         id="theta1Value"
                         class="parameter-value">
+
                         30.0°
+
                     </span>
 
                 </div>
@@ -389,7 +443,10 @@
             </div>
 
 
-            <!-- ================= THETA 2 ================= -->
+
+            <!-- =============================================
+                 THETA 2
+                 ============================================= -->
 
             <div class="parameter-control">
 
@@ -402,7 +459,9 @@
                     <span
                         id="theta2Value"
                         class="parameter-value">
+
                         40.0°
+
                     </span>
 
                 </div>
@@ -429,7 +488,10 @@
             </div>
 
 
-            <!-- ================= GRAVITY ================= -->
+
+            <!-- =============================================
+                 GRAVITY
+                 ============================================= -->
 
             <div class="parameter-control">
 
@@ -442,7 +504,9 @@
                     <span
                         id="gValue"
                         class="parameter-value">
+
                         9.81 m/s²
+
                     </span>
 
                 </div>
@@ -469,7 +533,10 @@
             </div>
 
 
-            <!-- ================= SPEED ================= -->
+
+            <!-- =============================================
+                 SIMULATION SPEED
+                 ============================================= -->
 
             <div class="parameter-control">
 
@@ -482,7 +549,9 @@
                     <span
                         id="speedValue"
                         class="parameter-value">
+
                         1.0×
+
                     </span>
 
                 </div>
@@ -508,17 +577,19 @@
 
             </div>
 
-
         </section>
 
 
-        <!-- -----------------------------------------------
-             DATA CONTROLS
-             ----------------------------------------------- -->
+
+        <!-- =================================================
+             DATA
+             ================================================= -->
 
         <section class="sidebar-section">
 
-            <h2>Data</h2>
+            <h2>
+                Data
+            </h2>
 
 
             <button
@@ -541,33 +612,45 @@
         </section>
 
 
-        <!-- -----------------------------------------------
+
+        <!-- =================================================
              KEYBOARD SHORTCUTS
-             ----------------------------------------------- -->
+             ================================================= -->
 
         <section class="sidebar-section shortcuts">
 
-            <h2>Shortcuts</h2>
+            <h2>
+                Shortcuts
+            </h2>
+
 
             <p>
-                <strong>Space</strong> — Start / Pause
+                <strong>Space</strong>
+                — Start / Pause
             </p>
 
-            <p>
-                <strong>R</strong> — Reset
-            </p>
 
             <p>
-                <strong>S</strong> — Step
+                <strong>R</strong>
+                — Reset
             </p>
 
+
             <p>
-                <strong>T</strong> — Toggle Trail
+                <strong>S</strong>
+                — Step
+            </p>
+
+
+            <p>
+                <strong>T</strong>
+                — Toggle Trail
             </p>
 
         </section>
 
     </aside>
+
 
 
     <!-- =====================================================
@@ -578,16 +661,19 @@
 
 
         <!-- =================================================
-             SIMULATION
+             SIMULATION CARD
              ================================================= -->
 
         <section class="card simulation-card">
+
 
             <div class="card-header">
 
                 <div>
 
-                    <h2>Double Pendulum Simulation</h2>
+                    <h2>
+                        Double Pendulum Simulation
+                    </h2>
 
                     <p>
                         Nonlinear coupled pendulum dynamics
@@ -624,6 +710,9 @@
                     id="pendulumCanvas"
                     width="1050"
                     height="400">
+
+                    Your browser does not support HTML5 Canvas.
+
                 </canvas>
 
             </div>
@@ -631,8 +720,9 @@
         </section>
 
 
+
         <!-- =================================================
-             CURRENT RESULTS
+             CURRENT STATE
              ================================================= -->
 
         <section class="card">
@@ -641,7 +731,9 @@
 
                 <div>
 
-                    <h2>Current State</h2>
+                    <h2>
+                        Current State
+                    </h2>
 
                     <p>
                         Instantaneous simulation values
@@ -666,7 +758,9 @@
                     <span
                         id="resultTheta1"
                         class="result-value">
+
                         30.00°
+
                     </span>
 
                 </div>
@@ -683,7 +777,9 @@
                     <span
                         id="resultTheta2"
                         class="result-value">
+
                         40.00°
+
                     </span>
 
                 </div>
@@ -700,7 +796,9 @@
                     <span
                         id="resultOmega1"
                         class="result-value">
+
                         0.000 rad/s
+
                     </span>
 
                 </div>
@@ -717,7 +815,9 @@
                     <span
                         id="resultOmega2"
                         class="result-value">
+
                         0.000 rad/s
+
                     </span>
 
                 </div>
@@ -734,7 +834,9 @@
                     <span
                         id="resultAlpha1"
                         class="result-value">
+
                         0.000 rad/s²
+
                     </span>
 
                 </div>
@@ -751,13 +853,15 @@
                     <span
                         id="resultAlpha2"
                         class="result-value">
+
                         0.000 rad/s²
+
                     </span>
 
                 </div>
 
 
-                <!-- KE -->
+                <!-- KINETIC ENERGY -->
 
                 <div class="result-card">
 
@@ -768,13 +872,15 @@
                     <span
                         id="resultKE"
                         class="result-value">
+
                         0.0000 J
+
                     </span>
 
                 </div>
 
 
-                <!-- PE -->
+                <!-- POTENTIAL ENERGY -->
 
                 <div class="result-card">
 
@@ -785,7 +891,9 @@
                     <span
                         id="resultPE"
                         class="result-value">
+
                         0.0000 J
+
                     </span>
 
                 </div>
@@ -802,7 +910,9 @@
                     <span
                         id="resultTotalEnergy"
                         class="result-value">
+
                         0.0000 J
+
                     </span>
 
                 </div>
@@ -812,17 +922,21 @@
         </section>
 
 
+
         <!-- =================================================
              ENERGY VALIDATION
              ================================================= -->
 
         <section class="card">
 
+
             <div class="card-header">
 
                 <div>
 
-                    <h2>Energy Conservation Validation</h2>
+                    <h2>
+                        Energy Conservation Validation
+                    </h2>
 
                     <p>
                         Validation of numerical integration
@@ -890,8 +1004,9 @@
         </section>
 
 
+
         <!-- =================================================
-             ANGLE CHARTS
+             CHARTS
              ================================================= -->
 
         <section class="charts-grid">
@@ -903,9 +1018,12 @@
 
                 <div class="card-header">
 
-                    <h2>θ₁ vs Time</h2>
+                    <h2>
+                        θ₁ vs Time
+                    </h2>
 
                 </div>
+
 
                 <div class="chart-container">
 
@@ -916,15 +1034,19 @@
             </div>
 
 
+
             <!-- THETA 2 -->
 
             <div class="card chart-card">
 
                 <div class="card-header">
 
-                    <h2>θ₂ vs Time</h2>
+                    <h2>
+                        θ₂ vs Time
+                    </h2>
 
                 </div>
+
 
                 <div class="chart-container">
 
@@ -935,15 +1057,19 @@
             </div>
 
 
+
             <!-- OMEGA 1 -->
 
             <div class="card chart-card">
 
                 <div class="card-header">
 
-                    <h2>ω₁ vs Time</h2>
+                    <h2>
+                        ω₁ vs Time
+                    </h2>
 
                 </div>
+
 
                 <div class="chart-container">
 
@@ -954,15 +1080,19 @@
             </div>
 
 
+
             <!-- OMEGA 2 -->
 
             <div class="card chart-card">
 
                 <div class="card-header">
 
-                    <h2>ω₂ vs Time</h2>
+                    <h2>
+                        ω₂ vs Time
+                    </h2>
 
                 </div>
+
 
                 <div class="chart-container">
 
@@ -973,15 +1103,19 @@
             </div>
 
 
+
             <!-- ENERGY -->
 
             <div class="card chart-card chart-wide">
 
                 <div class="card-header">
 
-                    <h2>Energy vs Time</h2>
+                    <h2>
+                        Energy vs Time
+                    </h2>
 
                 </div>
+
 
                 <div class="chart-container">
 
@@ -994,6 +1128,7 @@
         </section>
 
 
+
         <!-- =================================================
              OBSERVATION TABLE
              ================================================= -->
@@ -1004,10 +1139,12 @@
 
                 <div>
 
-                    <h2>Observation Table</h2>
+                    <h2>
+                        Observation Table
+                    </h2>
 
                     <p>
-                        Simulation data
+                        Numerical simulation data
                     </p>
 
                 </div>
@@ -1023,24 +1160,37 @@
 
                         <tr>
 
-                            <th>Time (s)</th>
+                            <th>
+                                Time (s)
+                            </th>
 
-                            <th>θ₁ (°)</th>
+                            <th>
+                                θ₁ (°)
+                            </th>
 
-                            <th>θ₂ (°)</th>
+                            <th>
+                                θ₂ (°)
+                            </th>
 
-                            <th>ω₁ (rad/s)</th>
+                            <th>
+                                ω₁ (rad/s)
+                            </th>
 
-                            <th>ω₂ (rad/s)</th>
+                            <th>
+                                ω₂ (rad/s)
+                            </th>
 
-                            <th>Energy (J)</th>
+                            <th>
+                                Energy (J)
+                            </th>
 
                         </tr>
 
                     </thead>
 
 
-                    <tbody id="observationTableBody">
+                    <tbody
+                        id="observationTableBody">
 
                     </tbody>
 
@@ -1051,6 +1201,7 @@
         </section>
 
 
+
         <!-- =================================================
              THEORY
              ================================================= -->
@@ -1059,14 +1210,20 @@
 
             <div class="card-header">
 
-                <h2>Theory</h2>
+                <h2>
+                    Theory
+                </h2>
 
             </div>
 
 
             <div class="theory-content">
 
-                <h3>System Assumptions</h3>
+
+                <h3>
+                    System Assumptions
+                </h3>
+
 
                 <ul>
 
@@ -1075,8 +1232,8 @@
                     </li>
 
                     <li>
-                        Masses are concentrated at the
-                        ends of the links.
+                        Masses are concentrated at
+                        the ends of the links.
                     </li>
 
                     <li>
@@ -1092,18 +1249,23 @@
                     </li>
 
                     <li>
-                        Gravitational acceleration is
-                        constant.
+                        Gravitational acceleration is constant.
                     </li>
 
                 </ul>
 
 
-                <h3>Coordinates</h3>
+
+                <h3>
+                    Generalized Coordinates
+                </h3>
+
 
                 <p>
+
                     The angles θ₁ and θ₂ are measured
                     from the downward vertical.
+
                 </p>
 
 
@@ -1128,8 +1290,10 @@
                 <div class="equation">
 
                     $$
-                    x_2=l_1\sin(\theta_1)
-                    +l_2\sin(\theta_2)
+                    x_2=
+                    l_1\sin(\theta_1)
+                    +
+                    l_2\sin(\theta_2)
                     $$
 
                 </div>
@@ -1138,19 +1302,59 @@
                 <div class="equation">
 
                     $$
-                    y_2=-l_1\cos(\theta_1)
-                    -l_2\cos(\theta_2)
+                    y_2=
+                    -l_1\cos(\theta_1)
+                    -
+                    l_2\cos(\theta_2)
                     $$
 
                 </div>
 
 
-                <h3>Energy</h3>
 
-                <p>
-                    The total mechanical energy is
-                    the sum of kinetic and potential energy.
-                </p>
+                <h3>
+                    Kinetic Energy
+                </h3>
+
+
+                <div class="equation">
+
+                    $$
+                    T=
+                    \frac{1}{2}(m_1+m_2)l_1^2\dot{\theta}_1^2
+                    +
+                    \frac{1}{2}m_2l_2^2\dot{\theta}_2^2
+                    +
+                    m_2l_1l_2
+                    \dot{\theta}_1\dot{\theta}_2
+                    \cos(\theta_1-\theta_2)
+                    $$
+
+                </div>
+
+
+
+                <h3>
+                    Potential Energy
+                </h3>
+
+
+                <div class="equation">
+
+                    $$
+                    V=
+                    -(m_1+m_2)gl_1\cos(\theta_1)
+                    -
+                    m_2gl_2\cos(\theta_2)
+                    $$
+
+                </div>
+
+
+
+                <h3>
+                    Total Mechanical Energy
+                </h3>
 
 
                 <div class="equation">
@@ -1162,12 +1366,18 @@
                 </div>
 
 
-                <h3>Equations of Motion</h3>
+
+                <h3>
+                    Equations of Motion
+                </h3>
+
 
                 <p>
-                    The nonlinear equations of motion
-                    are obtained using the Lagrangian
-                    formulation.
+
+                    The nonlinear equations are solved
+                    numerically using fourth-order
+                    Runge-Kutta integration.
+
                 </p>
 
 
@@ -1184,6 +1394,7 @@
         </section>
 
 
+
         <!-- =================================================
              PROCEDURE
              ================================================= -->
@@ -1192,7 +1403,9 @@
 
             <div class="card-header">
 
-                <h2>Experimental Procedure</h2>
+                <h2>
+                    Experimental Procedure
+                </h2>
 
             </div>
 
@@ -1200,15 +1413,27 @@
             <ol class="procedure-list">
 
                 <li>
-                    Set the link lengths using the sliders.
+                    Set the length of link 1.
                 </li>
 
                 <li>
-                    Set the masses of both pendulum bobs.
+                    Set the length of link 2.
                 </li>
 
                 <li>
-                    Set the initial angles θ₁ and θ₂.
+                    Set mass m₁.
+                </li>
+
+                <li>
+                    Set mass m₂.
+                </li>
+
+                <li>
+                    Set the initial angle θ₁.
+                </li>
+
+                <li>
+                    Set the initial angle θ₂.
                 </li>
 
                 <li>
@@ -1216,33 +1441,38 @@
                 </li>
 
                 <li>
+                    Select the desired simulation speed.
+                </li>
+
+                <li>
                     Click <strong>Start</strong>.
                 </li>
 
                 <li>
-                    Observe the nonlinear motion.
+                    Observe the motion of both pendulum links.
                 </li>
 
                 <li>
-                    Observe θ, ω and α values.
+                    Observe angular displacement,
+                    angular velocity and angular acceleration.
                 </li>
 
                 <li>
-                    Monitor total mechanical energy.
+                    Observe the energy conservation behaviour.
                 </li>
 
                 <li>
-                    Compare the plots generated by the
-                    simulation.
+                    Analyze the generated graphs.
                 </li>
 
                 <li>
-                    Download the observation data as CSV.
+                    Download the observation data.
                 </li>
 
             </ol>
 
         </section>
+
 
 
         <!-- =================================================
@@ -1253,18 +1483,25 @@
 
             <div class="card-header">
 
-                <h2>Quiz</h2>
+                <h2>
+                    Quiz
+                </h2>
 
             </div>
 
 
+
+            <!-- QUESTION 1 -->
+
             <div class="quiz-question">
 
                 <p>
+
                     <strong>
                         1. Why is the double pendulum
-                        considered a nonlinear system?
+                        a nonlinear system?
                     </strong>
+
                 </p>
 
 
@@ -1275,7 +1512,7 @@
                         name="q1"
                         value="a">
 
-                    Because the equations contain
+                    The equations contain
                     trigonometric nonlinearities
 
                 </label>
@@ -1288,7 +1525,7 @@
                         name="q1"
                         value="b">
 
-                    Because gravity is constant
+                    Gravity is constant
 
                 </label>
 
@@ -1300,7 +1537,7 @@
                         name="q1"
                         value="c">
 
-                    Because the links are rigid
+                    The links are rigid
 
                 </label>
 
@@ -1312,20 +1549,25 @@
                         name="q1"
                         value="d">
 
-                    Because the masses are point masses
+                    The masses are point masses
 
                 </label>
 
             </div>
 
 
+
+            <!-- QUESTION 2 -->
+
             <div class="quiz-question">
 
                 <p>
+
                     <strong>
-                        2. What happens to the total mechanical
+                        2. What happens to total mechanical
                         energy in an ideal frictionless system?
                     </strong>
+
                 </p>
 
 
@@ -1379,6 +1621,7 @@
             </div>
 
 
+
             <button
                 class="control-button"
                 onclick="checkQuiz()">
@@ -1391,14 +1634,15 @@
             <div
                 id="quizResult"
                 class="quiz-result">
+
             </div>
 
         </section>
 
-
     </section>
 
 </main>
+
 
 
 <!-- =========================================================
@@ -1412,6 +1656,7 @@
         Aeronautical Engineering
     </p>
 
+
     <p>
         Numerical Integration:
         4th Order Runge-Kutta (RK4)
@@ -1420,9 +1665,16 @@
 </footer>
 
 
+
 <!-- =========================================================
      JAVASCRIPT
-     IMPORTANT: LOAD IN THIS ORDER
+     
+     IMPORTANT LOAD ORDER:
+     
+     1. physics.js
+     2. charts.js
+     3. simulation.js
+     4. controls.js
      ========================================================= -->
 
 <script src="js/physics.js"></script>
@@ -1434,8 +1686,9 @@
 <script src="js/controls.js"></script>
 
 
+
 <!-- =========================================================
-     QUIZ SCRIPT
+     QUIZ JAVASCRIPT
      ========================================================= -->
 
 <script>
@@ -1450,42 +1703,76 @@ function checkQuiz() {
             'input[name="q1"]:checked'
         );
 
+
     const q2 =
         document.querySelector(
             'input[name="q2"]:checked'
         );
 
 
-    if (q1 && q1.value === "a") {
+    /*
+       Question 1
+    */
+
+    if (
+        q1 &&
+        q1.value === "a"
+    ) {
+
         score++;
     }
 
 
-    if (q2 && q2.value === "a") {
+    /*
+       Question 2
+    */
+
+    if (
+        q2 &&
+        q2.value === "a"
+    ) {
+
         score++;
     }
 
+
+    /*
+       Result element
+    */
 
     const result =
-        document.getElementById("quizResult");
+        document.getElementById(
+            "quizResult"
+        );
 
 
     if (!result) {
+
         return;
     }
 
 
     result.textContent =
-        "Score: " + score + " / 2";
+        "Score: " +
+        score +
+        " / 2";
 
+
+    /*
+       Visual feedback
+    */
 
     if (score === 2) {
 
-        result.classList.add("correct");
+        result.classList.add(
+            "correct"
+        );
 
     } else {
 
-        result.classList.remove("correct");
+        result.classList.remove(
+            "correct"
+        );
     }
 
 }
