@@ -1,99 +1,80 @@
-/* =========================================================
+/* ============================================================
    DOUBLE PENDULUM VIRTUAL LAB
    charts.js
-
-   Purpose:
-   - Create real-time simulation charts
-   - Store simulation data
-   - Update charts during simulation
-   - Clear/reset charts
-   - Provide data for CSV export
-
-   Required library:
-   Chart.js
-
-   Chart.js is loaded in index.html using CDN.
-   ========================================================= */
+   ============================================================ */
 
 
-/* =========================================================
-   GLOBAL CHART VARIABLES
-   ========================================================= */
+/* ============================================================
+   1. GLOBAL CHART VARIABLES
+   ============================================================ */
 
 let theta1Chart = null;
 let theta2Chart = null;
+
 let omega1Chart = null;
 let omega2Chart = null;
+
 let energyChart = null;
 
 
-/* =========================================================
-   SIMULATION DATA STORAGE
-   ========================================================= */
+/* ============================================================
+   2. SIMULATION DATA
+   ============================================================ */
 
 let simulationData = {
 
     time: [],
 
     theta1: [],
-
     theta2: [],
 
     omega1: [],
-
     omega2: [],
 
-    alpha1: [],
-
-    alpha2: [],
-
     kineticEnergy: [],
-
     potentialEnergy: [],
-
     totalEnergy: []
-
 };
 
 
-/* =========================================================
-   CHART CONFIGURATION
-   ========================================================= */
-
-/*
-   Maximum number of points displayed on the charts.
-
-   This prevents the browser from becoming slow during
-   long simulations.
-
-   The complete data is still stored separately.
-*/
+/* ============================================================
+   3. SETTINGS
+   ============================================================ */
 
 const MAX_CHART_POINTS = 1500;
 
-
-/*
-   Chart update frequency.
-
-   For example:
-
-   Simulation may calculate every 0.005 s
-
-   But charts don't need to redraw every 0.005 s.
-
-   We can update them every few simulation steps.
-*/
+const CHART_UPDATE_INTERVAL = 3;
 
 let chartUpdateCounter = 0;
 
-const CHART_UPDATE_INTERVAL = 3;
+
+/* ============================================================
+   4. CHECK CHART.JS
+   ============================================================ */
+
+function isChartJSAvailable() {
+
+    if (typeof Chart === "undefined") {
+
+        console.error(
+            "Chart.js is not loaded."
+        );
+
+        return false;
+    }
+
+    return true;
+}
 
 
-/* =========================================================
-   COMMON CHART OPTIONS
-   ========================================================= */
+/* ============================================================
+   5. CREATE COMMON OPTIONS
+   ============================================================ */
 
-function getCommonChartOptions(yAxisTitle) {
+function getCommonChartOptions(
+    xTitle,
+    yTitle
+) {
 
     return {
 
@@ -104,59 +85,35 @@ function getCommonChartOptions(yAxisTitle) {
         animation: false,
 
         interaction: {
-            mode: "index",
-            intersect: false
+
+            intersect: false,
+
+            mode: "index"
         },
 
         plugins: {
 
             legend: {
+
                 display: true,
 
                 position: "top",
 
                 labels: {
+
+                    boxWidth: 10,
+
                     font: {
-                        size: 11
+
+                        size: 9
                     }
                 }
             },
 
             tooltip: {
 
-                enabled: true,
-
-                callbacks: {
-
-                    label: function(context) {
-
-                        const value =
-                            context.parsed.y;
-
-                        if (
-                            typeof value === "number"
-                        ) {
-
-                            return (
-                                context.dataset.label +
-                                ": " +
-                                value.toFixed(4)
-                            );
-
-                        }
-
-                        return (
-                            context.dataset.label +
-                            ": " +
-                            value
-                        );
-
-                    }
-
-                }
-
+                enabled: true
             }
-
         },
 
         scales: {
@@ -169,29 +126,28 @@ function getCommonChartOptions(yAxisTitle) {
 
                     display: true,
 
-                    text: "Time (s)",
+                    text: xTitle,
 
                     font: {
-                        size: 12,
-                        weight: "bold"
-                    }
 
+                        size: 9
+                    }
                 },
 
                 ticks: {
 
-                    maxTicksLimit: 10,
-
                     font: {
-                        size: 10
-                    }
 
+                        size: 8
+                    },
+
+                    maxTicksLimit: 6
                 },
 
                 grid: {
+
                     display: true
                 }
-
             },
 
             y: {
@@ -200,169 +156,153 @@ function getCommonChartOptions(yAxisTitle) {
 
                     display: true,
 
-                    text: yAxisTitle,
+                    text: yTitle,
 
                     font: {
-                        size: 12,
-                        weight: "bold"
-                    }
 
+                        size: 9
+                    }
                 },
 
                 ticks: {
 
                     font: {
-                        size: 10
-                    }
 
+                        size: 8
+                    },
+
+                    maxTicksLimit: 6
                 },
 
                 grid: {
+
                     display: true
                 }
-
             }
-
         }
-
     };
-
 }
 
 
-/* =========================================================
-   CREATE DATASET
-   ========================================================= */
+/* ============================================================
+   6. CREATE LINE DATA
+   ============================================================ */
 
-function createDataset(label) {
+function makeLineData(
+    values,
+    label
+) {
 
     return {
 
         label: label,
 
-        data: [],
+        data: simulationData.time.map(
+            function(time, index) {
 
-        tension: 0.15,
+                return {
+
+                    x: time,
+
+                    y: values[index]
+                };
+            }
+        ),
+
+        borderWidth: 1.8,
 
         pointRadius: 0,
 
-        pointHoverRadius: 4,
+        pointHoverRadius: 3,
 
-        borderWidth: 2,
+        tension: 0.15,
 
         fill: false
-
     };
-
 }
 
 
-/* =========================================================
-   INITIALIZE ALL CHARTS
-   ========================================================= */
+/* ============================================================
+   7. INITIALIZE CHARTS
+   ============================================================ */
 
 function initializeCharts() {
 
     console.log(
-        "Initializing Double Pendulum charts..."
+        "Initializing charts..."
     );
 
 
-    /* -----------------------------------------------------
-       Find canvas elements
-       ----------------------------------------------------- */
+    if (!isChartJSAvailable()) {
 
-    const theta1Canvas =
-        document.getElementById("theta1Chart");
-
-    const theta2Canvas =
-        document.getElementById("theta2Chart");
-
-    const omega1Canvas =
-        document.getElementById("omega1Chart");
-
-    const omega2Canvas =
-        document.getElementById("omega2Chart");
-
-    const energyCanvas =
-        document.getElementById("energyChart");
+        return false;
+    }
 
 
     /*
-       Make sure the canvases exist.
+       Destroy existing charts first
     */
-
-    if (!theta1Canvas) {
-
-        console.error(
-            "theta1Chart canvas not found."
-        );
-
-        return;
-
-    }
-
-
-    if (!theta2Canvas) {
-
-        console.error(
-            "theta2Chart canvas not found."
-        );
-
-        return;
-
-    }
-
-
-    if (!omega1Canvas) {
-
-        console.error(
-            "omega1Chart canvas not found."
-        );
-
-        return;
-
-    }
-
-
-    if (!omega2Canvas) {
-
-        console.error(
-            "omega2Chart canvas not found."
-        );
-
-        return;
-
-    }
-
-
-    if (!energyCanvas) {
-
-        console.error(
-            "energyChart canvas not found."
-        );
-
-        return;
-
-    }
-
-
-    /* =====================================================
-       DESTROY EXISTING CHARTS
-       ===================================================== */
 
     destroyCharts();
 
 
-    /* =====================================================
-       θ₁ CHART
-       ===================================================== */
+    /*
+       Get canvas elements
+    */
+
+    const theta1Canvas =
+        document.getElementById(
+            "theta1Chart"
+        );
+
+
+    const theta2Canvas =
+        document.getElementById(
+            "theta2Chart"
+        );
+
+
+    const omega1Canvas =
+        document.getElementById(
+            "omega1Chart"
+        );
+
+
+    const omega2Canvas =
+        document.getElementById(
+            "omega2Chart"
+        );
+
+
+    const energyCanvas =
+        document.getElementById(
+            "energyChart"
+        );
+
+
+    if (
+        !theta1Canvas ||
+        !theta2Canvas ||
+        !omega1Canvas ||
+        !omega2Canvas ||
+        !energyCanvas
+    ) {
+
+        console.error(
+            "One or more chart canvas elements are missing."
+        );
+
+        return false;
+    }
+
+
+    /* ========================================================
+       THETA 1
+       ======================================================== */
 
     theta1Chart =
         new Chart(
-
             theta1Canvas.getContext("2d"),
-
             {
 
                 type: "line",
@@ -370,34 +310,29 @@ function initializeCharts() {
                 data: {
 
                     datasets: [
-
-                        createDataset(
-                            "θ₁ (degrees)"
+                        makeLineData(
+                            simulationData.theta1,
+                            "θ₁"
                         )
-
                     ]
-
                 },
 
                 options:
                     getCommonChartOptions(
-                        "Angular Displacement θ₁ (°)"
+                        "Time (s)",
+                        "θ₁ (°)"
                     )
-
             }
-
         );
 
 
-    /* =====================================================
-       θ₂ CHART
-       ===================================================== */
+    /* ========================================================
+       THETA 2
+       ======================================================== */
 
     theta2Chart =
         new Chart(
-
             theta2Canvas.getContext("2d"),
-
             {
 
                 type: "line",
@@ -405,34 +340,29 @@ function initializeCharts() {
                 data: {
 
                     datasets: [
-
-                        createDataset(
-                            "θ₂ (degrees)"
+                        makeLineData(
+                            simulationData.theta2,
+                            "θ₂"
                         )
-
                     ]
-
                 },
 
                 options:
                     getCommonChartOptions(
-                        "Angular Displacement θ₂ (°)"
+                        "Time (s)",
+                        "θ₂ (°)"
                     )
-
             }
-
         );
 
 
-    /* =====================================================
-       ω₁ CHART
-       ===================================================== */
+    /* ========================================================
+       OMEGA 1
+       ======================================================== */
 
     omega1Chart =
         new Chart(
-
             omega1Canvas.getContext("2d"),
-
             {
 
                 type: "line",
@@ -440,34 +370,29 @@ function initializeCharts() {
                 data: {
 
                     datasets: [
-
-                        createDataset(
-                            "ω₁ (rad/s)"
+                        makeLineData(
+                            simulationData.omega1,
+                            "ω₁"
                         )
-
                     ]
-
                 },
 
                 options:
                     getCommonChartOptions(
-                        "Angular Velocity ω₁ (rad/s)"
+                        "Time (s)",
+                        "ω₁ (rad/s)"
                     )
-
             }
-
         );
 
 
-    /* =====================================================
-       ω₂ CHART
-       ===================================================== */
+    /* ========================================================
+       OMEGA 2
+       ======================================================== */
 
     omega2Chart =
         new Chart(
-
             omega2Canvas.getContext("2d"),
-
             {
 
                 type: "line",
@@ -475,34 +400,29 @@ function initializeCharts() {
                 data: {
 
                     datasets: [
-
-                        createDataset(
-                            "ω₂ (rad/s)"
+                        makeLineData(
+                            simulationData.omega2,
+                            "ω₂"
                         )
-
                     ]
-
                 },
 
                 options:
                     getCommonChartOptions(
-                        "Angular Velocity ω₂ (rad/s)"
+                        "Time (s)",
+                        "ω₂ (rad/s)"
                     )
-
             }
-
         );
 
 
-    /* =====================================================
-       ENERGY CHART
-       ===================================================== */
+    /* ========================================================
+       ENERGY
+       ======================================================== */
 
     energyChart =
         new Chart(
-
             energyCanvas.getContext("2d"),
-
             {
 
                 type: "line",
@@ -511,21 +431,29 @@ function initializeCharts() {
 
                     datasets: [
 
-                        createDataset(
-                            "Total Mechanical Energy (J)"
+                        makeLineData(
+                            simulationData.kineticEnergy,
+                            "Kinetic"
+                        ),
+
+                        makeLineData(
+                            simulationData.potentialEnergy,
+                            "Potential"
+                        ),
+
+                        makeLineData(
+                            simulationData.totalEnergy,
+                            "Total"
                         )
-
                     ]
-
                 },
 
                 options:
                     getCommonChartOptions(
-                        "Total Mechanical Energy (J)"
+                        "Time (s)",
+                        "Energy (J)"
                     )
-
             }
-
         );
 
 
@@ -533,60 +461,45 @@ function initializeCharts() {
         "All charts initialized successfully."
     );
 
+
+    return true;
 }
 
 
-/* =========================================================
-   ADD A SINGLE SIMULATION DATA POINT
-   ========================================================= */
-
-/*
-   This function will be called by simulation.js.
-
-   Example:
-
-   addSimulationData(
-       time,
-       theta1,
-       theta2,
-       omega1,
-       omega2,
-       alpha1,
-       alpha2,
-       kineticEnergy,
-       potentialEnergy,
-       totalEnergy
-   );
-*/
+/* ============================================================
+   8. ADD SIMULATION DATA
+   ============================================================ */
 
 function addSimulationData(
-
     time,
-
     theta1,
-
     theta2,
-
     omega1,
-
     omega2,
-
-    alpha1,
-
-    alpha2,
-
     kineticEnergy,
-
     potentialEnergy,
-
     totalEnergy
-
 ) {
 
+    /*
+       Validate values
+    */
 
-    /* =====================================================
-       STORE DATA
-       ===================================================== */
+    if (
+        !Number.isFinite(time) ||
+        !Number.isFinite(theta1) ||
+        !Number.isFinite(theta2) ||
+        !Number.isFinite(omega1) ||
+        !Number.isFinite(omega2)
+    ) {
+
+        return;
+    }
+
+
+    /*
+       Add values
+    */
 
     simulationData.time.push(time);
 
@@ -598,35 +511,57 @@ function addSimulationData(
 
     simulationData.omega2.push(omega2);
 
-    simulationData.alpha1.push(alpha1);
-
-    simulationData.alpha2.push(alpha2);
-
     simulationData.kineticEnergy.push(
-        kineticEnergy
+        Number.isFinite(kineticEnergy)
+            ? kineticEnergy
+            : 0
     );
 
     simulationData.potentialEnergy.push(
-        potentialEnergy
+        Number.isFinite(potentialEnergy)
+            ? potentialEnergy
+            : 0
     );
 
     simulationData.totalEnergy.push(
-        totalEnergy
+        Number.isFinite(totalEnergy)
+            ? totalEnergy
+            : 0
     );
 
 
-    /* =====================================================
-       UPDATE COUNTER
-       ===================================================== */
+    /*
+       Limit stored points
+    */
+
+    if (
+        simulationData.time.length >
+        MAX_CHART_POINTS
+    ) {
+
+        simulationData.time.shift();
+
+        simulationData.theta1.shift();
+
+        simulationData.theta2.shift();
+
+        simulationData.omega1.shift();
+
+        simulationData.omega2.shift();
+
+        simulationData.kineticEnergy.shift();
+
+        simulationData.potentialEnergy.shift();
+
+        simulationData.totalEnergy.shift();
+    }
+
 
     chartUpdateCounter++;
 
 
     /*
-       Don't redraw charts at every single physics
-       calculation.
-
-       This greatly improves performance.
+       Update chart periodically
     */
 
     if (
@@ -634,176 +569,145 @@ function addSimulationData(
         CHART_UPDATE_INTERVAL
     ) {
 
-        updateCharts();
-
         chartUpdateCounter = 0;
 
+        updateCharts();
     }
-
 }
 
 
-/* =========================================================
-   UPDATE ALL CHARTS
-   ========================================================= */
+/* ============================================================
+   9. UPDATE CHARTS
+   ============================================================ */
 
 function updateCharts() {
 
     if (!theta1Chart) {
+
         return;
     }
 
 
-    /* =====================================================
-       DETERMINE START INDEX
-       ===================================================== */
-
-    const totalPoints =
-        simulationData.time.length;
-
-
-    let startIndex = 0;
-
-
-    if (
-        totalPoints >
-        MAX_CHART_POINTS
-    ) {
-
-        startIndex =
-            totalPoints -
-            MAX_CHART_POINTS;
-
-    }
-
-
-    /* =====================================================
-       CREATE CHART DATA
-       ===================================================== */
-
-    const timeData =
-        simulationData.time
-            .slice(startIndex);
-
-
-    const theta1Data =
-        simulationData.theta1
-            .slice(startIndex);
-
-
-    const theta2Data =
-        simulationData.theta2
-            .slice(startIndex);
-
-
-    const omega1Data =
-        simulationData.omega1
-            .slice(startIndex);
-
-
-    const omega2Data =
-        simulationData.omega2
-            .slice(startIndex);
-
-
-    const energyData =
-        simulationData.totalEnergy
-            .slice(startIndex);
-
-
-    /* =====================================================
-       θ₁ DATA
-       ===================================================== */
+    /*
+       Update θ1
+    */
 
     theta1Chart.data.datasets[0].data =
-        timeData.map(
+        simulationData.time.map(
+            function(time, index) {
 
-            (time, index) => ({
+                return {
+                    x: time,
+                    y: simulationData.theta1[index]
+                };
 
-                x: time,
-
-                y: theta1Data[index]
-
-            })
-
+            }
         );
 
 
-    /* =====================================================
-       θ₂ DATA
-       ===================================================== */
+    /*
+       Update θ2
+    */
 
     theta2Chart.data.datasets[0].data =
-        timeData.map(
+        simulationData.time.map(
+            function(time, index) {
 
-            (time, index) => ({
+                return {
+                    x: time,
+                    y: simulationData.theta2[index]
+                };
 
-                x: time,
-
-                y: theta2Data[index]
-
-            })
-
+            }
         );
 
 
-    /* =====================================================
-       ω₁ DATA
-       ===================================================== */
+    /*
+       Update ω1
+    */
 
     omega1Chart.data.datasets[0].data =
-        timeData.map(
+        simulationData.time.map(
+            function(time, index) {
 
-            (time, index) => ({
+                return {
+                    x: time,
+                    y: simulationData.omega1[index]
+                };
 
-                x: time,
-
-                y: omega1Data[index]
-
-            })
-
+            }
         );
 
 
-    /* =====================================================
-       ω₂ DATA
-       ===================================================== */
+    /*
+       Update ω2
+    */
 
     omega2Chart.data.datasets[0].data =
-        timeData.map(
+        simulationData.time.map(
+            function(time, index) {
 
-            (time, index) => ({
+                return {
+                    x: time,
+                    y: simulationData.omega2[index]
+                };
 
-                x: time,
-
-                y: omega2Data[index]
-
-            })
-
+            }
         );
 
 
-    /* =====================================================
-       ENERGY DATA
-       ===================================================== */
+    /*
+       Update energy
+    */
 
     energyChart.data.datasets[0].data =
-        timeData.map(
+        simulationData.time.map(
+            function(time, index) {
 
-            (time, index) => ({
+                return {
+                    x: time,
+                    y:
+                        simulationData
+                            .kineticEnergy[index]
+                };
 
-                x: time,
-
-                y: energyData[index]
-
-            })
-
+            }
         );
 
 
-    /* =====================================================
-       REDRAW
-       ===================================================== */
+    energyChart.data.datasets[1].data =
+        simulationData.time.map(
+            function(time, index) {
+
+                return {
+                    x: time,
+                    y:
+                        simulationData
+                            .potentialEnergy[index]
+                };
+
+            }
+        );
+
+
+    energyChart.data.datasets[2].data =
+        simulationData.time.map(
+            function(time, index) {
+
+                return {
+                    x: time,
+                    y:
+                        simulationData
+                            .totalEnergy[index]
+                };
+
+            }
+        );
+
+
+    /*
+       Render
+    */
 
     theta1Chart.update("none");
 
@@ -814,134 +718,73 @@ function updateCharts() {
     omega2Chart.update("none");
 
     energyChart.update("none");
-
 }
 
 
-/* =========================================================
-   CLEAR SIMULATION DATA
-   ========================================================= */
+/* ============================================================
+   10. FORCE CHART UPDATE
+   ============================================================ */
+
+function forceChartUpdate() {
+
+    chartUpdateCounter = 0;
+
+    updateCharts();
+}
+
+
+/* ============================================================
+   11. CLEAR CHART DATA
+   ============================================================ */
 
 function clearChartData() {
 
+    simulationData = {
 
-    /* =====================================================
-       CLEAR DATA ARRAYS
-       ===================================================== */
+        time: [],
 
-    simulationData.time = [];
+        theta1: [],
+        theta2: [],
 
-    simulationData.theta1 = [];
+        omega1: [],
+        omega2: [],
 
-    simulationData.theta2 = [];
+        kineticEnergy: [],
+        potentialEnergy: [],
+        totalEnergy: []
+    };
 
-    simulationData.omega1 = [];
-
-    simulationData.omega2 = [];
-
-    simulationData.alpha1 = [];
-
-    simulationData.alpha2 = [];
-
-    simulationData.kineticEnergy = [];
-
-    simulationData.potentialEnergy = [];
-
-    simulationData.totalEnergy = [];
-
-
-    /* =====================================================
-       RESET COUNTER
-       ===================================================== */
 
     chartUpdateCounter = 0;
 
 
-    /* =====================================================
-       CLEAR CHARTS
-       ===================================================== */
-
-    if (theta1Chart) {
-
-        theta1Chart.data.datasets[0].data =
-            [];
-
-        theta1Chart.update("none");
-
-    }
-
-
-    if (theta2Chart) {
-
-        theta2Chart.data.datasets[0].data =
-            [];
-
-        theta2Chart.update("none");
-
-    }
-
-
-    if (omega1Chart) {
-
-        omega1Chart.data.datasets[0].data =
-            [];
-
-        omega1Chart.update("none");
-
-    }
-
-
-    if (omega2Chart) {
-
-        omega2Chart.data.datasets[0].data =
-            [];
-
-        omega2Chart.update("none");
-
-    }
-
-
-    if (energyChart) {
-
-        energyChart.data.datasets[0].data =
-            [];
-
-        energyChart.update("none");
-
-    }
-
-
-    console.log(
-        "Chart data cleared."
-    );
-
+    updateCharts();
 }
 
 
-/* =========================================================
-   RESET CHARTS
-   ========================================================= */
+/* ============================================================
+   12. RESET CHARTS
+   ============================================================ */
 
 function resetCharts() {
 
     clearChartData();
 
+    forceChartUpdate();
 }
 
 
-/* =========================================================
-   DESTROY CHARTS
-   ========================================================= */
+/* ============================================================
+   13. DESTROY CHARTS
+   ============================================================ */
 
 function destroyCharts() {
-
 
     if (theta1Chart) {
 
         theta1Chart.destroy();
 
         theta1Chart = null;
-
     }
 
 
@@ -950,7 +793,6 @@ function destroyCharts() {
         theta2Chart.destroy();
 
         theta2Chart = null;
-
     }
 
 
@@ -959,7 +801,6 @@ function destroyCharts() {
         omega1Chart.destroy();
 
         omega1Chart = null;
-
     }
 
 
@@ -968,7 +809,6 @@ function destroyCharts() {
         omega2Chart.destroy();
 
         omega2Chart = null;
-
     }
 
 
@@ -977,344 +817,167 @@ function destroyCharts() {
         energyChart.destroy();
 
         energyChart = null;
-
     }
-
 }
 
 
-/* =========================================================
-   GET STORED SIMULATION DATA
-   ========================================================= */
+/* ============================================================
+   14. GET DATA
+   ============================================================ */
 
-/*
-   This function will later be used by the CSV export
-   function in controls.js.
-*/
-
-function getSimulationData() {
+function getSimulationChartData() {
 
     return simulationData;
-
 }
 
 
-/* =========================================================
-   GET NUMBER OF DATA POINTS
-   ========================================================= */
+/* ============================================================
+   15. GET CHART STATUS
+   ============================================================ */
 
-function getSimulationDataLength() {
-
-    return simulationData.time.length;
-
-}
-
-
-/* =========================================================
-   GET LAST DATA POINT
-   ========================================================= */
-
-function getLatestSimulationData() {
-
-    const n =
-        simulationData.time.length - 1;
-
-
-    if (n < 0) {
-
-        return null;
-
-    }
-
+function getChartStatus() {
 
     return {
 
-        time:
-            simulationData.time[n],
+        chartJS:
+            typeof Chart !== "undefined",
 
         theta1:
-            simulationData.theta1[n],
+            theta1Chart !== null,
 
         theta2:
-            simulationData.theta2[n],
+            theta2Chart !== null,
 
         omega1:
-            simulationData.omega1[n],
+            omega1Chart !== null,
 
         omega2:
-            simulationData.omega2[n],
+            omega2Chart !== null,
 
-        alpha1:
-            simulationData.alpha1[n],
+        energy:
+            energyChart !== null,
 
-        alpha2:
-            simulationData.alpha2[n],
-
-        kineticEnergy:
-            simulationData.kineticEnergy[n],
-
-        potentialEnergy:
-            simulationData.potentialEnergy[n],
-
-        totalEnergy:
-            simulationData.totalEnergy[n]
-
+        dataPoints:
+            simulationData.time.length
     };
-
 }
 
 
-/* =========================================================
-   CALCULATE ENERGY ERROR
-   ========================================================= */
+/* ============================================================
+   16. ENERGY VALIDATION
+   ============================================================ */
 
-function calculateEnergyError() {
+function updateEnergyValidation(
+    initialEnergy,
+    currentEnergy
+) {
 
-    const n =
-        simulationData.totalEnergy.length;
-
-
-    if (n < 2) {
-
-        return 0;
-
-    }
-
-
-    const initialEnergy =
-        simulationData.totalEnergy[0];
-
-
-    const currentEnergy =
-        simulationData.totalEnergy[n - 1];
-
-
-    if (
-        Math.abs(initialEnergy) <
-        1e-12
-    ) {
-
-        return 0;
-
-    }
-
-
-    const error =
-        Math.abs(
-            currentEnergy -
-            initialEnergy
-        )
-        /
-        Math.abs(initialEnergy)
-        *
-        100;
-
-
-    return error;
-
-}
-
-
-/* =========================================================
-   UPDATE ENERGY VALIDATION PANEL
-   ========================================================= */
-
-function updateEnergyValidation() {
-
-    const data =
-        getLatestSimulationData();
-
-
-    if (!data) {
-
-        return;
-
-    }
-
-
-    const initialEnergy =
-        simulationData.totalEnergy[0];
-
-
-    const currentEnergy =
-        data.totalEnergy;
-
-
-    const error =
-        calculateEnergyError();
-
-
-    /* =====================================================
-       FIND HTML ELEMENTS
-       ===================================================== */
-
-    const initialEnergyElement =
+    const initialElement =
         document.getElementById(
             "initialEnergy"
         );
 
 
-    const currentEnergyElement =
+    const currentElement =
         document.getElementById(
             "currentEnergy"
         );
 
 
-    const energyErrorElement =
+    const errorElement =
         document.getElementById(
             "energyError"
         );
 
 
-    const energyStatusElement =
+    const statusElement =
         document.getElementById(
             "energyStatus"
         );
 
 
-    const energyStatusText =
+    const statusTextElement =
         document.getElementById(
             "energyStatusText"
         );
 
 
-    /* =====================================================
-       UPDATE VALUES
-       ===================================================== */
+    if (initialElement) {
 
-    if (initialEnergyElement) {
-
-        initialEnergyElement.textContent =
-            initialEnergy.toFixed(4) +
+        initialElement.textContent =
+            Number(initialEnergy).toFixed(4) +
             " J";
-
     }
 
 
-    if (currentEnergyElement) {
+    if (currentElement) {
 
-        currentEnergyElement.textContent =
-            currentEnergy.toFixed(4) +
+        currentElement.textContent =
+            Number(currentEnergy).toFixed(4) +
             " J";
-
     }
 
 
-    if (energyErrorElement) {
-
-        energyErrorElement.textContent =
-            error.toFixed(4) +
-            " %";
-
-    }
-
-
-    /* =====================================================
-       ENERGY STATUS
-       ===================================================== */
-
-    if (energyStatusElement) {
-
-        energyStatusElement.classList.remove(
-            "good",
-            "warning",
-            "error"
-        );
-
-
-        if (error < 0.1) {
-
-            energyStatusElement.classList.add(
-                "good"
-            );
-
-        }
-
-        else if (error < 1.0) {
-
-            energyStatusElement.classList.add(
-                "warning"
-            );
-
-        }
-
-        else {
-
-            energyStatusElement.classList.add(
-                "error"
-            );
-
-        }
-
-    }
-
-
-    if (energyStatusText) {
-
-        if (error < 0.1) {
-
-            energyStatusText.textContent =
-                "Excellent numerical energy conservation";
-
-        }
-
-        else if (error < 1.0) {
-
-            energyStatusText.textContent =
-                "Acceptable numerical error";
-
-        }
-
-        else {
-
-            energyStatusText.textContent =
-                "High numerical error — reduce timestep";
-
-        }
-
-    }
-
-}
-
-
-/* =========================================================
-   FORCE CHART UPDATE
-   ========================================================= */
-
-/*
-   Used when the simulation is paused or stopped.
-
-   This ensures the latest data point is visible even if
-   the normal update interval hasn't been reached.
-*/
-
-function forceChartUpdate() {
-
-    updateCharts();
-
-    updateEnergyValidation();
-
-}
-
-
-/* =========================================================
-   EXPORT DATA AS CSV
-   ========================================================= */
-
-/*
-   This function can also be called directly from the
-   Download CSV button in index.html.
-*/
-
-function exportChartsDataCSV() {
-
-
-    const data =
-        simulationData;
+    let error = 0;
 
 
     if (
-        data.time.length === 0
+        Math.abs(initialEnergy) >
+        1e-12
+    ) {
+
+        error =
+            Math.abs(
+                (
+                    currentEnergy -
+                    initialEnergy
+                ) /
+                initialEnergy
+            ) * 100;
+    }
+
+
+    if (errorElement) {
+
+        errorElement.textContent =
+            error.toFixed(4) +
+            " %";
+    }
+
+
+    if (
+        statusElement &&
+        statusTextElement
+    ) {
+
+        if (error < 0.1) {
+
+            statusTextElement.textContent =
+                "Energy conserved — excellent numerical stability.";
+
+        } else if (error < 1.0) {
+
+            statusTextElement.textContent =
+                "Energy conservation within acceptable limits.";
+
+        } else {
+
+            statusTextElement.textContent =
+                "Energy error is increasing — check numerical stability.";
+        }
+    }
+}
+
+
+/* ============================================================
+   17. EXPORT CSV
+   ============================================================ */
+
+function exportChartsDataCSV() {
+
+    if (
+        simulationData.time.length ===
+        0
     ) {
 
         alert(
@@ -1322,13 +985,8 @@ function exportChartsDataCSV() {
         );
 
         return;
-
     }
 
-
-    /* =====================================================
-       CSV HEADER
-       ===================================================== */
 
     let csv =
         "Time (s)," +
@@ -1336,62 +994,38 @@ function exportChartsDataCSV() {
         "Theta2 (deg)," +
         "Omega1 (rad/s)," +
         "Omega2 (rad/s)," +
-        "Alpha1 (rad/s²)," +
-        "Alpha2 (rad/s²)," +
         "Kinetic Energy (J)," +
         "Potential Energy (J)," +
         "Total Energy (J)\n";
 
 
-    /* =====================================================
-       CSV ROWS
-       ===================================================== */
-
     for (
         let i = 0;
-        i < data.time.length;
+        i < simulationData.time.length;
         i++
     ) {
 
         csv +=
 
-            data.time[i].toFixed(6)
-            + "," +
+            simulationData.time[i] + "," +
 
-            data.theta1[i].toFixed(6)
-            + "," +
+            simulationData.theta1[i] + "," +
 
-            data.theta2[i].toFixed(6)
-            + "," +
+            simulationData.theta2[i] + "," +
 
-            data.omega1[i].toFixed(6)
-            + "," +
+            simulationData.omega1[i] + "," +
 
-            data.omega2[i].toFixed(6)
-            + "," +
+            simulationData.omega2[i] + "," +
 
-            data.alpha1[i].toFixed(6)
-            + "," +
+            simulationData.kineticEnergy[i] + "," +
 
-            data.alpha2[i].toFixed(6)
-            + "," +
+            simulationData.potentialEnergy[i] + "," +
 
-            data.kineticEnergy[i].toFixed(6)
-            + "," +
+            simulationData.totalEnergy[i] +
 
-            data.potentialEnergy[i].toFixed(6)
-            + "," +
-
-            data.totalEnergy[i].toFixed(6)
-
-            + "\n";
-
+            "\n";
     }
 
-
-    /* =====================================================
-       CREATE BLOB
-       ===================================================== */
 
     const blob =
         new Blob(
@@ -1401,10 +1035,6 @@ function exportChartsDataCSV() {
             }
         );
 
-
-    /* =====================================================
-       CREATE DOWNLOAD LINK
-       ===================================================== */
 
     const url =
         URL.createObjectURL(blob);
@@ -1416,63 +1046,94 @@ function exportChartsDataCSV() {
 
     link.href = url;
 
-
     link.download =
-        "double_pendulum_simulation_data.csv";
+        "double-pendulum-data.csv";
 
 
     document.body.appendChild(link);
 
-
     link.click();
-
 
     document.body.removeChild(link);
 
 
     URL.revokeObjectURL(url);
-
-
-    console.log(
-        "Simulation CSV downloaded."
-    );
-
 }
 
 
-/* =========================================================
-   AUTOMATIC INITIALIZATION
-   ========================================================= */
+/* ============================================================
+   18. DOM READY
+   ============================================================ */
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    function() {
+
+        console.log(
+            "charts.js loaded."
+        );
+
 
         /*
-           Chart.js should already be loaded by index.html.
-
-           Initialize after the page has loaded.
+           Small delay ensures Chart.js
+           and all canvas elements exist.
         */
 
-        if (
-            typeof Chart === "undefined"
-        ) {
+        setTimeout(
+            function() {
 
-            console.error(
-                "Chart.js is not loaded."
-            );
+                initializeCharts();
 
-            return;
-
-        }
-
-
-        initializeCharts();
+            },
+            100
+        );
 
     }
 );
 
 
-/* =========================================================
-   END OF charts.js
-   ========================================================= */
+/* ============================================================
+   19. GLOBAL EXPORTS
+   ============================================================ */
+
+window.initializeCharts =
+    initializeCharts;
+
+window.addSimulationData =
+    addSimulationData;
+
+window.updateCharts =
+    updateCharts;
+
+window.forceChartUpdate =
+    forceChartUpdate;
+
+window.clearChartData =
+    clearChartData;
+
+window.resetCharts =
+    resetCharts;
+
+window.destroyCharts =
+    destroyCharts;
+
+window.getSimulationChartData =
+    getSimulationChartData;
+
+window.getChartStatus =
+    getChartStatus;
+
+window.updateEnergyValidation =
+    updateEnergyValidation;
+
+window.exportChartsDataCSV =
+    exportChartsDataCSV;
+
+
+/* ============================================================
+   20. LOADED MESSAGE
+   ============================================================ */
+
+console.log(
+    "Double Pendulum Chart Engine Loaded"
+);
