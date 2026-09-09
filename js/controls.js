@@ -1,50 +1,22 @@
 /* =========================================================
    DOUBLE PENDULUM VIRTUAL LAB
    controls.js
-
-   Purpose:
-   - Control simulation
-   - Handle user inputs
-   - Synchronize sliders and number inputs
-   - Update result display
-   - Control simulation status
-   - Handle speed and trail
-   - Connect UI with physics/simulation engine
-   ========================================================= */
-
-
-/* =========================================================
-   GLOBAL SIMULATION PARAMETERS
    ========================================================= */
 
 let simulationParameters = {
+    m1: 1.0,
+    m2: 1.0,
 
-    m1: 1.00,
+    l1: 0.8,
+    l2: 0.8,
 
-    m2: 1.00,
-
-    l1: 0.80,
-
-    l2: 0.80,
-
-    theta1: 30.00,
-
-    theta2: 40.00,
+    theta1: 30,
+    theta2: 40,
 
     g: 9.81,
 
-    speed: 1.00
-
+    speed: 1.0
 };
-
-
-/* =========================================================
-   SIMULATION CONTROL STATE
-   ========================================================= */
-
-let simulationRunning = false;
-
-let trailEnabled = false;
 
 
 /* =========================================================
@@ -52,24 +24,42 @@ let trailEnabled = false;
    ========================================================= */
 
 const DEFAULT_PARAMETERS = {
+    m1: 1.0,
+    m2: 1.0,
 
-    m1: 1.00,
+    l1: 0.8,
+    l2: 0.8,
 
-    m2: 1.00,
-
-    l1: 0.80,
-
-    l2: 0.80,
-
-    theta1: 30.00,
-
-    theta2: 40.00,
+    theta1: 30,
+    theta2: 40,
 
     g: 9.81,
 
-    speed: 1.00
-
+    speed: 1.0
 };
+
+
+/* =========================================================
+   GET PARAMETERS
+   ========================================================= */
+
+function getSimulationParameters() {
+
+    return {
+        m1: simulationParameters.m1,
+        m2: simulationParameters.m2,
+
+        l1: simulationParameters.l1,
+        l2: simulationParameters.l2,
+
+        theta1: simulationParameters.theta1,
+        theta2: simulationParameters.theta2,
+
+        g: simulationParameters.g,
+
+        speed: simulationParameters.speed
+    };
+}
 
 
 /* =========================================================
@@ -78,105 +68,121 @@ const DEFAULT_PARAMETERS = {
 
 function initializeControls() {
 
-    console.log(
-        "Initializing simulation controls..."
-    );
-
-
-    /*
-       Synchronize all inputs with the parameter object.
-    */
-
-    syncAllInputs();
-
-
-    /*
-       Update displayed values.
-    */
+    console.log("Controls.js loaded");
 
     updateAllParameterDisplays();
 
-
-    /*
-       Set initial status.
-    */
+    syncAllInputs();
 
     updateSimulationStatus(
-        "stopped",
+        "ready",
         "Ready"
     );
 
+    updateTimeDisplay(0);
 
     /*
-       Update initial results.
+       Initialize result cards
     */
 
-    updateResultDisplay({
+    updateElement("resultTheta1", "30.00");
+    updateElement("resultTheta2", "40.00");
 
-        theta1:
-            simulationParameters.theta1,
+    updateElement("resultOmega1", "0.000");
+    updateElement("resultOmega2", "0.000");
 
-        theta2:
-            simulationParameters.theta2,
+    updateElement("resultAlpha1", "0.000");
+    updateElement("resultAlpha2", "0.000");
 
-        omega1: 0,
-
-        omega2: 0,
-
-        alpha1: 0,
-
-        alpha2: 0,
-
-        kineticEnergy: 0,
-
-        potentialEnergy: 0,
-
-        totalEnergy: 0
-
-    });
-
-
-    console.log(
-        "Controls initialized successfully."
-    );
-
+    updateElement("resultKE", "0.000");
+    updateElement("resultPE", "0.000");
+    updateElement("resultTotalEnergy", "0.000");
 }
 
 
 /* =========================================================
-   GET PARAMETER
+   SYNC ALL INPUTS
    ========================================================= */
 
-function getSimulationParameters() {
+function syncAllInputs() {
 
-    return {
+    syncInput(
+        "l1Slider",
+        "l1Input",
+        simulationParameters.l1
+    );
 
-        m1:
-            simulationParameters.m1,
+    syncInput(
+        "l2Slider",
+        "l2Input",
+        simulationParameters.l2
+    );
 
-        m2:
-            simulationParameters.m2,
+    syncInput(
+        "m1Slider",
+        "m1Input",
+        simulationParameters.m1
+    );
 
-        l1:
-            simulationParameters.l1,
+    syncInput(
+        "m2Slider",
+        "m2Input",
+        simulationParameters.m2
+    );
 
-        l2:
-            simulationParameters.l2,
+    syncInput(
+        "theta1Slider",
+        "theta1Input",
+        simulationParameters.theta1
+    );
 
-        theta1:
-            simulationParameters.theta1,
+    syncInput(
+        "theta2Slider",
+        "theta2Input",
+        simulationParameters.theta2
+    );
 
-        theta2:
-            simulationParameters.theta2,
+    syncInput(
+        "gSlider",
+        "gInput",
+        simulationParameters.g
+    );
 
-        g:
-            simulationParameters.g,
+    syncInput(
+        "speedSlider",
+        "speedInput",
+        simulationParameters.speed
+    );
+}
 
-        speed:
-            simulationParameters.speed
 
-    };
+/* =========================================================
+   SYNC INDIVIDUAL INPUT
+   ========================================================= */
 
+function syncInput(
+    sliderId,
+    inputId,
+    value
+) {
+
+    const slider =
+        document.getElementById(sliderId);
+
+    const input =
+        document.getElementById(inputId);
+
+
+    if (slider) {
+
+        slider.value = value;
+    }
+
+
+    if (input) {
+
+        input.value = value;
+    }
 }
 
 
@@ -184,35 +190,13 @@ function getSimulationParameters() {
    UPDATE PARAMETER
    ========================================================= */
 
-/*
-   Called from index.html:
-
-   updateParameter("m1")
-   updateParameter("theta1")
-   etc.
-*/
-
 function updateSimulationParameter(parameter) {
 
-    if (
-        !simulationParameters.hasOwnProperty(
-            parameter
-        )
-    ) {
+    console.log(
+        "Updating parameter:",
+        parameter
+    );
 
-        console.error(
-            "Unknown simulation parameter:",
-            parameter
-        );
-
-        return;
-
-    }
-
-
-    /* =====================================================
-       FIND INPUT ELEMENTS
-       ===================================================== */
 
     const slider =
         document.getElementById(
@@ -226,45 +210,38 @@ function updateSimulationParameter(parameter) {
         );
 
 
+    /*
+       Determine which element triggered
+       the update.
+    */
+
     let value;
 
 
-    /*
-       Prefer slider value when slider is used.
-    */
-
     if (
-        slider &&
-        document.activeElement === slider
+        document.activeElement === input
     ) {
-
-        value =
-            parseFloat(slider.value);
-
-    }
-
-    else if (input) {
 
         value =
             parseFloat(input.value);
 
-    }
-
-    else if (slider) {
+    } else if (slider) {
 
         value =
             parseFloat(slider.value);
 
+    } else {
+
+        value =
+            parseFloat(input?.value);
     }
 
 
     /*
-       Validate number.
+       Safety check
     */
 
-    if (
-        Number.isNaN(value)
-    ) {
+    if (!Number.isFinite(value)) {
 
         console.warn(
             "Invalid value for:",
@@ -272,112 +249,101 @@ function updateSimulationParameter(parameter) {
         );
 
         return;
-
-    }
-
-
-    /* =====================================================
-       GET LIMITS
-       ===================================================== */
-
-    let min = -Infinity;
-
-    let max = Infinity;
-
-
-    if (slider) {
-
-        min =
-            parseFloat(slider.min);
-
-        max =
-            parseFloat(slider.max);
-
-    }
-
-
-    if (input) {
-
-        const inputMin =
-            parseFloat(input.min);
-
-        const inputMax =
-            parseFloat(input.max);
-
-
-        if (
-            !Number.isNaN(inputMin)
-        ) {
-
-            min =
-                Math.max(
-                    min,
-                    inputMin
-                );
-
-        }
-
-
-        if (
-            !Number.isNaN(inputMax)
-        ) {
-
-            max =
-                Math.min(
-                    max,
-                    inputMax
-                );
-
-        }
-
     }
 
 
     /*
-       Clamp the value to valid range.
+       Parameter limits
     */
 
-    value =
-        Math.max(
-            min,
-            Math.min(
-                max,
-                value
-            )
-        );
+    const limits = {
+
+        l1: {
+            min: 0.2,
+            max: 2.0
+        },
+
+        l2: {
+            min: 0.2,
+            max: 2.0
+        },
+
+        m1: {
+            min: 0.1,
+            max: 5.0
+        },
+
+        m2: {
+            min: 0.1,
+            max: 5.0
+        },
+
+        theta1: {
+            min: -180,
+            max: 180
+        },
+
+        theta2: {
+            min: -180,
+            max: 180
+        },
+
+        g: {
+            min: 0,
+            max: 20
+        },
+
+        speed: {
+            min: 0.1,
+            max: 5.0
+        }
+    };
 
 
-    /* =====================================================
-       UPDATE PARAMETER
-       ===================================================== */
+    /*
+       Clamp value
+    */
+
+    if (limits[parameter]) {
+
+        value =
+            Math.max(
+                limits[parameter].min,
+                Math.min(
+                    limits[parameter].max,
+                    value
+                )
+            );
+    }
+
+
+    /*
+       Save value
+    */
 
     simulationParameters[parameter] =
         value;
 
 
-    /* =====================================================
-       SYNCHRONIZE INPUTS
-       ===================================================== */
+    /*
+       Synchronize both controls
+    */
 
     if (slider) {
 
-        slider.value =
-            value;
-
+        slider.value = value;
     }
 
 
     if (input) {
 
-        input.value =
-            value;
-
+        input.value = value;
     }
 
 
-    /* =====================================================
-       UPDATE DISPLAY
-       ===================================================== */
+    /*
+       Update visible value
+    */
 
     updateParameterDisplay(
         parameter,
@@ -386,7 +352,7 @@ function updateSimulationParameter(parameter) {
 
 
     /*
-       Tell simulation engine that a parameter changed.
+       Update simulation if available
     */
 
     if (
@@ -394,18 +360,20 @@ function updateSimulationParameter(parameter) {
         "function"
     ) {
 
-        onSimulationParameterChanged(
-            parameter,
-            value
-        );
-
+        onSimulationParameterChanged();
     }
 
+
+    console.log(
+        parameter,
+        "=",
+        value
+    );
 }
 
 
 /* =========================================================
-   UPDATE PARAMETER DISPLAY
+   UPDATE DISPLAY VALUE
    ========================================================= */
 
 function updateParameterDisplay(
@@ -421,42 +389,45 @@ function updateParameterDisplay(
 
     if (!display) {
 
-        return;
+        console.warn(
+            "Display element not found:",
+            parameter + "Value"
+        );
 
+        return;
     }
+
+
+    let text;
 
 
     switch (parameter) {
 
-
         case "l1":
-
         case "l2":
 
-            display.textContent =
-                value.toFixed(2) +
+            text =
+                Number(value).toFixed(2) +
                 " m";
 
             break;
 
 
         case "m1":
-
         case "m2":
 
-            display.textContent =
-                value.toFixed(2) +
+            text =
+                Number(value).toFixed(2) +
                 " kg";
 
             break;
 
 
         case "theta1":
-
         case "theta2":
 
-            display.textContent =
-                value.toFixed(1) +
+            text =
+                Number(value).toFixed(1) +
                 "°";
 
             break;
@@ -464,8 +435,8 @@ function updateParameterDisplay(
 
         case "g":
 
-            display.textContent =
-                value.toFixed(2) +
+            text =
+                Number(value).toFixed(2) +
                 " m/s²";
 
             break;
@@ -473,8 +444,8 @@ function updateParameterDisplay(
 
         case "speed":
 
-            display.textContent =
-                value.toFixed(2) +
+            text =
+                Number(value).toFixed(1) +
                 "×";
 
             break;
@@ -482,97 +453,65 @@ function updateParameterDisplay(
 
         default:
 
-            display.textContent =
-                value;
-
+            text =
+                Number(value).toFixed(2);
     }
 
+
+    display.textContent = text;
 }
 
 
 /* =========================================================
-   UPDATE ALL PARAMETER DISPLAYS
+   UPDATE ALL DISPLAY VALUES
    ========================================================= */
 
 function updateAllParameterDisplays() {
 
-    Object.keys(
-        simulationParameters
-    ).forEach(
-
-        function(parameter) {
-
-            updateParameterDisplay(
-
-                parameter,
-
-                simulationParameters[
-                    parameter
-                ]
-
-            );
-
-        }
-
+    updateParameterDisplay(
+        "l1",
+        simulationParameters.l1
     );
 
+    updateParameterDisplay(
+        "l2",
+        simulationParameters.l2
+    );
+
+    updateParameterDisplay(
+        "m1",
+        simulationParameters.m1
+    );
+
+    updateParameterDisplay(
+        "m2",
+        simulationParameters.m2
+    );
+
+    updateParameterDisplay(
+        "theta1",
+        simulationParameters.theta1
+    );
+
+    updateParameterDisplay(
+        "theta2",
+        simulationParameters.theta2
+    );
+
+    updateParameterDisplay(
+        "g",
+        simulationParameters.g
+    );
+
+    updateParameterDisplay(
+        "speed",
+        simulationParameters.speed
+    );
 }
 
 
 /* =========================================================
-   SYNCHRONIZE ALL INPUTS
-   ========================================================= */
-
-function syncAllInputs() {
-
-    Object.keys(
-        simulationParameters
-    ).forEach(
-
-        function(parameter) {
-
-            const slider =
-                document.getElementById(
-                    parameter + "Slider"
-                );
-
-
-            const input =
-                document.getElementById(
-                    parameter + "Input"
-                );
-
-
-            const value =
-                simulationParameters[
-                    parameter
-                ];
-
-
-            if (slider) {
-
-                slider.value =
-                    value;
-
-            }
-
-
-            if (input) {
-
-                input.value =
-                    value;
-
-            }
-
-        }
-
-    );
-
-}
-
-
-/* =========================================================
-   UPDATE SIMULATION SPEED
+   SPEED
    ========================================================= */
 
 function updateSimulationSpeed() {
@@ -581,7 +520,6 @@ function updateSimulationSpeed() {
         document.getElementById(
             "speedSlider"
         );
-
 
     const input =
         document.getElementById(
@@ -593,47 +531,29 @@ function updateSimulationSpeed() {
 
 
     if (
-        slider &&
-        document.activeElement === slider
+        document.activeElement === input
     ) {
-
-        value =
-            parseFloat(slider.value);
-
-    }
-
-    else if (input) {
 
         value =
             parseFloat(input.value);
 
+    } else {
+
+        value =
+            parseFloat(slider.value);
     }
 
-    else {
 
+    if (!Number.isFinite(value)) {
         return;
-
     }
 
-
-    if (
-        Number.isNaN(value)
-    ) {
-
-        return;
-
-    }
-
-
-    /*
-       Keep speed within valid limits.
-    */
 
     value =
         Math.max(
-            0.10,
+            0.1,
             Math.min(
-                3.00,
+                5.0,
                 value
             )
         );
@@ -643,20 +563,9 @@ function updateSimulationSpeed() {
         value;
 
 
-    if (slider) {
+    slider.value = value;
 
-        slider.value =
-            value;
-
-    }
-
-
-    if (input) {
-
-        input.value =
-            value;
-
-    }
+    input.value = value;
 
 
     updateParameterDisplay(
@@ -665,399 +574,18 @@ function updateSimulationSpeed() {
     );
 
 
-    /*
-       Inform simulation engine.
-    */
-
     if (
         typeof setSimulationSpeed ===
         "function"
     ) {
 
-        setSimulationSpeed(
-            value
-        );
-
+        setSimulationSpeed(value);
     }
-
 }
 
 
 /* =========================================================
-   START SIMULATION
-   ========================================================= */
-
-function startSimulationEngine() {
-
-    simulationRunning = true;
-
-
-    updateSimulationStatus(
-        "running",
-        "Running"
-    );
-
-
-    /*
-       Call actual simulation engine.
-    */
-
-    if (
-        typeof startSimulationEngineCore ===
-        "function"
-    ) {
-
-        startSimulationEngineCore();
-
-    }
-
-    else if (
-        typeof startSimulationLoop ===
-        "function"
-    ) {
-
-        startSimulationLoop();
-
-    }
-
-    else {
-
-        console.log(
-            "Simulation engine is not connected yet."
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   PAUSE SIMULATION
-   ========================================================= */
-
-function pauseSimulationEngine() {
-
-    simulationRunning = false;
-
-
-    updateSimulationStatus(
-        "paused",
-        "Paused"
-    );
-
-
-    if (
-        typeof pauseSimulationEngineCore ===
-        "function"
-    ) {
-
-        pauseSimulationEngineCore();
-
-    }
-
-    else if (
-        typeof pauseSimulationLoop ===
-        "function"
-    ) {
-
-        pauseSimulationLoop();
-
-    }
-
-    else {
-
-        console.log(
-            "Simulation engine is not connected yet."
-        );
-
-    }
-
-
-    /*
-       Force latest chart update.
-    */
-
-    if (
-        typeof forceChartUpdate ===
-        "function"
-    ) {
-
-        forceChartUpdate();
-
-    }
-
-}
-
-
-/* =========================================================
-   RESET SIMULATION
-   ========================================================= */
-
-function resetSimulationEngine() {
-
-    simulationRunning = false;
-
-
-    updateSimulationStatus(
-        "stopped",
-        "Ready"
-    );
-
-
-    /*
-       Reset parameters to default values.
-    */
-
-    simulationParameters = {
-
-        m1:
-            DEFAULT_PARAMETERS.m1,
-
-        m2:
-            DEFAULT_PARAMETERS.m2,
-
-        l1:
-            DEFAULT_PARAMETERS.l1,
-
-        l2:
-            DEFAULT_PARAMETERS.l2,
-
-        theta1:
-            DEFAULT_PARAMETERS.theta1,
-
-        theta2:
-            DEFAULT_PARAMETERS.theta2,
-
-        g:
-            DEFAULT_PARAMETERS.g,
-
-        speed:
-            DEFAULT_PARAMETERS.speed
-
-    };
-
-
-    /*
-       Update HTML inputs.
-    */
-
-    syncAllInputs();
-
-
-    updateAllParameterDisplays();
-
-
-    /*
-       Reset actual simulation.
-    */
-
-    if (
-        typeof resetSimulationEngineCore ===
-        "function"
-    ) {
-
-        resetSimulationEngineCore();
-
-    }
-
-
-    /*
-       Clear chart data.
-    */
-
-    if (
-        typeof resetCharts ===
-        "function"
-    ) {
-
-        resetCharts();
-
-    }
-
-
-    /*
-       Reset result display.
-    */
-
-    updateResultDisplay({
-
-        theta1:
-            simulationParameters.theta1,
-
-        theta2:
-            simulationParameters.theta2,
-
-        omega1: 0,
-
-        omega2: 0,
-
-        alpha1: 0,
-
-        alpha2: 0,
-
-        kineticEnergy: 0,
-
-        potentialEnergy: 0,
-
-        totalEnergy: 0
-
-    });
-
-
-    /*
-       Reset time.
-    */
-
-    updateTimeDisplay(0);
-
-
-    console.log(
-        "Simulation reset."
-    );
-
-}
-
-
-/* =========================================================
-   STEP SIMULATION
-   ========================================================= */
-
-function stepSimulationEngine() {
-
-    /*
-       Step should not continuously run the simulation.
-    */
-
-    simulationRunning = false;
-
-
-    updateSimulationStatus(
-        "paused",
-        "Step"
-    );
-
-
-    if (
-        typeof performSimulationStep ===
-        "function"
-    ) {
-
-        performSimulationStep();
-
-    }
-
-    else if (
-        typeof simulationStep ===
-        "function"
-    ) {
-
-        simulationStep();
-
-    }
-
-    else {
-
-        console.log(
-            "Simulation step function is not connected yet."
-        );
-
-    }
-
-
-    /*
-       Update graphs after step.
-    */
-
-    if (
-        typeof forceChartUpdate ===
-        "function"
-    ) {
-
-        forceChartUpdate();
-
-    }
-
-}
-
-
-/* =========================================================
-   TRAIL TOGGLE
-   ========================================================= */
-
-function toggleSimulationTrail() {
-
-    trailEnabled =
-        !trailEnabled;
-
-
-    const buttons =
-        document.querySelectorAll(
-            ".btn"
-        );
-
-
-    /*
-       Update actual simulation engine.
-    */
-
-    if (
-        typeof setTrailEnabled ===
-        "function"
-    ) {
-
-        setTrailEnabled(
-            trailEnabled
-        );
-
-    }
-
-
-    /*
-       Update button appearance.
-    */
-
-    buttons.forEach(
-
-        function(button) {
-
-            if (
-                button.textContent
-                    .includes("Trail")
-            ) {
-
-                if (trailEnabled) {
-
-                    button.classList.add(
-                        "active"
-                    );
-
-                    button.textContent =
-                        "◉ Trail ON";
-
-                }
-
-                else {
-
-                    button.classList.remove(
-                        "active"
-                    );
-
-                    button.textContent =
-                        "◌ Trail";
-
-                }
-
-            }
-
-        }
-
-    );
-
-}
-
-
-/* =========================================================
-   UPDATE SIMULATION STATUS
+   STATUS
    ========================================================= */
 
 function updateSimulationStatus(
@@ -1065,74 +593,35 @@ function updateSimulationStatus(
     text
 ) {
 
-    const statusContainer =
+    const statusElement =
         document.getElementById(
             "simulationStatus"
         );
 
-
-    const statusText =
+    const textElement =
         document.getElementById(
             "statusText"
         );
 
 
-    if (statusContainer) {
+    if (statusElement) {
 
-        statusContainer.classList.remove(
-
-            "status-running",
-
-            "status-paused",
-
-            "status-stopped"
-
-        );
-
-
-        switch (status) {
-
-            case "running":
-
-                statusContainer.classList.add(
-                    "status-running"
-                );
-
-                break;
-
-
-            case "paused":
-
-                statusContainer.classList.add(
-                    "status-paused"
-                );
-
-                break;
-
-
-            default:
-
-                statusContainer.classList.add(
-                    "status-stopped"
-                );
-
-        }
-
+        statusElement.className =
+            "simulation-status " +
+            status;
     }
 
 
-    if (statusText) {
+    if (textElement) {
 
-        statusText.textContent =
+        textElement.textContent =
             text;
-
     }
-
 }
 
 
 /* =========================================================
-   UPDATE TIME DISPLAY
+   TIME
    ========================================================= */
 
 function updateTimeDisplay(time) {
@@ -1143,159 +632,52 @@ function updateTimeDisplay(time) {
         );
 
 
-    if (!element) {
+    if (element) {
 
-        return;
-
+        element.textContent =
+            Number(time).toFixed(2) +
+            " s";
     }
-
-
-    element.textContent =
-        Number(time).toFixed(3) +
-        " s";
-
 }
 
 
 /* =========================================================
-   UPDATE RESULT DISPLAY
+   RESULT DISPLAY
    ========================================================= */
 
-function updateResultDisplay(data) {
-
-
-    if (!data) {
-
-        return;
-
-    }
-
-
-    /*
-       Angular displacement
-    */
-
-    updateElement(
-        "resultTheta1",
-        formatNumber(
-            data.theta1,
-            2
-        )
-    );
-
-
-    updateElement(
-        "resultTheta2",
-        formatNumber(
-            data.theta2,
-            2
-        )
-    );
-
-
-    /*
-       Angular velocity
-    */
-
-    updateElement(
-        "resultOmega1",
-        formatNumber(
-            data.omega1,
-            3
-        )
-    );
-
-
-    updateElement(
-        "resultOmega2",
-        formatNumber(
-            data.omega2,
-            3
-        )
-    );
-
-
-    /*
-       Angular acceleration
-    */
-
-    updateElement(
-        "resultAlpha1",
-        formatNumber(
-            data.alpha1,
-            3
-        )
-    );
-
-
-    updateElement(
-        "resultAlpha2",
-        formatNumber(
-            data.alpha2,
-            3
-        )
-    );
-
-
-    /*
-       Energy
-    */
-
-    updateElement(
-        "resultKE",
-        formatNumber(
-            data.kineticEnergy,
-            3
-        )
-    );
-
-
-    updateElement(
-        "resultPE",
-        formatNumber(
-            data.potentialEnergy,
-            3
-        )
-    );
-
-
-    updateElement(
-        "resultTotalEnergy",
-        formatNumber(
-            data.totalEnergy,
-            3
-        )
-    );
-
-
-    /*
-       Update energy validation.
-    */
-
-    if (
-        typeof updateEnergyValidation ===
-        "function"
-    ) {
-
-        updateEnergyValidation();
-
-    }
-
-}
-
-
-/* =========================================================
-   GENERIC HTML ELEMENT UPDATE
-   ========================================================= */
-
-function updateElement(
-    elementID,
+function updateResultDisplay(
+    elementId,
     value
 ) {
 
     const element =
         document.getElementById(
-            elementID
+            elementId
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent =
+        Number(value).toFixed(3);
+}
+
+
+/* =========================================================
+   GENERIC ELEMENT UPDATE
+   ========================================================= */
+
+function updateElement(
+    elementId,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            elementId
         );
 
 
@@ -1303,40 +685,160 @@ function updateElement(
 
         element.textContent =
             value;
-
     }
-
 }
 
 
 /* =========================================================
-   NUMBER FORMATTER
+   START
    ========================================================= */
 
-function formatNumber(
-    value,
-    decimals
-) {
+function startSimulationEngine() {
+
+    console.log(
+        "Start button pressed"
+    );
+
 
     if (
-        value === undefined ||
-        value === null ||
-        Number.isNaN(value)
+        typeof startSimulationEngineCore ===
+        "function"
     ) {
 
-        return "0.000";
+        startSimulationEngineCore();
 
+    } else {
+
+        console.error(
+            "startSimulationEngineCore() not found"
+        );
     }
-
-
-    return Number(value)
-        .toFixed(decimals);
-
 }
 
 
 /* =========================================================
-   CLEAR SIMULATION DATA
+   PAUSE
+   ========================================================= */
+
+function pauseSimulationEngine() {
+
+    console.log(
+        "Pause button pressed"
+    );
+
+
+    if (
+        typeof pauseSimulationEngineCore ===
+        "function"
+    ) {
+
+        pauseSimulationEngineCore();
+
+    } else {
+
+        console.error(
+            "pauseSimulationEngineCore() not found"
+        );
+    }
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+function resetSimulationEngine() {
+
+    console.log(
+        "Reset button pressed"
+    );
+
+
+    if (
+        typeof resetSimulationEngineCore ===
+        "function"
+    ) {
+
+        resetSimulationEngineCore();
+
+    } else {
+
+        console.error(
+            "resetSimulationEngineCore() not found"
+        );
+    }
+}
+
+
+/* =========================================================
+   STEP
+   ========================================================= */
+
+function stepSimulationEngine() {
+
+    console.log(
+        "Step button pressed"
+    );
+
+
+    if (
+        typeof performSimulationStep ===
+        "function"
+    ) {
+
+        performSimulationStep();
+
+    } else {
+
+        console.error(
+            "performSimulationStep() not found"
+        );
+    }
+}
+
+
+/* =========================================================
+   TRAIL
+   ========================================================= */
+
+let trailEnabled = false;
+
+
+function toggleSimulationTrail() {
+
+    trailEnabled =
+        !trailEnabled;
+
+
+    if (
+        typeof setTrailEnabled ===
+        "function"
+    ) {
+
+        setTrailEnabled(
+            trailEnabled
+        );
+    }
+
+
+    const button =
+        document.getElementById(
+            "trailButton"
+        );
+
+
+    if (button) {
+
+        button.textContent =
+            trailEnabled
+                ? "◉ Trail ON"
+                : "◌ Trail";
+    }
+}
+
+
+/* =========================================================
+   CLEAR DATA
    ========================================================= */
 
 function clearSimulationData() {
@@ -1347,81 +849,15 @@ function clearSimulationData() {
     ) {
 
         clearChartData();
-
     }
-
-
-    updateEnergyValidationAfterClear();
-
-
-    console.log(
-        "Simulation data cleared."
-    );
-
 }
 
 
 /* =========================================================
-   RESET ENERGY DISPLAY
-   ========================================================= */
-
-function updateEnergyValidationAfterClear() {
-
-    updateElement(
-        "initialEnergy",
-        "0.000 J"
-    );
-
-
-    updateElement(
-        "currentEnergy",
-        "0.000 J"
-    );
-
-
-    updateElement(
-        "energyError",
-        "0.000 %"
-    );
-
-
-    updateElement(
-        "energyStatusText",
-        "Ready"
-    );
-
-
-    const status =
-        document.getElementById(
-            "energyStatus"
-        );
-
-
-    if (status) {
-
-        status.classList.remove(
-            "warning",
-            "error"
-        );
-
-        status.classList.add(
-            "good"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   CSV EXPORT
+   EXPORT CSV
    ========================================================= */
 
 function exportSimulationCSV() {
-
-    /*
-       Use the CSV function from charts.js.
-    */
 
     if (
         typeof exportChartsDataCSV ===
@@ -1430,307 +866,78 @@ function exportSimulationCSV() {
 
         exportChartsDataCSV();
 
-        return;
+    } else {
 
+        console.error(
+            "CSV export function not found."
+        );
     }
-
-
-    /*
-       Backup implementation.
-    */
-
-    if (
-        typeof getSimulationData !==
-        "function"
-    ) {
-
-        alert(
-            "Simulation data is not available."
-        );
-
-        return;
-
-    }
-
-
-    const data =
-        getSimulationData();
-
-
-    if (
-        !data ||
-        !data.time ||
-        data.time.length === 0
-    ) {
-
-        alert(
-            "No simulation data available."
-        );
-
-        return;
-
-    }
-
-
-    let csv =
-        "Time (s)," +
-        "Theta1 (deg)," +
-        "Theta2 (deg)," +
-        "Omega1 (rad/s)," +
-        "Omega2 (rad/s)," +
-        "Alpha1 (rad/s²)," +
-        "Alpha2 (rad/s²)," +
-        "Kinetic Energy (J)," +
-        "Potential Energy (J)," +
-        "Total Energy (J)\n";
-
-
-    for (
-        let i = 0;
-        i < data.time.length;
-        i++
-    ) {
-
-        csv +=
-
-            data.time[i].toFixed(6) +
-            "," +
-
-            data.theta1[i].toFixed(6) +
-            "," +
-
-            data.theta2[i].toFixed(6) +
-            "," +
-
-            data.omega1[i].toFixed(6) +
-            "," +
-
-            data.omega2[i].toFixed(6) +
-            "," +
-
-            data.alpha1[i].toFixed(6) +
-            "," +
-
-            data.alpha2[i].toFixed(6) +
-            "," +
-
-            data.kineticEnergy[i].toFixed(6) +
-            "," +
-
-            data.potentialEnergy[i].toFixed(6) +
-            "," +
-
-            data.totalEnergy[i].toFixed(6) +
-
-            "\n";
-
-    }
-
-
-    const blob =
-        new Blob(
-            [csv],
-            {
-                type:
-                    "text/csv;charset=utf-8;"
-            }
-        );
-
-
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-
-    const link =
-        document.createElement(
-            "a"
-        );
-
-
-    link.href =
-        url;
-
-
-    link.download =
-        "double_pendulum_simulation_data.csv";
-
-
-    document.body.appendChild(
-        link
-    );
-
-
-    link.click();
-
-
-    document.body.removeChild(
-        link
-    );
-
-
-    URL.revokeObjectURL(
-        url
-    );
-
 }
 
 
 /* =========================================================
-   PARAMETER CHANGE CALLBACK
-   ========================================================= */
-
-/*
-   This function is called whenever the user changes:
-
-   m1
-   m2
-   l1
-   l2
-   theta1
-   theta2
-   g
-*/
-
-function onSimulationParameterChanged(
-    parameter,
-    value
-) {
-
-    console.log(
-        "Parameter changed:",
-        parameter,
-        value
-    );
-
-
-    /*
-       If the simulation is currently stopped,
-       immediately update the displayed model.
-
-       The actual physics update will be handled
-       by simulation.js.
-    */
-
-    if (
-        !simulationRunning
-    ) {
-
-        if (
-            typeof updateStaticSimulation ===
-            "function"
-        ) {
-
-            updateStaticSimulation();
-
-        }
-
-    }
-
-}
-
-
-/* =========================================================
-   KEYBOARD CONTROLS
+   KEYBOARD SHORTCUTS
    ========================================================= */
 
 document.addEventListener(
     "keydown",
     function(event) {
 
-
-        /*
-           Avoid keyboard controls when typing
-           inside an input field.
-        */
-
-        const activeElement =
-            document.activeElement;
+        const tag =
+            event.target.tagName.toLowerCase();
 
 
         if (
-            activeElement &&
-            (
-                activeElement.tagName ===
-                "INPUT" ||
-
-                activeElement.tagName ===
-                "TEXTAREA"
-            )
+            tag === "input" ||
+            tag === "textarea" ||
+            tag === "select"
         ) {
 
             return;
-
         }
 
 
-        /* Space = Start / Pause */
-
-        if (
-            event.code ===
-            "Space"
-        ) {
+        if (event.code === "Space") {
 
             event.preventDefault();
 
 
             if (
-                simulationRunning
+                typeof isSimulationRunning ===
+                "function" &&
+                isSimulationRunning()
             ) {
 
                 pauseSimulationEngine();
 
-            }
-
-            else {
+            } else {
 
                 startSimulationEngine();
-
             }
-
         }
 
 
-        /* R = Reset */
-
         if (
-            event.key.toLowerCase() ===
-            "r"
+            event.key.toLowerCase() === "r"
         ) {
 
             resetSimulationEngine();
-
         }
 
 
-        /* S = Step */
-
         if (
-            event.key.toLowerCase() ===
-            "s"
+            event.key.toLowerCase() === "s"
         ) {
 
             stepSimulationEngine();
-
         }
-
     }
-
 );
 
 
 /* =========================================================
-   HANDLE PAGE VISIBILITY
+   VISIBILITY
    ========================================================= */
-
-/*
-   Automatically pause the simulation if the user
-   changes browser tabs.
-
-   This prevents the simulation from running unnecessarily
-   in the background.
-*/
 
 document.addEventListener(
     "visibilitychange",
@@ -1738,19 +945,19 @@ document.addEventListener(
 
         if (
             document.hidden &&
-            simulationRunning
+            typeof isSimulationRunning ===
+            "function" &&
+            isSimulationRunning()
         ) {
 
             pauseSimulationEngine();
-
         }
-
     }
 );
 
 
 /* =========================================================
-   INITIALIZE CONTROLS AFTER PAGE LOAD
+   INITIALIZATION
    ========================================================= */
 
 document.addEventListener(
@@ -1761,8 +968,3 @@ document.addEventListener(
 
     }
 );
-
-
-/* =========================================================
-   END OF controls.js
-   ========================================================= */
