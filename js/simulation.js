@@ -1,36 +1,26 @@
-/* =========================================================
+/* ============================================================
    DOUBLE PENDULUM VIRTUAL LAB
-   File: simulation.js
+   simulation.js
 
-   Responsibilities:
-   - RK4 numerical integration
-   - Simulation time management
-   - Canvas rendering
-   - Pendulum animation
-   - Trail rendering
-   - Start / Pause / Reset / Step
-   - Result display
-   - Chart data collection
-   - Energy validation
-
-   Depends on:
-   - physics.js
-   - controls.js
-   - charts.js
-   ========================================================= */
+   Numerical simulation using:
+   - Nonlinear double-pendulum equations
+   - 4th-order Runge-Kutta integration
+   - HTML Canvas visualization
+   - Real-time parameter updates
+   ============================================================ */
 
 
-/* =========================================================
-   CANVAS
-   ========================================================= */
+/* ============================================================
+   1. CANVAS VARIABLES
+   ============================================================ */
 
 let pendulumCanvas = null;
-let pendulumCtx = null;
+let ctx = null;
 
 
-/* =========================================================
-   SIMULATION STATE
-   ========================================================= */
+/* ============================================================
+   2. SIMULATION STATE
+   ============================================================ */
 
 let simulationState = {
     theta1: degreesToRadians(30),
@@ -41,41 +31,59 @@ let simulationState = {
 };
 
 
-/* =========================================================
-   SIMULATION SETTINGS
-   ========================================================= */
+/* ============================================================
+   3. SIMULATION CONFIGURATION
+   ============================================================ */
 
 const SIMULATION_CONFIG = {
 
-    // Physics integration time step
+    /*
+       Numerical integration time step.
+       Smaller value = better accuracy.
+    */
+
     dt: 0.002,
 
-    // Maximum number of physics steps in one animation frame
+    /*
+       Maximum number of integration steps
+       performed during one animation frame.
+    */
+
     maxSubSteps: 100,
 
-    // Maximum time accumulated per frame
+    /*
+       Maximum real-time frame interval.
+    */
+
     maxFrameTime: 0.05,
 
-    // Initial simulation speed
+    /*
+       Default simulation speed.
+    */
+
     speed: 1.0,
 
-    // Trail maximum points
+    /*
+       Maximum number of trail points.
+    */
+
     maxTrailPoints: 1000,
 
-    // Canvas drawing
-    pivotRadius: 7,
+    /*
+       Visual dimensions.
+    */
 
-    bob1Radius: 13,
+    bobRadius: 12,
 
-    bob2Radius: 16,
+    linkWidth: 5,
 
-    linkWidth: 5
+    pivotRadius: 7
 };
 
 
-/* =========================================================
-   RUNTIME VARIABLES
-   ========================================================= */
+/* ============================================================
+   4. SIMULATION VARIABLES
+   ============================================================ */
 
 let simulationTime = 0;
 
@@ -89,176 +97,186 @@ let accumulatedTime = 0;
 
 let simulationSpeed = 1.0;
 
-let trailEnabled = false;
+let trailEnabled = true;
 
 let trailPoints = [];
 
-let initialEnergy = null;
-
-let lastChartUpdateTime = 0;
+let initialEnergy = 0;
 
 
-/* =========================================================
-   INITIALIZATION
-   ========================================================= */
+/* ============================================================
+   5. INITIALIZE SIMULATION
+   ============================================================ */
 
 function initializeSimulation() {
+
+    console.log("Initializing simulation engine...");
+
+
+    /*
+       Find canvas
+    */
 
     pendulumCanvas =
         document.getElementById("pendulumCanvas");
 
+
     if (!pendulumCanvas) {
 
         console.error(
-            "Canvas #pendulumCanvas was not found."
+            "ERROR: pendulumCanvas not found."
         );
 
         return;
     }
 
 
-    pendulumCtx =
+    /*
+       Get drawing context
+    */
+
+    ctx =
         pendulumCanvas.getContext("2d");
 
 
+    if (!ctx) {
+
+        console.error(
+            "ERROR: Canvas 2D context unavailable."
+        );
+
+        return;
+    }
+
+
     /*
-       Set canvas resolution according to
-       its displayed size while preserving
-       high-DPI rendering.
+       Configure canvas
     */
 
-    resizeCanvasForDPI();
+    resizeCanvas();
 
 
     /*
-       Get current parameters from controls.js
+       Create initial state
     */
 
-    const params =
+    const parameters =
         getCurrentSimulationParameters();
 
 
-    /*
-       Initialize state
-    */
-
     simulationState =
-        createInitialState(params);
+        createInitialState(parameters);
+
+
+    simulationTime = 0;
+
+    accumulatedTime = 0;
+
+    trailPoints = [];
 
 
     /*
        Calculate initial energy
     */
 
-    const energy =
-        calculateEnergy(
-            simulationState,
-            params
-        );
+    if (
+        typeof calculateEnergy ===
+        "function"
+    ) {
 
-
-    initialEnergy =
-        energy.totalEnergy;
+        initialEnergy =
+            calculateEnergy(
+                simulationState,
+                parameters
+            );
+    }
 
 
     /*
        Draw initial configuration
     */
 
-    drawPendulum();
+    updateStaticSimulation();
 
 
     /*
-       Update result cards
+       Set status
     */
 
-    updateSimulationResults();
-
-
-    /*
-       Update time
-    */
-
-    updateTimeDisplay(
-        simulationTime
+    updateSimulationCanvasStatus(
+        "ready",
+        "Ready"
     );
 
 
     console.log(
-        "Double Pendulum Simulation Engine Loaded"
+        "Simulation engine initialized successfully."
     );
 }
 
 
-/* =========================================================
-   GET PARAMETERS
-   ========================================================= */
+/* ============================================================
+   6. GET CURRENT PARAMETERS
+   ============================================================ */
 
 function getCurrentSimulationParameters() {
 
     /*
-       controls.js provides getSimulationParameters().
+       Prefer controls.js
     */
 
-    if (typeof getSimulationParameters === "function") {
+    if (
+        typeof getSimulationParameters ===
+        "function"
+    ) {
 
-        const p =
-            getSimulationParameters();
-
-        return {
-
-            m1: Number(p.m1),
-            m2: Number(p.m2),
-
-            l1: Number(p.l1),
-            l2: Number(p.l2),
-
-            g: Number(p.g),
-
-            speed:
-                Number(p.speed || simulationSpeed)
-        };
+        return getSimulationParameters();
     }
 
 
     /*
-       Fallback parameters
-       in case controls.js is not ready.
+       Fallback values
     */
 
     return {
 
         m1: 1.0,
+
         m2: 1.0,
 
         l1: 0.8,
+
         l2: 0.8,
+
+        theta1: 30.0,
+
+        theta2: 40.0,
 
         g: 9.81,
 
-        speed: simulationSpeed
+        speed: 1.0
     };
 }
 
 
-/* =========================================================
-   CREATE INITIAL STATE
-   ========================================================= */
+/* ============================================================
+   7. CREATE INITIAL STATE
+   ============================================================ */
 
-function createInitialState(params) {
+function createInitialState(parameters) {
 
     return {
 
         theta1:
             degreesToRadians(
-                Number(params.theta1 || 30)
+                parameters.theta1
             ),
 
         omega1: 0,
 
         theta2:
             degreesToRadians(
-                Number(params.theta2 || 40)
+                parameters.theta2
             ),
 
         omega2: 0
@@ -266,9 +284,9 @@ function createInitialState(params) {
 }
 
 
-/* =========================================================
-   STATE CLONING
-   ========================================================= */
+/* ============================================================
+   8. CLONE STATE
+   ============================================================ */
 
 function cloneState(state) {
 
@@ -285,68 +303,38 @@ function cloneState(state) {
 }
 
 
-/* =========================================================
-   STATE ADDITION
-   ========================================================= */
+/* ============================================================
+   9. ADD STATES
+   ============================================================ */
 
-function addState(
-    state,
-    derivative,
-    scale
-) {
+function addState(state, derivative, factor) {
 
     return {
 
         theta1:
             state.theta1 +
-            derivative.theta1 * scale,
+            derivative.theta1 * factor,
 
         omega1:
             state.omega1 +
-            derivative.omega1 * scale,
+            derivative.omega1 * factor,
 
         theta2:
             state.theta2 +
-            derivative.theta2 * scale,
+            derivative.theta2 * factor,
 
         omega2:
             state.omega2 +
-            derivative.omega2 * scale
+            derivative.omega2 * factor
     };
 }
 
 
-/* =========================================================
-   RK4 INTEGRATION
-   ========================================================= */
+/* ============================================================
+   10. RK4 INTEGRATION
+   ============================================================ */
 
-/**
- * Fourth-order Runge-Kutta integration.
- *
- * State:
- *
- * x = [theta1, omega1, theta2, omega2]
- *
- * dx/dt =
- *
- * [omega1, alpha1, omega2, alpha2]
- *
- * RK4:
- *
- * k1 = f(x)
- * k2 = f(x + dt*k1/2)
- * k3 = f(x + dt*k2/2)
- * k4 = f(x + dt*k3)
- *
- * x_new =
- * x + dt/6*(k1 + 2k2 + 2k3 + k4)
- */
-
-function rk4Step(
-    state,
-    params,
-    dt
-) {
+function rk4Step(state, dt, parameters) {
 
     /*
        k1
@@ -355,7 +343,7 @@ function rk4Step(
     const k1 =
         calculateDerivatives(
             state,
-            params
+            parameters
         );
 
 
@@ -373,7 +361,7 @@ function rk4Step(
     const k2 =
         calculateDerivatives(
             state2,
-            params
+            parameters
         );
 
 
@@ -391,7 +379,7 @@ function rk4Step(
     const k3 =
         calculateDerivatives(
             state3,
-            params
+            parameters
         );
 
 
@@ -409,84 +397,87 @@ function rk4Step(
     const k4 =
         calculateDerivatives(
             state4,
-            params
+            parameters
         );
 
 
     /*
-       Combine RK4 terms
+       Final RK4 state
     */
 
-    const newState = {
+    return {
 
         theta1:
             state.theta1 +
-            (dt / 6) *
+            dt *
             (
                 k1.theta1 +
                 2 * k2.theta1 +
                 2 * k3.theta1 +
                 k4.theta1
-            ),
+            ) / 6,
 
         omega1:
             state.omega1 +
-            (dt / 6) *
+            dt *
             (
                 k1.omega1 +
                 2 * k2.omega1 +
                 2 * k3.omega1 +
                 k4.omega1
-            ),
+            ) / 6,
 
         theta2:
             state.theta2 +
-            (dt / 6) *
+            dt *
             (
                 k1.theta2 +
                 2 * k2.theta2 +
                 2 * k3.theta2 +
                 k4.theta2
-            ),
+            ) / 6,
 
         omega2:
             state.omega2 +
-            (dt / 6) *
+            dt *
             (
                 k1.omega2 +
                 2 * k2.omega2 +
                 2 * k3.omega2 +
                 k4.omega2
-            )
+            ) / 6
     };
-
-
-    /*
-       Keep angles numerically bounded.
-    */
-
-    newState.theta1 =
-        normalizeAngle(
-            newState.theta1
-        );
-
-    newState.theta2 =
-        normalizeAngle(
-            newState.theta2
-        );
-
-
-    return newState;
 }
 
 
-/* =========================================================
-   START SIMULATION
-   ========================================================= */
+/* ============================================================
+   11. START SIMULATION
+   ============================================================ */
 
 function startSimulationEngineCore() {
 
     if (simulationRunning) {
+
+        return;
+    }
+
+
+    /*
+       Make sure engine exists
+    */
+
+    if (!pendulumCanvas || !ctx) {
+
+        initializeSimulation();
+    }
+
+
+    if (!pendulumCanvas || !ctx) {
+
+        console.error(
+            "Cannot start simulation: canvas unavailable."
+        );
+
         return;
     }
 
@@ -498,13 +489,9 @@ function startSimulationEngineCore() {
     accumulatedTime = 0;
 
 
-    /*
-       Update status
-    */
-
     updateSimulationCanvasStatus(
         "running",
-        "Simulation Running"
+        "Running"
     );
 
 
@@ -512,31 +499,28 @@ function startSimulationEngineCore() {
        Start animation loop
     */
 
-    animationFrameId =
-        requestAnimationFrame(
-            simulationAnimationLoop
-        );
+    if (animationFrameId === null) {
+
+        animationFrameId =
+            requestAnimationFrame(
+                simulationAnimationLoop
+            );
+    }
+
+
+    console.log(
+        "Double pendulum simulation started."
+    );
 }
 
 
-/* =========================================================
-   PAUSE SIMULATION
-   ========================================================= */
+/* ============================================================
+   12. PAUSE SIMULATION
+   ============================================================ */
 
 function pauseSimulationEngineCore() {
 
     simulationRunning = false;
-
-
-    if (animationFrameId !== null) {
-
-        cancelAnimationFrame(
-            animationFrameId
-        );
-
-        animationFrameId = null;
-    }
-
 
     lastFrameTime = null;
 
@@ -545,41 +529,8 @@ function pauseSimulationEngineCore() {
 
     updateSimulationCanvasStatus(
         "paused",
-        "Simulation Paused"
+        "Paused"
     );
-
-
-    /*
-       Draw the latest state
-    */
-
-    drawPendulum();
-
-
-    /*
-       Force chart update
-    */
-
-    if (
-        typeof forceChartUpdate === "function"
-    ) {
-
-        forceChartUpdate();
-    }
-}
-
-
-/* =========================================================
-   RESET SIMULATION
-   ========================================================= */
-
-function resetSimulationEngineCore() {
-
-    /*
-       Stop simulation
-    */
-
-    simulationRunning = false;
 
 
     if (animationFrameId !== null) {
@@ -592,75 +543,89 @@ function resetSimulationEngineCore() {
     }
 
 
+    console.log(
+        "Double pendulum simulation paused."
+    );
+}
+
+
+/* ============================================================
+   13. RESET SIMULATION
+   ============================================================ */
+
+function resetSimulationEngineCore() {
+
+    /*
+       Stop animation
+    */
+
+    simulationRunning = false;
+
     lastFrameTime = null;
 
     accumulatedTime = 0;
 
 
+    if (animationFrameId !== null) {
+
+        cancelAnimationFrame(
+            animationFrameId
+        );
+
+        animationFrameId = null;
+    }
+
+
     /*
-       Get current parameters.
+       Get current parameters
     */
 
-    const params =
+    const parameters =
         getCurrentSimulationParameters();
 
 
     /*
-       Recreate initial state.
+       Reset state
     */
 
     simulationState =
         createInitialState(
-            params
+            parameters
         );
 
 
-    /*
-       Reset time.
-    */
-
     simulationTime = 0;
-
-
-    /*
-       Clear trail.
-    */
 
     trailPoints = [];
 
 
     /*
-       Calculate initial energy.
+       Calculate initial energy
     */
 
-    const energy =
-        calculateEnergy(
-            simulationState,
-            params
-        );
+    if (
+        typeof calculateEnergy ===
+        "function"
+    ) {
 
-
-    initialEnergy =
-        energy.totalEnergy;
+        initialEnergy =
+            calculateEnergy(
+                simulationState,
+                parameters
+            );
+    }
 
 
     /*
-       Draw.
+       Redraw
     */
 
-    drawPendulum();
+    updateStaticSimulation();
 
 
     /*
-       Update UI.
+       Update status
     */
-
-    updateSimulationResults();
-
-    updateTimeDisplay(
-        simulationTime
-    );
-
 
     updateSimulationCanvasStatus(
         "ready",
@@ -668,38 +633,31 @@ function resetSimulationEngineCore() {
     );
 
 
-    /*
-       Force chart update.
-    */
-
-    if (
-        typeof forceChartUpdate === "function"
-    ) {
-
-        forceChartUpdate();
-    }
+    console.log(
+        "Double pendulum simulation reset."
+    );
 }
 
 
-/* =========================================================
-   SINGLE SIMULATION STEP
-   ========================================================= */
+/* ============================================================
+   14. PERFORM ONE SIMULATION STEP
+   ============================================================ */
 
 function performSimulationStep() {
 
-    const params =
+    const parameters =
         getCurrentSimulationParameters();
 
 
     /*
-       Perform exactly one RK4 physics step.
+       Perform one RK4 step
     */
 
     simulationState =
         rk4Step(
             simulationState,
-            params,
-            SIMULATION_CONFIG.dt
+            SIMULATION_CONFIG.dt,
+            parameters
         );
 
 
@@ -708,79 +666,75 @@ function performSimulationStep() {
 
 
     /*
-       Update trail.
+       Update trail
     */
 
     updateTrail();
 
 
     /*
-       Update result cards.
+       Update display
     */
 
     updateSimulationResults();
 
 
     /*
-       Add data to charts.
-    */
-
-    addCurrentDataToCharts();
-
-
-    /*
-       Draw.
+       Update canvas
     */
 
     drawPendulum();
 
 
     /*
-       Update time.
+       Add data to charts
     */
 
-    updateTimeDisplay(
-        simulationTime
-    );
+    addCurrentDataToCharts();
 }
 
 
-/* =========================================================
-   ANIMATION LOOP
-   ========================================================= */
+/* ============================================================
+   15. MAIN ANIMATION LOOP
+   ============================================================ */
 
-function simulationAnimationLoop(
-    currentTime
-) {
+function simulationAnimationLoop(timestamp) {
+
+    /*
+       If paused, stop loop.
+    */
 
     if (!simulationRunning) {
+
+        animationFrameId = null;
+
         return;
     }
 
 
     /*
-       Calculate real elapsed time.
+       Initialize frame timing
     */
 
     if (lastFrameTime === null) {
 
-        lastFrameTime =
-            currentTime;
+        lastFrameTime = timestamp;
     }
 
 
+    /*
+       Calculate real elapsed time
+    */
+
     let frameTime =
-        (currentTime - lastFrameTime) /
-        1000;
+        (timestamp - lastFrameTime) / 1000;
 
 
-    lastFrameTime =
-        currentTime;
+    lastFrameTime = timestamp;
 
 
     /*
-       Protect simulation from
-       huge time jumps.
+       Prevent huge time jumps
     */
 
     frameTime =
@@ -791,47 +745,74 @@ function simulationAnimationLoop(
 
 
     /*
-       Apply simulation speed.
+       Apply simulation speed
     */
 
-    accumulatedTime +=
-        frameTime *
-        simulationSpeed;
+    frameTime *= simulationSpeed;
+
+
+    accumulatedTime += frameTime;
 
 
     /*
-       Run fixed-size physics steps.
+       Number of physics steps
     */
 
     let subSteps = 0;
 
 
+    /*
+       Integrate until accumulated time
+       is consumed.
+    */
+
     while (
         accumulatedTime >=
-            SIMULATION_CONFIG.dt &&
-
+        SIMULATION_CONFIG.dt
+        &&
         subSteps <
-            SIMULATION_CONFIG.maxSubSteps
+        SIMULATION_CONFIG.maxSubSteps
     ) {
 
-        performSimulationStep();
+        const parameters =
+            getCurrentSimulationParameters();
+
+
+        simulationState =
+            rk4Step(
+                simulationState,
+                SIMULATION_CONFIG.dt,
+                parameters
+            );
+
+
+        simulationTime +=
+            SIMULATION_CONFIG.dt;
+
 
         accumulatedTime -=
             SIMULATION_CONFIG.dt;
+
 
         subSteps++;
     }
 
 
     /*
-       Draw once per animation frame.
+       Update visualization
     */
+
+    updateTrail();
+
+    updateSimulationResults();
 
     drawPendulum();
 
+    addCurrentDataToCharts();
+
 
     /*
-       Continue animation.
+       Continue animation
     */
 
     animationFrameId =
@@ -841,33 +822,39 @@ function simulationAnimationLoop(
 }
 
 
-/* =========================================================
-   SPEED CONTROL
-   ========================================================= */
+/* ============================================================
+   16. SET SIMULATION SPEED
+   ============================================================ */
 
 function setSimulationSpeed(speed) {
 
     const value =
-        Number(speed);
+        parseFloat(speed);
 
 
-    if (
-        !Number.isFinite(value) ||
-        value <= 0
-    ) {
+    if (!Number.isFinite(value)) {
 
-        simulationSpeed = 1.0;
-
-    } else {
-
-        simulationSpeed = value;
+        return;
     }
+
+
+    simulationSpeed =
+        Math.max(
+            0.1,
+            Math.min(5.0, value)
+        );
+
+
+    console.log(
+        "Simulation speed:",
+        simulationSpeed
+    );
 }
 
 
-/* =========================================================
-   TRAIL CONTROL
-   ========================================================= */
+/* ============================================================
+   17. SET TRAIL ENABLED
+   ============================================================ */
 
 function setTrailEnabled(enabled) {
 
@@ -885,38 +872,56 @@ function setTrailEnabled(enabled) {
 }
 
 
-/* =========================================================
-   TRAIL UPDATE
-   ========================================================= */
+/* ============================================================
+   18. UPDATE TRAIL
+   ============================================================ */
 
 function updateTrail() {
 
     if (!trailEnabled) {
+
         return;
     }
 
 
-    const params =
+    if (!pendulumCanvas) {
+
+        return;
+    }
+
+
+    const parameters =
         getCurrentSimulationParameters();
 
 
     const positions =
         calculatePositions(
             simulationState,
-            params
+            parameters
         );
 
+
+    if (!positions) {
+
+        return;
+    }
+
+
+    /*
+       Store second bob position.
+    */
 
     trailPoints.push({
 
         x: positions.x2,
 
         y: positions.y2
+
     });
 
 
     /*
-       Prevent unlimited memory usage.
+       Limit trail size.
     */
 
     if (
@@ -929,56 +934,91 @@ function updateTrail() {
 }
 
 
-/* =========================================================
-   STATIC SIMULATION UPDATE
-   ========================================================= */
-
-/**
- * Called when the user changes parameters
- * while simulation is not running.
- */
+/* ============================================================
+   19. UPDATE STATIC SIMULATION
+   ============================================================ */
 
 function updateStaticSimulation() {
 
+    /*
+       If simulation is running,
+       don't reset its state.
+    */
+
     if (simulationRunning) {
+
         return;
     }
 
 
-    const params =
+    const parameters =
         getCurrentSimulationParameters();
 
 
     /*
-       Update initial angles.
+       Update speed
+    */
+
+    if (
+        Number.isFinite(parameters.speed)
+    ) {
+
+        setSimulationSpeed(
+            parameters.speed
+        );
+    }
+
+
+    /*
+       Reset initial state when parameters
+       change while simulation is stopped.
     */
 
     simulationState =
         createInitialState(
-            params
+            parameters
         );
 
 
     simulationTime = 0;
 
-
     trailPoints = [];
 
 
-    const energy =
-        calculateEnergy(
-            simulationState,
-            params
-        );
+    /*
+       Recalculate energy
+    */
+
+    if (
+        typeof calculateEnergy ===
+        "function"
+    ) {
+
+        initialEnergy =
+            calculateEnergy(
+                simulationState,
+                parameters
+            );
+    }
 
 
-    initialEnergy =
-        energy.totalEnergy;
+    /*
+       Update results
+    */
 
+    updateSimulationResults();
+
+
+    /*
+       Draw
+    */
 
     drawPendulum();
 
-    updateSimulationResults();
+
+    /*
+       Update time
+    */
 
     updateTimeDisplay(
         simulationTime
@@ -986,93 +1026,111 @@ function updateStaticSimulation() {
 }
 
 
-/* =========================================================
-   UPDATE RESULTS
-   ========================================================= */
+/* ============================================================
+   20. UPDATE SIMULATION RESULTS
+   ============================================================ */
 
 function updateSimulationResults() {
 
-    const params =
+    const parameters =
         getCurrentSimulationParameters();
+
+
+    /*
+       Calculate physics
+    */
+
+    if (
+        typeof calculatePhysics !==
+        "function"
+    ) {
+
+        console.error(
+            "calculatePhysics() is not available."
+        );
+
+        return;
+    }
 
 
     const physics =
         calculatePhysics(
             simulationState,
-            params
+            parameters
         );
+
+
+    if (!physics) {
+
+        return;
+    }
 
 
     /*
-       Angular positions
+       Prepare results
+    */
+
+    const results = {
+
+        theta1:
+            radiansToDegrees(
+                simulationState.theta1
+            ),
+
+        theta2:
+            radiansToDegrees(
+                simulationState.theta2
+            ),
+
+        omega1:
+            simulationState.omega1,
+
+        omega2:
+            simulationState.omega2,
+
+        alpha1:
+            physics.alpha1,
+
+        alpha2:
+            physics.alpha2,
+
+        kineticEnergy:
+            physics.kineticEnergy,
+
+        potentialEnergy:
+            physics.potentialEnergy,
+
+        totalEnergy:
+            physics.totalEnergy
+    };
+
+
+    /*
+       Send to controls.js
     */
 
     if (
-        typeof updateResultDisplay === "function"
+        typeof updateResultDisplay ===
+        "function"
     ) {
 
         updateResultDisplay(
-            "resultTheta1",
-            radiansToDegrees(
-                simulationState.theta1
-            )
+            results
         );
-
-        updateResultDisplay(
-            "resultTheta2",
-            radiansToDegrees(
-                simulationState.theta2
-            )
-        );
+    }
 
 
-        /*
-           Angular velocities
-        */
+    /*
+       Update time
+    */
 
-        updateResultDisplay(
-            "resultOmega1",
-            simulationState.omega1
-        );
+    if (
+        typeof updateTimeDisplay ===
+        "function"
+    ) {
 
-        updateResultDisplay(
-            "resultOmega2",
-            simulationState.omega2
-        );
-
-
-        /*
-           Angular accelerations
-        */
-
-        updateResultDisplay(
-            "resultAlpha1",
-            physics.alpha1
-        );
-
-        updateResultDisplay(
-            "resultAlpha2",
-            physics.alpha2
-        );
-
-
-        /*
-           Energy
-        */
-
-        updateResultDisplay(
-            "resultKE",
-            physics.kineticEnergy
-        );
-
-        updateResultDisplay(
-            "resultPE",
-            physics.potentialEnergy
-        );
-
-        updateResultDisplay(
-            "resultTotalEnergy",
-            physics.totalEnergy
+        updateTimeDisplay(
+            simulationTime
         );
     }
 
@@ -1081,108 +1139,275 @@ function updateSimulationResults() {
        Energy validation
     */
 
-    if (
-        typeof updateEnergyValidation === "function"
-    ) {
-
-        updateEnergyValidation(
-            initialEnergy,
-            physics.totalEnergy
-        );
-    }
+    updateEnergyValidation(
+        physics.totalEnergy
+    );
 }
 
 
-/* =========================================================
-   ADD DATA TO CHARTS
-   ========================================================= */
+/* ============================================================
+   21. ADD DATA TO CHARTS
+   ============================================================ */
 
 function addCurrentDataToCharts() {
 
+    /*
+       Don't add data if charts are unavailable.
+    */
+
     if (
-        typeof addSimulationData !== "function"
+        typeof addSimulationData !==
+        "function"
     ) {
 
         return;
     }
 
 
-    const params =
+    const parameters =
         getCurrentSimulationParameters();
 
 
     const physics =
         calculatePhysics(
             simulationState,
-            params
+            parameters
         );
 
 
-    addSimulationData(
+    if (!physics) {
 
-        simulationTime,
+        return;
+    }
 
-        radiansToDegrees(
-            simulationState.theta1
-        ),
 
-        radiansToDegrees(
-            simulationState.theta2
-        ),
+    addSimulationData({
 
-        simulationState.omega1,
+        time:
+            simulationTime,
 
-        simulationState.omega2,
+        theta1:
+            radiansToDegrees(
+                simulationState.theta1
+            ),
 
-        physics.alpha1,
+        theta2:
+            radiansToDegrees(
+                simulationState.theta2
+            ),
 
-        physics.alpha2,
+        omega1:
+            simulationState.omega1,
 
-        physics.kineticEnergy,
+        omega2:
+            simulationState.omega2,
 
-        physics.potentialEnergy,
+        kineticEnergy:
+            physics.kineticEnergy,
 
-        physics.totalEnergy
-    );
+        potentialEnergy:
+            physics.potentialEnergy,
+
+        totalEnergy:
+            physics.totalEnergy
+
+    });
 }
 
 
-/* =========================================================
-   CANVAS DPI
-   ========================================================= */
+/* ============================================================
+   22. ENERGY VALIDATION
+   ============================================================ */
 
-function resizeCanvasForDPI() {
+function updateEnergyValidation(currentEnergy) {
 
-    if (!pendulumCanvas) {
-        return;
+    const initialElement =
+        document.getElementById(
+            "initialEnergy"
+        );
+
+    const currentElement =
+        document.getElementById(
+            "currentEnergy"
+        );
+
+    const errorElement =
+        document.getElementById(
+            "energyError"
+        );
+
+    const statusElement =
+        document.getElementById(
+            "energyStatus"
+        );
+
+    const statusTextElement =
+        document.getElementById(
+            "energyStatusText"
+        );
+
+
+    /*
+       Initial energy
+    */
+
+    if (initialElement) {
+
+        initialElement.textContent =
+            initialEnergy.toFixed(4) +
+            " J";
     }
 
 
-    const rect =
-        pendulumCanvas.getBoundingClientRect();
+    /*
+       Current energy
+    */
+
+    if (currentElement) {
+
+        currentElement.textContent =
+            currentEnergy.toFixed(4) +
+            " J";
+    }
+
+
+    /*
+       Calculate error
+    */
+
+    let error = 0;
 
 
     if (
-        rect.width === 0 ||
-        rect.height === 0
+        Math.abs(initialEnergy) >
+        1e-12
     ) {
+
+        error =
+            Math.abs(
+                (
+                    currentEnergy -
+                    initialEnergy
+                ) /
+                initialEnergy
+            ) * 100;
+    }
+
+
+    if (errorElement) {
+
+        errorElement.textContent =
+            error.toFixed(4) +
+            " %";
+    }
+
+
+    /*
+       Determine validation status
+    */
+
+    let status = "good";
+
+    let message =
+        "Energy conserved";
+
+
+    if (error > 1.0) {
+
+        status = "warning";
+
+        message =
+            "Small numerical energy variation";
+
+    }
+
+
+    if (error > 5.0) {
+
+        status = "error";
+
+        message =
+            "Significant energy error";
+    }
+
+
+    if (statusElement) {
+
+        statusElement.className =
+            "energy-status " +
+            status;
+    }
+
+
+    if (statusTextElement) {
+
+        statusTextElement.textContent =
+            message;
+    }
+}
+
+
+/* ============================================================
+   23. CANVAS RESIZE
+   ============================================================ */
+
+function resizeCanvas() {
+
+    if (!pendulumCanvas || !ctx) {
 
         return;
     }
+
+
+    /*
+       Support high-DPI displays.
+    */
+
+    const rect =
+        pendulumCanvas.getBoundingClientRect();
 
 
     const dpr =
         window.devicePixelRatio || 1;
 
 
+    const width =
+        rect.width ||
+        pendulumCanvas.width;
+
+
+    const height =
+        rect.height ||
+        pendulumCanvas.height;
+
+
+    /*
+       Set actual canvas resolution.
+    */
+
     pendulumCanvas.width =
-        rect.width * dpr;
+        width * dpr;
 
     pendulumCanvas.height =
-        rect.height * dpr;
+        height * dpr;
 
 
-    pendulumCtx.setTransform(
+    /*
+       Restore CSS size.
+    */
+
+    pendulumCanvas.style.width =
+        width + "px";
+
+    pendulumCanvas.style.height =
+        height + "px";
+
+
+    /*
+       Scale drawing coordinates.
+    */
+
+    ctx.setTransform(
         dpr,
         0,
         0,
@@ -1190,19 +1415,19 @@ function resizeCanvasForDPI() {
         0,
         0
     );
+
+
+    drawPendulum();
 }
 
 
-/* =========================================================
-   CANVAS CLEAR
-   ========================================================= */
+/* ============================================================
+   24. CLEAR CANVAS
+   ============================================================ */
 
 function clearCanvas() {
 
-    if (
-        !pendulumCtx ||
-        !pendulumCanvas
-    ) {
+    if (!pendulumCanvas || !ctx) {
 
         return;
     }
@@ -1212,7 +1437,7 @@ function clearCanvas() {
         pendulumCanvas.getBoundingClientRect();
 
 
-    pendulumCtx.clearRect(
+    ctx.clearRect(
         0,
         0,
         rect.width,
@@ -1221,108 +1446,118 @@ function clearCanvas() {
 }
 
 
-/* =========================================================
-   DRAW PENDULUM
-   ========================================================= */
+/* ============================================================
+   25. DRAW PENDULUM
+   ============================================================ */
 
 function drawPendulum() {
 
-    if (
-        !pendulumCanvas ||
-        !pendulumCtx
-    ) {
+    if (!pendulumCanvas || !ctx) {
 
         return;
     }
 
 
-    const params =
+    const parameters =
         getCurrentSimulationParameters();
 
 
-    const positions =
-        calculatePositions(
-            simulationState,
-            params
-        );
-
+    /*
+       Canvas dimensions
+    */
 
     const rect =
         pendulumCanvas.getBoundingClientRect();
 
 
-    const canvasWidth =
-        rect.width;
+    const width =
+        rect.width ||
+        1050;
 
 
-    const canvasHeight =
-        rect.height;
+    const height =
+        rect.height ||
+        400;
 
 
-    clearCanvas();
+    /*
+       Clear
+    */
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
 
 
     /*
        Background
     */
 
-    drawCanvasBackground(
-        canvasWidth,
-        canvasHeight
+    drawBackground(
+        width,
+        height
     );
 
 
     /*
-       Determine scale.
+       Calculate physical positions
+    */
 
-       The complete pendulum length is:
+    const positions =
+        calculatePositions(
+            simulationState,
+            parameters
+        );
 
-       L = l1 + l2
 
-       We keep sufficient margin around
-       the pendulum.
+    if (!positions) {
+
+        return;
+    }
+
+
+    /*
+       Scale physical dimensions to canvas.
     */
 
     const totalLength =
-        params.l1 +
-        params.l2;
+        parameters.l1 +
+        parameters.l2;
+
+
+    const availableHeight =
+        height * 0.72;
 
 
     const scale =
         Math.min(
-            canvasHeight * 0.40 /
-                totalLength,
+            availableHeight /
+                Math.max(totalLength, 0.1),
 
-            canvasWidth * 0.35 /
-                totalLength
+            width * 0.32 /
+                Math.max(totalLength, 0.1)
         );
 
 
     /*
-       Pivot position.
+       Pivot location
     */
 
     const pivotX =
-        canvasWidth / 2;
-
+        width * 0.5;
 
     const pivotY =
-        canvasHeight * 0.20;
+        height * 0.18;
 
 
     /*
-       Convert physical coordinates
-       to canvas coordinates.
-
-       Physics:
-       y positive upward.
-
-       Canvas:
-       y positive downward.
-
-       Therefore:
-
-       canvasY = pivotY - y*scale
+       Convert positions.
+       Physical y is positive upward/downward
+       according to our model, so Canvas y
+       is inverted.
     */
 
     const x1 =
@@ -1346,7 +1581,7 @@ function drawPendulum() {
 
 
     /*
-       Draw trail first.
+       Draw trail first
     */
 
     if (trailEnabled) {
@@ -1360,17 +1595,7 @@ function drawPendulum() {
 
 
     /*
-       Draw pivot support.
-    */
-
-    drawPivotSupport(
-        pivotX,
-        pivotY
-    );
-
-
-    /*
-       Draw first link.
+       Draw first link
     */
 
     drawLink(
@@ -1382,7 +1607,7 @@ function drawPendulum() {
 
 
     /*
-       Draw second link.
+       Draw second link
     */
 
     drawLink(
@@ -1394,13 +1619,23 @@ function drawPendulum() {
 
 
     /*
-       Draw masses.
+       Draw pivot
+    */
+
+    drawPivot(
+        pivotX,
+        pivotY
+    );
+
+
+    /*
+       Draw bobs
     */
 
     drawBob(
         x1,
         y1,
-        SIMULATION_CONFIG.bob1Radius,
+        parameters.m1,
         "m₁"
     );
 
@@ -1408,20 +1643,20 @@ function drawPendulum() {
     drawBob(
         x2,
         y2,
-        SIMULATION_CONFIG.bob2Radius,
+        parameters.m2,
         "m₂"
     );
 
 
     /*
-       Draw angle indicators.
+       Draw angle indicators
     */
 
     drawAngleIndicator(
         pivotX,
         pivotY,
         simulationState.theta1,
-        Math.min(55, params.l1 * scale * 0.25)
+        55
     );
 
 
@@ -1429,31 +1664,25 @@ function drawPendulum() {
         x1,
         y1,
         simulationState.theta2,
-        Math.min(45, params.l2 * scale * 0.25)
+        45
     );
 }
 
 
-/* =========================================================
-   BACKGROUND
-   ========================================================= */
+/* ============================================================
+   26. DRAW BACKGROUND
+   ============================================================ */
 
-function drawCanvasBackground(
-    width,
-    height
-) {
-
-    pendulumCtx.save();
-
+function drawBackground(width, height) {
 
     /*
        Background
     */
 
-    pendulumCtx.fillStyle =
-        "#f8fafc";
+    ctx.fillStyle =
+        "#ffffff";
 
-    pendulumCtx.fillRect(
+    ctx.fillRect(
         0,
         0,
         width,
@@ -1462,13 +1691,13 @@ function drawCanvasBackground(
 
 
     /*
-       Engineering grid
+       Grid
     */
 
-    pendulumCtx.strokeStyle =
-        "#e2e8f0";
+    ctx.strokeStyle =
+        "#eeeeee";
 
-    pendulumCtx.lineWidth = 1;
+    ctx.lineWidth = 1;
 
 
     const gridSize = 25;
@@ -1480,19 +1709,19 @@ function drawCanvasBackground(
         x += gridSize
     ) {
 
-        pendulumCtx.beginPath();
+        ctx.beginPath();
 
-        pendulumCtx.moveTo(
+        ctx.moveTo(
             x,
             0
         );
 
-        pendulumCtx.lineTo(
+        ctx.lineTo(
             x,
             height
         );
 
-        pendulumCtx.stroke();
+        ctx.stroke();
     }
 
 
@@ -1502,338 +1731,226 @@ function drawCanvasBackground(
         y += gridSize
     ) {
 
-        pendulumCtx.beginPath();
+        ctx.beginPath();
 
-        pendulumCtx.moveTo(
+        ctx.moveTo(
             0,
             y
         );
 
-        pendulumCtx.lineTo(
+        ctx.lineTo(
             width,
             y
         );
 
-        pendulumCtx.stroke();
+        ctx.stroke();
     }
-
-
-    pendulumCtx.restore();
 }
 
 
-/* =========================================================
-   PIVOT SUPPORT
-   ========================================================= */
+/* ============================================================
+   27. DRAW LINK
+   ============================================================ */
 
-function drawPivotSupport(
-    x,
-    y
+function drawLink(
+    xStart,
+    yStart,
+    xEnd,
+    yEnd
 ) {
 
-    pendulumCtx.save();
+    ctx.beginPath();
 
-
-    /*
-       Vertical support
-    */
-
-    pendulumCtx.strokeStyle =
-        "#334155";
-
-    pendulumCtx.lineWidth = 4;
-
-    pendulumCtx.beginPath();
-
-    pendulumCtx.moveTo(
-        x,
-        y - 65
+    ctx.moveTo(
+        xStart,
+        yStart
     );
 
-    pendulumCtx.lineTo(
-        x,
-        y
+    ctx.lineTo(
+        xEnd,
+        yEnd
     );
 
-    pendulumCtx.stroke();
+
+    ctx.strokeStyle =
+        "#222222";
+
+    ctx.lineWidth =
+        SIMULATION_CONFIG.linkWidth;
+
+    ctx.lineCap =
+        "round";
+
+    ctx.stroke();
+}
 
 
-    /*
-       Horizontal mounting plate
-    */
+/* ============================================================
+   28. DRAW PIVOT
+   ============================================================ */
 
-    pendulumCtx.lineWidth = 6;
+function drawPivot(x, y) {
 
-    pendulumCtx.beginPath();
+    ctx.beginPath();
 
-    pendulumCtx.moveTo(
-        x - 45,
-        y - 65
-    );
-
-    pendulumCtx.lineTo(
-        x + 45,
-        y - 65
-    );
-
-    pendulumCtx.stroke();
-
-
-    /*
-       Pivot
-    */
-
-    pendulumCtx.fillStyle =
-        "#0f172a";
-
-    pendulumCtx.beginPath();
-
-    pendulumCtx.arc(
+    ctx.arc(
         x,
         y,
         SIMULATION_CONFIG.pivotRadius,
         0,
-        2 * Math.PI
+        Math.PI * 2
     );
 
-    pendulumCtx.fill();
+
+    ctx.fillStyle =
+        "#222222";
+
+    ctx.fill();
 
 
-    pendulumCtx.restore();
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y,
+        SIMULATION_CONFIG.pivotRadius + 3,
+        0,
+        Math.PI * 2
+    );
+
+
+    ctx.strokeStyle =
+        "#555555";
+
+    ctx.lineWidth = 2;
+
+    ctx.stroke();
 }
 
 
-/* =========================================================
-   LINK
-   ========================================================= */
-
-function drawLink(
-    x1,
-    y1,
-    x2,
-    y2
-) {
-
-    pendulumCtx.save();
-
-
-    /*
-       Outer link
-    */
-
-    pendulumCtx.strokeStyle =
-        "#0f766e";
-
-    pendulumCtx.lineWidth =
-        SIMULATION_CONFIG.linkWidth;
-
-    pendulumCtx.lineCap =
-        "round";
-
-
-    pendulumCtx.beginPath();
-
-    pendulumCtx.moveTo(
-        x1,
-        y1
-    );
-
-    pendulumCtx.lineTo(
-        x2,
-        y2
-    );
-
-    pendulumCtx.stroke();
-
-
-    /*
-       Highlight
-    */
-
-    pendulumCtx.strokeStyle =
-        "#14b8a6";
-
-    pendulumCtx.lineWidth = 2;
-
-
-    pendulumCtx.beginPath();
-
-    pendulumCtx.moveTo(
-        x1,
-        y1
-    );
-
-    pendulumCtx.lineTo(
-        x2,
-        y2
-    );
-
-    pendulumCtx.stroke();
-
-
-    pendulumCtx.restore();
-}
-
-
-/* =========================================================
-   BOB / MASS
-   ========================================================= */
+/* ============================================================
+   29. DRAW BOB
+   ============================================================ */
 
 function drawBob(
     x,
     y,
-    radius,
+    mass,
     label
 ) {
 
-    pendulumCtx.save();
+    const radius =
+        SIMULATION_CONFIG.bobRadius;
 
 
     /*
-       Shadow
+       Bob
     */
 
-    pendulumCtx.fillStyle =
-        "rgba(0,0,0,0.15)";
+    ctx.beginPath();
 
-    pendulumCtx.beginPath();
-
-    pendulumCtx.arc(
-        x + 3,
-        y + 4,
-        radius,
-        0,
-        2 * Math.PI
-    );
-
-    pendulumCtx.fill();
-
-
-    /*
-       Main mass
-    */
-
-    pendulumCtx.fillStyle =
-        "#0f766e";
-
-    pendulumCtx.beginPath();
-
-    pendulumCtx.arc(
+    ctx.arc(
         x,
         y,
         radius,
         0,
-        2 * Math.PI
+        Math.PI * 2
     );
 
-    pendulumCtx.fill();
+
+    ctx.fillStyle =
+        "#333333";
+
+    ctx.fill();
 
 
-    /*
-       Border
-    */
+    ctx.strokeStyle =
+        "#000000";
 
-    pendulumCtx.strokeStyle =
-        "#064e3b";
+    ctx.lineWidth = 2;
 
-    pendulumCtx.lineWidth = 2;
-
-    pendulumCtx.stroke();
+    ctx.stroke();
 
 
     /*
        Label
     */
 
-    pendulumCtx.fillStyle =
+    ctx.fillStyle =
         "#ffffff";
 
-    pendulumCtx.font =
+    ctx.font =
         "bold 12px Arial";
 
-    pendulumCtx.textAlign =
+    ctx.textAlign =
         "center";
 
-    pendulumCtx.textBaseline =
+    ctx.textBaseline =
         "middle";
 
 
-    pendulumCtx.fillText(
+    ctx.fillText(
         label,
         x,
         y
     );
-
-
-    pendulumCtx.restore();
 }
 
 
-/* =========================================================
-   ANGLE INDICATOR
-   ========================================================= */
+/* ============================================================
+   30. DRAW ANGLE INDICATOR
+   ============================================================ */
 
 function drawAngleIndicator(
-    originX,
-    originY,
+    x,
+    y,
     angle,
     radius
 ) {
 
-    if (radius < 5) {
-        return;
-    }
-
-
-    pendulumCtx.save();
-
-
-    pendulumCtx.strokeStyle =
-        "rgba(15,118,110,0.65)";
-
-    pendulumCtx.lineWidth = 2;
-
-
     /*
-       Downward vertical direction.
-
-       Canvas angle:
-       90 degrees corresponds to downward.
-
-       Because our physics angle is measured
-       from downward vertical:
-       canvasAngle = PI/2 + theta
+       Reference direction:
+       downward vertical.
     */
 
     const startAngle =
         Math.PI / 2;
 
 
+    /*
+       Canvas angle is clockwise relative
+       to mathematical convention.
+    */
+
     const endAngle =
-        Math.PI / 2 + angle;
+        startAngle +
+        angle;
 
 
-    pendulumCtx.beginPath();
+    ctx.beginPath();
 
-    pendulumCtx.arc(
-        originX,
-        originY,
+    ctx.arc(
+        x,
+        y,
         radius,
         startAngle,
         endAngle,
         angle < 0
     );
 
-    pendulumCtx.stroke();
 
+    ctx.strokeStyle =
+        "#888888";
 
-    pendulumCtx.restore();
+    ctx.lineWidth = 2;
+
+    ctx.stroke();
 }
 
 
-/* =========================================================
-   TRAIL
-   ========================================================= */
+/* ============================================================
+   31. DRAW TRAIL
+   ============================================================ */
 
 function drawTrail(
     pivotX,
@@ -1842,101 +1959,69 @@ function drawTrail(
 ) {
 
     if (
-        trailPoints.length < 2
+        trailPoints.length <
+        2
     ) {
 
         return;
     }
 
 
-    pendulumCtx.save();
+    ctx.beginPath();
 
 
-    pendulumCtx.lineWidth = 2;
+    for (
+        let i = 0;
+        i < trailPoints.length;
+        i++
+    ) {
 
-    pendulumCtx.strokeStyle =
-        "rgba(15,118,110,0.35)";
-
-
-    pendulumCtx.beginPath();
-
-
-    trailPoints.forEach(
-        (point, index) => {
-
-            const x =
-                pivotX +
-                point.x * scale;
+        const point =
+            trailPoints[i];
 
 
-            const y =
-                pivotY -
-                point.y * scale;
+        const x =
+            pivotX +
+            point.x * scale;
 
 
-            if (index === 0) {
+        const y =
+            pivotY -
+            point.y * scale;
 
-                pendulumCtx.moveTo(
-                    x,
-                    y
-                );
 
-            } else {
+        if (i === 0) {
 
-                pendulumCtx.lineTo(
-                    x,
-                    y
-                );
-            }
+            ctx.moveTo(
+                x,
+                y
+            );
+
+        } else {
+
+            ctx.lineTo(
+                x,
+                y
+            );
         }
-    );
-
-
-    pendulumCtx.stroke();
-
-    pendulumCtx.restore();
-}
-
-
-/* =========================================================
-   TIME DISPLAY
-   ========================================================= */
-
-function updateTimeDisplay(
-    time
-) {
-
-    if (
-        typeof window.updateTimeDisplay ===
-        "function"
-    ) {
-
-        window.updateTimeDisplay(
-            time
-        );
-
-        return;
     }
 
 
-    const element =
-        document.getElementById(
-            "timeDisplay"
-        );
+    ctx.strokeStyle =
+        "rgba(80, 80, 80, 0.35)";
 
+    ctx.lineWidth = 2;
 
-    if (element) {
+    ctx.lineCap =
+        "round";
 
-        element.textContent =
-            Number(time).toFixed(2) +
-            " s";
-    }
+    ctx.stroke();
 }
 
 
-/* =========================================================
-   STATUS
-   ========================================================= */
+/* ============================================================
+   32. CANVAS STATUS
+   ============================================================ */
 
 function updateSimulationCanvasStatus(
     status,
@@ -1949,7 +2034,7 @@ function updateSimulationCanvasStatus(
         );
 
 
-    const textElement =
+    const statusText =
         document.getElementById(
             "statusText"
         );
@@ -1963,65 +2048,27 @@ function updateSimulationCanvasStatus(
     }
 
 
-    if (textElement) {
+    if (statusText) {
 
-        textElement.textContent =
+        statusText.textContent =
             text;
     }
 }
 
 
-/* =========================================================
-   RESIZE HANDLER
-   ========================================================= */
+/* ============================================================
+   33. TIME
+   ============================================================ */
 
-function handleCanvasResize() {
+function getSimulationTime() {
 
-    if (!pendulumCanvas) {
-        return;
-    }
-
-
-    resizeCanvasForDPI();
-
-    drawPendulum();
+    return simulationTime;
 }
 
 
-/* =========================================================
-   PARAMETER CHANGE HANDLER
-   ========================================================= */
-
-function onSimulationParameterChanged() {
-
-    /*
-       Do not alter a running simulation.
-       The new parameters will be picked up
-       by the next physics step.
-    */
-
-    if (!simulationRunning) {
-
-        updateStaticSimulation();
-    }
-}
-
-
-/* =========================================================
-   RESET TRAIL
-   ========================================================= */
-
-function clearSimulationTrail() {
-
-    trailPoints = [];
-
-    drawPendulum();
-}
-
-
-/* =========================================================
-   GET CURRENT STATE
-   ========================================================= */
+/* ============================================================
+   34. STATE GETTER
+   ============================================================ */
 
 function getSimulationState() {
 
@@ -2031,19 +2078,9 @@ function getSimulationState() {
 }
 
 
-/* =========================================================
-   GET SIMULATION TIME
-   ========================================================= */
-
-function getSimulationTime() {
-
-    return simulationTime;
-}
-
-
-/* =========================================================
-   GET RUNNING STATUS
-   ========================================================= */
+/* ============================================================
+   35. RUNNING STATUS
+   ============================================================ */
 
 function isSimulationRunning() {
 
@@ -2051,272 +2088,421 @@ function isSimulationRunning() {
 }
 
 
-/* =========================================================
-   GET CURRENT PHYSICS RESULTS
-   ========================================================= */
+/* ============================================================
+   36. PHYSICS STATE
+   ============================================================ */
 
-function getCurrentPhysicsResults() {
+function getSimulationPhysics() {
 
-    const params =
+    const parameters =
         getCurrentSimulationParameters();
 
 
     return calculatePhysics(
         simulationState,
-        params
+        parameters
     );
 }
 
 
-/* =========================================================
-   DEBUG INFORMATION
-   ========================================================= */
+/* ============================================================
+   37. CHANGE PARAMETERS
+   ============================================================ */
 
-function printSimulationState() {
+function updateSimulationParameters(
+    parameters
+) {
 
-    const physics =
-        getCurrentPhysicsResults();
+    if (!parameters) {
+
+        return;
+    }
+
+
+    /*
+       Only update values that exist.
+    */
+
+    if (
+        Number.isFinite(parameters.m1)
+    ) {
+
+        simulationParameters.m1 =
+            parameters.m1;
+    }
+
+
+    if (
+        Number.isFinite(parameters.m2)
+    ) {
+
+        simulationParameters.m2 =
+            parameters.m2;
+    }
+
+
+    if (
+        Number.isFinite(parameters.l1)
+    ) {
+
+        simulationParameters.l1 =
+            parameters.l1;
+    }
+
+
+    if (
+        Number.isFinite(parameters.l2)
+    ) {
+
+        simulationParameters.l2 =
+            parameters.l2;
+    }
+
+
+    if (
+        Number.isFinite(parameters.theta1)
+    ) {
+
+        simulationParameters.theta1 =
+            parameters.theta1;
+    }
+
+
+    if (
+        Number.isFinite(parameters.theta2)
+    ) {
+
+        simulationParameters.theta2 =
+            parameters.theta2;
+    }
+
+
+    if (
+        Number.isFinite(parameters.g)
+    ) {
+
+        simulationParameters.g =
+            parameters.g;
+    }
+
+
+    if (
+        Number.isFinite(parameters.speed)
+    ) {
+
+        setSimulationSpeed(
+            parameters.speed
+        );
+    }
+
+
+    /*
+       Redraw if stopped.
+    */
+
+    if (!simulationRunning) {
+
+        updateStaticSimulation();
+    }
+}
+
+
+/* ============================================================
+   38. DEBUG FUNCTION
+   ============================================================ */
+
+function debugSimulation() {
+
+    console.log(
+        "================================"
+    );
+
+    console.log(
+        "DOUBLE PENDULUM SIMULATION DEBUG"
+    );
+
+    console.log(
+        "================================"
+    );
 
 
     console.log(
-        "========== SIMULATION STATE =========="
+        "Canvas:",
+        pendulumCanvas
+    );
+
+
+    console.log(
+        "Context:",
+        ctx
+    );
+
+
+    console.log(
+        "Running:",
+        simulationRunning
     );
 
 
     console.log(
         "Time:",
-        simulationTime.toFixed(4),
-        "s"
+        simulationTime
     );
 
 
     console.log(
-        "Theta 1:",
-        radiansToDegrees(
-            simulationState.theta1
-        ).toFixed(4),
-        "deg"
+        "State:",
+        simulationState
     );
 
 
     console.log(
-        "Omega 1:",
-        simulationState.omega1.toFixed(4),
-        "rad/s"
+        "Speed:",
+        simulationSpeed
     );
 
 
     console.log(
-        "Alpha 1:",
-        physics.alpha1.toFixed(4),
-        "rad/s²"
+        "Trail enabled:",
+        trailEnabled
     );
 
 
     console.log(
-        "Theta 2:",
-        radiansToDegrees(
-            simulationState.theta2
-        ).toFixed(4),
-        "deg"
+        "Physics function:",
+        typeof calculatePhysics
     );
 
 
     console.log(
-        "Omega 2:",
-        simulationState.omega2.toFixed(4),
-        "rad/s"
+        "Derivative function:",
+        typeof calculateDerivatives
     );
 
 
     console.log(
-        "Alpha 2:",
-        physics.alpha2.toFixed(4),
-        "rad/s²"
+        "Parameters function:",
+        typeof getSimulationParameters
     );
 
 
     console.log(
-        "Kinetic Energy:",
-        physics.kineticEnergy.toFixed(6),
-        "J"
-    );
-
-
-    console.log(
-        "Potential Energy:",
-        physics.potentialEnergy.toFixed(6),
-        "J"
-    );
-
-
-    console.log(
-        "Total Energy:",
-        physics.totalEnergy.toFixed(6),
-        "J"
-    );
-
-
-    console.log(
-        "======================================="
+        "================================"
     );
 }
 
 
-/* =========================================================
-   KEYBOARD SHORTCUTS
-   ========================================================= */
+/* ============================================================
+   39. FULLSCREEN CANVAS
+   ============================================================ */
 
-document.addEventListener(
-    "keydown",
-    function(event) {
+function toggleFullscreen() {
 
-        /*
-           Avoid shortcuts while typing.
-        */
+    if (!pendulumCanvas) {
 
-        const tag =
-            event.target.tagName
-                .toLowerCase();
-
-
-        if (
-            tag === "input" ||
-            tag === "textarea" ||
-            tag === "select"
-        ) {
-
-            return;
-        }
-
-
-        /*
-           F = fullscreen simulation
-        */
-
-        if (
-            event.key.toLowerCase() === "f"
-        ) {
-
-            toggleSimulationFullscreen();
-        }
-
-    }
-);
-
-
-/* =========================================================
-   FULLSCREEN SIMULATION
-   ========================================================= */
-
-function toggleSimulationFullscreen() {
-
-    const container =
-        document.querySelector(
-            ".simulation-container"
-        );
-
-
-    if (!container) {
         return;
     }
 
 
     if (!document.fullscreenElement) {
 
-        if (
-            container.requestFullscreen
-        ) {
+        pendulumCanvas
+            .requestFullscreen()
+            .catch(
+                error => {
 
-            container.requestFullscreen();
-        }
+                    console.error(
+                        "Fullscreen error:",
+                        error
+                    );
+
+                }
+            );
 
     } else {
 
-        if (
-            document.exitFullscreen
-        ) {
-
-            document.exitFullscreen();
-        }
+        document.exitFullscreen();
     }
 }
 
 
-/* =========================================================
-   FULLSCREEN RESIZE
-   ========================================================= */
+/* ============================================================
+   40. KEYBOARD HANDLING
+   ============================================================ */
 
-document.addEventListener(
-    "fullscreenchange",
-    function() {
+function handleSimulationKeyboard(event) {
 
-        setTimeout(
-            function() {
+    /*
+       Don't interfere with text inputs.
+    */
 
-                resizeCanvasForDPI();
+    const target =
+        event.target;
 
-                drawPendulum();
 
-            },
-            100
-        );
+    if (
+        target &&
+        (
+            target.tagName === "INPUT" ||
+            target.tagName === "TEXTAREA" ||
+            target.tagName === "SELECT"
+        )
+    ) {
+
+        return;
     }
-);
 
 
-/* =========================================================
-   WINDOW RESIZE
-   ========================================================= */
+    switch (
+        event.key.toLowerCase()
+    ) {
+
+        case " ":
+
+            event.preventDefault();
+
+
+            if (simulationRunning) {
+
+                pauseSimulationEngineCore();
+
+            } else {
+
+                startSimulationEngineCore();
+            }
+
+            break;
+
+
+        case "r":
+
+            resetSimulationEngineCore();
+
+            break;
+
+
+        case "s":
+
+            performSimulationStep();
+
+            break;
+    }
+}
+
+
+/* ============================================================
+   41. WINDOW RESIZE
+   ============================================================ */
 
 window.addEventListener(
     "resize",
-    function() {
+    function () {
 
-        handleCanvasResize();
+        resizeCanvas();
 
     }
 );
 
 
-/* =========================================================
-   DOM INITIALIZATION
-   ========================================================= */
+/* ============================================================
+   42. DOM READY
+   ============================================================ */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    console.log("Simulation.js: DOM loaded");
+        console.log(
+            "simulation.js loaded."
+        );
 
-    setTimeout(function () {
+
+        /*
+           Initialize simulation after
+           all required DOM elements exist.
+        */
 
         initializeSimulation();
 
-    }, 100);
 
-});
+        /*
+           Keyboard shortcuts.
+        */
+
+        document.addEventListener(
+            "keydown",
+            handleSimulationKeyboard
+        );
+
+    }
+);
 
 
-/* =========================================================
-   PUBLIC SIMULATION API
-   ========================================================= */
+/* ============================================================
+   43. GLOBAL EXPORTS
+   ============================================================ */
 
-/*
-   Functions used by controls.js:
+window.startSimulationEngineCore =
+    startSimulationEngineCore;
 
-   startSimulationEngineCore()
-   pauseSimulationEngineCore()
-   resetSimulationEngineCore()
-   performSimulationStep()
-   setSimulationSpeed()
-   setTrailEnabled()
-   updateStaticSimulation()
+window.pauseSimulationEngineCore =
+    pauseSimulationEngineCore;
 
-   Additional useful functions:
+window.resetSimulationEngineCore =
+    resetSimulationEngineCore;
 
-   getSimulationState()
-   getSimulationTime()
-   isSimulationRunning()
-   getCurrentPhysicsResults()
-   printSimulationState()
-   clearSimulationTrail()
-*/
+window.performSimulationStep =
+    performSimulationStep;
+
+window.setSimulationSpeed =
+    setSimulationSpeed;
+
+window.setTrailEnabled =
+    setTrailEnabled;
+
+window.updateStaticSimulation =
+    updateStaticSimulation;
+
+window.updateSimulationResults =
+    updateSimulationResults;
+
+window.getSimulationTime =
+    getSimulationTime;
+
+window.getSimulationState =
+    getSimulationState;
+
+window.isSimulationRunning =
+    isSimulationRunning;
+
+window.getSimulationPhysics =
+    getSimulationPhysics;
+
+window.updateSimulationParameters =
+    updateSimulationParameters;
+
+window.debugSimulation =
+    debugSimulation;
+
+window.toggleFullscreen =
+    toggleFullscreen;
+
+window.resizeCanvas =
+    resizeCanvas;
+
+
+/* ============================================================
+   ENGINE LOADED MESSAGE
+   ============================================================ */
+
+console.log(
+    "=========================================="
+);
+
+console.log(
+    "Double Pendulum Simulation Engine Loaded"
+);
+
+console.log(
+    "=========================================="
+);
