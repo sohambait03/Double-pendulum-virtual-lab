@@ -1,22 +1,2564 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 
 <head>
 
+    <!-- =====================================================
+         BASIC DOCUMENT SETTINGS
+         ===================================================== -->
+
     <meta charset="UTF-8">
 
-    <title>Double Pendulum Virtual Lab</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="/css/style.css">
+    <meta name="description"
+          content="Interactive Double Pendulum Virtual Laboratory for studying nonlinear dynamics and vibrations.">
+
+    <meta name="author"
+          content="Soham Bait">
+
+    <title>Double Pendulum Virtual Laboratory</title>
+
+
+    <!-- =====================================================
+         STYLESHEET
+         ===================================================== -->
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+
+    <!-- =====================================================
+         CHART.JS
+         Used later for simulation graphs
+         ===================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <!-- =====================================================
+         MATHJAX
+         Used for displaying engineering equations
+         ===================================================== -->
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+
+    <script async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
 
 </head>
 
+
 <body>
 
-    <h1>Double Pendulum System</h1>
 
-    <script src="js/physics.js"></script>
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+
+<header>
+
+    <div>
+
+        <h1>
+            DOUBLE PENDULUM SYSTEM
+        </h1>
+
+        <p>
+            Virtual Laboratory — Engineering Dynamics
+        </p>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     MAIN APPLICATION
+     ========================================================= -->
+
+<div class="app">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="sidebar">
+
+
+        <!-- Home -->
+
+        <button class="active"
+                onclick="scrollToSection('simulation')">
+
+            <span class="icon">⌂</span>
+
+            <span class="label">
+                Simulation
+            </span>
+
+        </button>
+
+
+        <!-- Variables -->
+
+        <button onclick="scrollToSection('variables')">
+
+            <span class="icon">⚙</span>
+
+            <span class="label">
+                Variables
+            </span>
+
+        </button>
+
+
+        <!-- Start -->
+
+        <button onclick="startSimulation()">
+
+            <span class="icon">▶</span>
+
+            <span class="label">
+                Start
+            </span>
+
+        </button>
+
+
+        <!-- Pause -->
+
+        <button onclick="pauseSimulation()">
+
+            <span class="icon">Ⅱ</span>
+
+            <span class="label">
+                Pause
+            </span>
+
+        </button>
+
+
+        <!-- Reset -->
+
+        <button onclick="resetSimulation()">
+
+            <span class="icon">↻</span>
+
+            <span class="label">
+                Reset
+            </span>
+
+        </button>
+
+
+        <!-- Step -->
+
+        <button onclick="stepSimulation()">
+
+            <span class="icon">⏭</span>
+
+            <span class="label">
+                Step
+            </span>
+
+        </button>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main>
+
+
+        <!-- =================================================
+             SIMULATION
+             ================================================= -->
+
+        <section id="simulation">
+
+            <h2>
+                Simulation
+            </h2>
+
+
+            <div class="simulation-container">
+
+
+                <!-- Canvas -->
+
+                <canvas id="pendulumCanvas"
+                        width="1050"
+                        height="400">
+                </canvas>
+
+
+                <!-- Simulation status -->
+
+                <div class="simulation-status">
+
+                    <span class="status status-stopped"
+                          id="simulationStatus">
+
+                        <span class="status-dot"></span>
+
+                        <span id="statusText">
+                            Ready
+                        </span>
+
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =============================================
+                 TIME DISPLAY
+                 ============================================= -->
+
+            <div class="time-display">
+
+                <span class="time-label">
+                    Simulation Time:
+                </span>
+
+                <span class="time-value"
+                      id="timeDisplay">
+
+                    0.000 s
+
+                </span>
+
+            </div>
+
+
+            <!-- =============================================
+                 CONTROL BUTTONS
+                 ============================================= -->
+
+            <div class="controls">
+
+
+                <button class="btn btn-start"
+                        onclick="startSimulation()">
+
+                    ▶ Start
+
+                </button>
+
+
+                <button class="btn btn-pause"
+                        onclick="pauseSimulation()">
+
+                    ⏸ Pause
+
+                </button>
+
+
+                <button class="btn btn-reset"
+                        onclick="resetSimulation()">
+
+                    ↻ Reset
+
+                </button>
+
+
+                <button class="btn btn-step"
+                        onclick="stepSimulation()">
+
+                    ⏭ Step
+
+                </button>
+
+
+                <button class="btn btn-secondary"
+                        onclick="toggleTrail()">
+
+                    ◌ Trail
+
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             VARIABLES
+             ================================================= -->
+
+        <section id="variables">
+
+            <h2>
+                Variables
+            </h2>
+
+
+            <div class="variables-container">
+
+
+                <!-- =========================================
+                     LENGTH 1
+                     ========================================= -->
+
+                <div class="variable-group">
+
+                    <div class="variable-label">
+
+                        <span class="variable-symbol">
+                            l₁
+                        </span>
+
+                        <span class="variable-value"
+                              id="l1Value">
+
+                            0.80 m
+
+                        </span>
+
+                    </div>
+
+
+                    <input
+                        type="range"
+                        id="l1Slider"
+                        min="0.10"
+                        max="2.00"
+                        step="0.01"
+                        value="0.80"
+                        oninput="updateParameter('l1')"
+                    >
+
+
+                    <input
+                        type="number"
+                        id="l1Input"
+                        min="0.10"
+                        max="2.00"
+                        step="0.01"
+                        value="0.80"
+                        onchange="updateParameter('l1')"
+                    >
+
+                </div>
+
+
+
+                <!-- =========================================
+                     LENGTH 2
+                     ========================================= -->
+
+                <div class="variable-group">
+
+                    <div class="variable-label">
+
+                        <span class="variable-symbol">
+                            l₂
+                        </span>
+
+                        <span class="variable-value"
+                              id="l2Value">
+
+                            0.80 m
+
+                        </span>
+
+                    </div>
+
+
+                    <input
+                        type="range"
+                        id="l2Slider"
+                        min="0.10"
+                        max="2.00"
+                        step="0.01"
+                        value="0.80"
+                        oninput="updateParameter('l2')"
+                    >
+
+
+                    <input
+                        type="number"
+                        id="l2Input"
+                        min="0.10"
+                        max="2.00"
+                        step="0.01"
+                        value="0.80"
+                        onchange="updateParameter('l2')"
+                    >
+
+                </div>
+
+
+
+                <!-- =========================================
+                     MASS 1
+                     ========================================= -->
+
+                <div class="variable-group">
+
+                    <div class="variable-label">
+
+                        <span class="variable-symbol">
+                            m₁
+                        </span>
+
+                        <span class="variable-value"
+                              id="m1Value">
+
+                            1.00 kg
+
+                        </span>
+
+                    </div>
+
+
+                    <input
+                        type="range"
+                        id="m1Slider"
+                        min="0.10"
+                        max="20.00"
+                        step="0.10"
+                        value="1.00"
+                        oninput="updateParameter('m1')"
+                    >
+
+
+                    <input
+                        type="number"
+                        id="m1Input"
+                        min="0.10"
+                        max="20.00"
+                        step="0.10"
+                        value="1.00"
+                        onchange="updateParameter('m1')"
+                    >
+
+                </div>
+
+
+
+                <!-- =========================================
+                     MASS 2
+                     ========================================= -->
+
+                <div class="variable-group">
+
+                    <div class="variable-label">
+
+                        <span class="variable-symbol">
+                            m₂
+                        </span>
+
+                        <span class="variable-value"
+                              id="m2Value">
+
+                            1.00 kg
+
+                        </span>
+
+                    </div>
+
+
+                    <input
+                        type="range"
+                        id="m2Slider"
+                        min="0.10"
+                        max="20.00"
+                        step="0.10"
+                        value="1.00"
+                        oninput="updateParameter('m2')"
+                    >
+
+
+                    <input
+                        type="number"
+                        id="m2Input"
+                        min="0.10"
+                        max="20.00"
+                        step="0.10"
+                        value="1.00"
+                        onchange="updateParameter('m2')"
+                    >
+
+                </div>
+
+
+
+                <!-- =========================================
+                     ANGLE 1
+                     ========================================= -->
+
+                <div class="variable-group">
+
+                    <div class="variable-label">
+
+                        <span class="variable-symbol">
+                            θ₁
+                        </span>
+
+                        <span class="variable-value"
+                              id="theta1Value">
+
+                            30°
+
+                        </span>
+
+                    </div>
+
+
+                    <input
+                        type="range"
+                        id="theta1Slider"
+                        min="-180"
+                        max="180"
+                        step="1"
+                        value="30"
+                        oninput="updateParameter('theta1')"
+                    >
+
+
+                    <input
+                        type="number"
+                        id="theta1Input"
+                        min="-180"
+                        max="180"
+                        step="1"
+                        value="30"
+                        onchange="updateParameter('theta1')"
+                    >
+
+                </div>
+
+
+
+                <!-- =========================================
+                     ANGLE 2
+                     ========================================= -->
+
+                <div class="variable-group">
+
+                    <div class="variable-label">
+
+                        <span class="variable-symbol">
+                            θ₂
+                        </span>
+
+                        <span class="variable-value"
+                              id="theta2Value">
+
+                            40°
+
+                        </span>
+
+                    </div>
+
+
+                    <input
+                        type="range"
+                        id="theta2Slider"
+                        min="-180"
+                        max="180"
+                        step="1"
+                        value="40"
+                        oninput="updateParameter('theta2')"
+                    >
+
+
+                    <input
+                        type="number"
+                        id="theta2Input"
+                        min="-180"
+                        max="180"
+                        step="1"
+                        value="40"
+                        onchange="updateParameter('theta2')"
+                    >
+
+                </div>
+
+
+
+                <!-- =========================================
+                     GRAVITY
+                     ========================================= -->
+
+                <div class="variable-group">
+
+                    <div class="variable-label">
+
+                        <span class="variable-symbol">
+                            g
+                        </span>
+
+                        <span class="variable-value"
+                              id="gValue">
+
+                            9.81 m/s²
+
+                        </span>
+
+                    </div>
+
+
+                    <input
+                        type="range"
+                        id="gSlider"
+                        min="1"
+                        max="20"
+                        step="0.01"
+                        value="9.81"
+                        oninput="updateParameter('g')"
+                    >
+
+
+                    <input
+                        type="number"
+                        id="gInput"
+                        min="1"
+                        max="20"
+                        step="0.01"
+                        value="9.81"
+                        onchange="updateParameter('g')"
+                    >
+
+                </div>
+
+
+
+                <!-- =========================================
+                     SIMULATION SPEED
+                     ========================================= -->
+
+                <div class="variable-group">
+
+                    <div class="variable-label">
+
+                        <span class="variable-symbol">
+                            Speed
+                        </span>
+
+                        <span class="variable-value"
+                              id="speedValue">
+
+                            1.00×
+
+                        </span>
+
+                    </div>
+
+
+                    <input
+                        type="range"
+                        id="speedSlider"
+                        min="0.10"
+                        max="3.00"
+                        step="0.10"
+                        value="1.00"
+                        oninput="updateSpeed()"
+                    >
+
+
+                    <input
+                        type="number"
+                        id="speedInput"
+                        min="0.10"
+                        max="3.00"
+                        step="0.10"
+                        value="1.00"
+                        onchange="updateSpeed()"
+                    >
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CURRENT STATE / RESULTS
+             ================================================= -->
+
+        <section id="results">
+
+            <h2>
+                Current State
+            </h2>
+
+
+            <div class="results-container">
+
+
+                <!-- θ1 -->
+
+                <div class="result-card">
+
+                    <div class="result-label">
+                        Angular Displacement θ₁
+                    </div>
+
+                    <div class="result-value"
+                         id="resultTheta1">
+
+                        30.00
+
+                    </div>
+
+                    <div class="result-unit">
+                        degrees
+                    </div>
+
+                </div>
+
+
+                <!-- θ2 -->
+
+                <div class="result-card">
+
+                    <div class="result-label">
+                        Angular Displacement θ₂
+                    </div>
+
+                    <div class="result-value"
+                         id="resultTheta2">
+
+                        40.00
+
+                    </div>
+
+                    <div class="result-unit">
+                        degrees
+                    </div>
+
+                </div>
+
+
+                <!-- ω1 -->
+
+                <div class="result-card">
+
+                    <div class="result-label">
+                        Angular Velocity ω₁
+                    </div>
+
+                    <div class="result-value"
+                         id="resultOmega1">
+
+                        0.000
+
+                    </div>
+
+                    <div class="result-unit">
+                        rad/s
+                    </div>
+
+                </div>
+
+
+                <!-- ω2 -->
+
+                <div class="result-card">
+
+                    <div class="result-label">
+                        Angular Velocity ω₂
+                    </div>
+
+                    <div class="result-value"
+                         id="resultOmega2">
+
+                        0.000
+
+                    </div>
+
+                    <div class="result-unit">
+                        rad/s
+                    </div>
+
+                </div>
+
+
+                <!-- α1 -->
+
+                <div class="result-card">
+
+                    <div class="result-label">
+                        Angular Acceleration α₁
+                    </div>
+
+                    <div class="result-value"
+                         id="resultAlpha1">
+
+                        0.000
+
+                    </div>
+
+                    <div class="result-unit">
+                        rad/s²
+                    </div>
+
+                </div>
+
+
+                <!-- α2 -->
+
+                <div class="result-card">
+
+                    <div class="result-label">
+                        Angular Acceleration α₂
+                    </div>
+
+                    <div class="result-value"
+                         id="resultAlpha2">
+
+                        0.000
+
+                    </div>
+
+                    <div class="result-unit">
+                        rad/s²
+                    </div>
+
+                </div>
+
+
+                <!-- Kinetic Energy -->
+
+                <div class="result-card">
+
+                    <div class="result-label">
+                        Kinetic Energy
+                    </div>
+
+                    <div class="result-value"
+                         id="resultKE">
+
+                        0.000
+
+                    </div>
+
+                    <div class="result-unit">
+                        J
+                    </div>
+
+                </div>
+
+
+                <!-- Potential Energy -->
+
+                <div class="result-card">
+
+                    <div class="result-label">
+                        Potential Energy
+                    </div>
+
+                    <div class="result-value"
+                         id="resultPE">
+
+                        0.000
+
+                    </div>
+
+                    <div class="result-unit">
+                        J
+                    </div>
+
+                </div>
+
+
+                <!-- Total Energy -->
+
+                <div class="result-card">
+
+                    <div class="result-label">
+                        Total Energy
+                    </div>
+
+                    <div class="result-value"
+                         id="resultTotalEnergy">
+
+                        0.000
+
+                    </div>
+
+                    <div class="result-unit">
+                        J
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             GRAPHS
+             ================================================= -->
+
+        <section id="graphs">
+
+            <h2>
+                Real-Time Results & Graphs
+            </h2>
+
+
+            <div class="graphs-container">
+
+
+                <!-- θ1 graph -->
+
+                <div class="graph-card">
+
+                    <div class="graph-title">
+                        Angular Displacement θ₁ vs Time
+                    </div>
+
+                    <canvas id="theta1Chart">
+                    </canvas>
+
+                </div>
+
+
+                <!-- θ2 graph -->
+
+                <div class="graph-card">
+
+                    <div class="graph-title">
+                        Angular Displacement θ₂ vs Time
+                    </div>
+
+                    <canvas id="theta2Chart">
+                    </canvas>
+
+                </div>
+
+
+                <!-- ω1 graph -->
+
+                <div class="graph-card">
+
+                    <div class="graph-title">
+                        Angular Velocity ω₁ vs Time
+                    </div>
+
+                    <canvas id="omega1Chart">
+                    </canvas>
+
+                </div>
+
+
+                <!-- ω2 graph -->
+
+                <div class="graph-card">
+
+                    <div class="graph-title">
+                        Angular Velocity ω₂ vs Time
+                    </div>
+
+                    <canvas id="omega2Chart">
+                    </canvas>
+
+                </div>
+
+
+                <!-- Energy graph -->
+
+                <div class="graph-card">
+
+                    <div class="graph-title">
+                        Total Mechanical Energy vs Time
+                    </div>
+
+                    <canvas id="energyChart">
+                    </canvas>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ENERGY VALIDATION
+             ================================================= -->
+
+        <section id="energyValidation">
+
+            <h2>
+                Energy Conservation Check
+            </h2>
+
+
+            <div class="energy-status good"
+                 id="energyStatus">
+
+
+                <h4>
+                    Numerical Energy Validation
+                </h4>
+
+
+                <p>
+
+                    Initial Energy:
+
+                    <strong id="initialEnergy">
+                        0.000 J
+                    </strong>
+
+                </p>
+
+
+                <p>
+
+                    Current Energy:
+
+                    <strong id="currentEnergy">
+                        0.000 J
+                    </strong>
+
+                </p>
+
+
+                <p>
+
+                    Energy Error:
+
+                    <strong id="energyError">
+                        0.000 %
+                    </strong>
+
+                </p>
+
+
+                <p>
+
+                    Status:
+
+                    <strong id="energyStatusText">
+                        Ready
+                    </strong>
+
+                </p>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             THEORY
+             ================================================= -->
+
+        <section id="theory">
+
+            <h2>
+                Theory
+            </h2>
+
+
+            <div class="theory-container">
+
+
+                <h3>
+                    1. Introduction
+                </h3>
+
+
+                <p>
+
+                    A double pendulum is a mechanical system
+                    consisting of two pendulum links connected
+                    in series. The system has two independent
+                    angular coordinates and therefore possesses
+                    two degrees of freedom.
+
+                </p>
+
+
+                <p>
+
+                    The double pendulum is an important example
+                    of a nonlinear coupled dynamic system and
+                    is commonly used to demonstrate concepts
+                    related to dynamics, vibrations, numerical
+                    methods, and chaotic motion.
+
+                </p>
+
+
+
+                <h3>
+                    2. System Configuration
+                </h3>
+
+
+                <p>
+
+                    The system consists of two masses
+                    \(m_1\) and \(m_2\), connected by links
+                    of lengths \(l_1\) and \(l_2\).
+
+                    The angular coordinates are measured
+                    from the vertically downward direction.
+
+                </p>
+
+
+
+                <h3>
+                    3. Degrees of Freedom
+                </h3>
+
+
+                <div class="equation-box">
+
+                    <p>
+                        $$DOF = 2$$
+                    </p>
+
+                    <p>
+                        $$q =
+                        \begin{bmatrix}
+                        \theta_1 \\
+                        \theta_2
+                        \end{bmatrix}$$
+                    </p>
+
+                </div>
+
+
+
+                <h3>
+                    4. Assumptions
+                </h3>
+
+
+                <ul>
+
+                    <li>
+                        Links are rigid.
+                    </li>
+
+                    <li>
+                        Masses are concentrated at the ends
+                        of the links.
+                    </li>
+
+                    <li>
+                        Joints are frictionless.
+                    </li>
+
+                    <li>
+                        Motion occurs in a single vertical plane.
+                    </li>
+
+                    <li>
+                        Gravitational acceleration is constant.
+                    </li>
+
+                    <li>
+                        Air resistance is neglected.
+                    </li>
+
+                    <li>
+                        Links are assumed to have negligible mass.
+                    </li>
+
+                </ul>
+
+
+
+                <h3>
+                    5. Position Coordinates
+                </h3>
+
+
+                <p>
+                    Position of the first mass:
+                </p>
+
+
+                <div class="equation-box">
+
+                    <p>
+                        $$x_1 = l_1\sin\theta_1$$
+                    </p>
+
+                    <p>
+                        $$y_1 = -l_1\cos\theta_1$$
+                    </p>
+
+                </div>
+
+
+                <p>
+                    Position of the second mass:
+                </p>
+
+
+                <div class="equation-box">
+
+                    <p>
+                        $$x_2 =
+                        l_1\sin\theta_1
+                        +
+                        l_2\sin\theta_2$$
+                    </p>
+
+                    <p>
+                        $$y_2 =
+                        -l_1\cos\theta_1
+                        -
+                        l_2\cos\theta_2$$
+                    </p>
+
+                </div>
+
+
+
+                <h3>
+                    6. Kinetic Energy
+                </h3>
+
+
+                <div class="equation-box">
+
+                    <p>
+
+                        $$
+                        T =
+                        \frac{1}{2}(m_1+m_2)
+                        l_1^2\dot{\theta}_1^2
+                        +
+                        \frac{1}{2}m_2l_2^2
+                        \dot{\theta}_2^2
+                        $$
+
+                    </p>
+
+
+                    <p>
+
+                        $$
+                        +
+                        m_2l_1l_2
+                        \dot{\theta}_1
+                        \dot{\theta}_2
+                        \cos(\theta_1-\theta_2)
+                        $$
+
+                    </p>
+
+                </div>
+
+
+
+                <h3>
+                    7. Potential Energy
+                </h3>
+
+
+                <div class="equation-box">
+
+                    <p>
+
+                        $$
+                        V =
+                        -(m_1+m_2)gl_1\cos\theta_1
+                        -
+                        m_2gl_2\cos\theta_2
+                        $$
+
+                    </p>
+
+                </div>
+
+
+
+                <h3>
+                    8. Lagrangian
+                </h3>
+
+
+                <div class="equation-box">
+
+                    <p>
+
+                        $$
+                        L = T - V
+                        $$
+
+                    </p>
+
+                </div>
+
+
+
+                <h3>
+                    9. Lagrange's Equation
+                </h3>
+
+
+                <div class="equation-box">
+
+                    <p>
+
+                        $$
+                        \frac{d}{dt}
+                        \left(
+                        \frac{\partial L}
+                        {\partial \dot{q_i}}
+                        \right)
+                        -
+                        \frac{\partial L}
+                        {\partial q_i}
+                        =0
+                        $$
+
+                    </p>
+
+                </div>
+
+
+
+                <h3>
+                    10. Governing Differential Equations
+                </h3>
+
+
+                <p>
+                    The nonlinear equations of motion are:
+                </p>
+
+
+                <div class="equation-box">
+
+                    <p>
+
+                        $$
+                        (m_1+m_2)l_1^2\ddot{\theta}_1
+                        +
+                        m_2l_1l_2\ddot{\theta}_2
+                        \cos(\theta_1-\theta_2)
+                        $$
+
+                    </p>
+
+
+                    <p>
+
+                        $$
+                        +
+                        m_2l_1l_2\dot{\theta}_2^2
+                        \sin(\theta_1-\theta_2)
+                        +
+                        (m_1+m_2)gl_1\sin\theta_1
+                        =0
+                        $$
+
+                    </p>
+
+                </div>
+
+
+                <div class="equation-box">
+
+                    <p>
+
+                        $$
+                        m_2l_2^2\ddot{\theta}_2
+                        +
+                        m_2l_1l_2\ddot{\theta}_1
+                        \cos(\theta_1-\theta_2)
+                        $$
+
+                    </p>
+
+
+                    <p>
+
+                        $$
+                        -
+                        m_2l_1l_2\dot{\theta}_1^2
+                        \sin(\theta_1-\theta_2)
+                        +
+                        m_2gl_2\sin\theta_2
+                        =0
+                        $$
+
+                    </p>
+
+                </div>
+
+
+
+                <h3>
+                    11. Matrix Form
+                </h3>
+
+
+                <div class="matrix-box">
+
+                    <p>
+
+                        $$
+                        \mathbf{M}(q)\ddot{q}
+                        +
+                        \mathbf{C}(q,\dot{q})
+                        +
+                        \mathbf{G}(q)
+                        =0
+                        $$
+
+                    </p>
+
+
+                    <p>
+
+                        $$
+                        \mathbf{M} =
+                        \begin{bmatrix}
+                        (m_1+m_2)l_1^2 &
+                        m_2l_1l_2\cos\Delta
+                        \\
+                        m_2l_1l_2\cos\Delta &
+                        m_2l_2^2
+                        \end{bmatrix}
+                        $$
+
+                    </p>
+
+                    <p>
+                        where
+                    </p>
+
+                    <p>
+
+                        $$
+                        \Delta=\theta_1-\theta_2
+                        $$
+
+                    </p>
+
+                </div>
+
+
+
+                <h3>
+                    12. Numerical Solution
+                </h3>
+
+
+                <p>
+
+                    The governing differential equations are
+                    nonlinear and coupled. Therefore, the
+                    simulation solves them numerically using
+                    the fourth-order Runge-Kutta method.
+
+                </p>
+
+
+                <div class="equation-box">
+
+                    <p>
+                        $$\boxed{\text{RK4 Numerical Integration}}$$
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             EXPERIMENTAL PROCEDURE
+             ================================================= -->
+
+        <section id="procedure">
+
+            <h2>
+                Experimental Procedure
+            </h2>
+
+
+            <div class="procedure-container">
+
+
+                <!-- Step 1 -->
+
+                <div class="procedure-step">
+
+                    <div class="step-number">
+                        1
+                    </div>
+
+                    <div class="step-content">
+
+                        <h4>
+                            Set System Parameters
+                        </h4>
+
+                        <p>
+
+                            Enter suitable values of
+                            \(m_1\), \(m_2\), \(l_1\),
+                            and \(l_2\).
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Step 2 -->
+
+                <div class="procedure-step">
+
+                    <div class="step-number">
+                        2
+                    </div>
+
+                    <div class="step-content">
+
+                        <h4>
+                            Set Initial Angles
+                        </h4>
+
+                        <p>
+
+                            Set the initial angular positions
+                            \(\theta_1\) and \(\theta_2\)
+                            using the sliders or input boxes.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Step 3 -->
+
+                <div class="procedure-step">
+
+                    <div class="step-number">
+                        3
+                    </div>
+
+                    <div class="step-content">
+
+                        <h4>
+                            Set Gravity
+                        </h4>
+
+                        <p>
+
+                            Set gravitational acceleration.
+                            The default Earth value is
+                            \(g=9.81\,m/s^2\).
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Step 4 -->
+
+                <div class="procedure-step">
+
+                    <div class="step-number">
+                        4
+                    </div>
+
+                    <div class="step-content">
+
+                        <h4>
+                            Reset the Simulation
+                        </h4>
+
+                        <p>
+
+                            Click the Reset button to apply
+                            the selected initial conditions.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Step 5 -->
+
+                <div class="procedure-step">
+
+                    <div class="step-number">
+                        5
+                    </div>
+
+                    <div class="step-content">
+
+                        <h4>
+                            Start the Simulation
+                        </h4>
+
+                        <p>
+
+                            Click Start to begin the numerical
+                            integration and observe the motion
+                            of both pendulum masses.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Step 6 -->
+
+                <div class="procedure-step">
+
+                    <div class="step-number">
+                        6
+                    </div>
+
+                    <div class="step-content">
+
+                        <h4>
+                            Observe the Motion
+                        </h4>
+
+                        <p>
+
+                            Observe angular displacement,
+                            angular velocity and angular
+                            acceleration in real time.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Step 7 -->
+
+                <div class="procedure-step">
+
+                    <div class="step-number">
+                        7
+                    </div>
+
+                    <div class="step-content">
+
+                        <h4>
+                            Analyze the Graphs
+                        </h4>
+
+                        <p>
+
+                            Study the variation of
+                            \(\theta_1\), \(\theta_2\),
+                            \(\omega_1\), and \(\omega_2\)
+                            with time.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Step 8 -->
+
+                <div class="procedure-step">
+
+                    <div class="step-number">
+                        8
+                    </div>
+
+                    <div class="step-content">
+
+                        <h4>
+                            Check Energy Conservation
+                        </h4>
+
+                        <p>
+
+                            Compare the initial and current
+                            total mechanical energy to evaluate
+                            numerical accuracy.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             OBSERVATION TABLE
+             ================================================= -->
+
+        <section id="observations">
+
+            <h2>
+                Observation Table
+            </h2>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Trial
+                            </th>
+
+                            <th>
+                                θ₁ (°)
+                            </th>
+
+                            <th>
+                                θ₂ (°)
+                            </th>
+
+                            <th>
+                                Maximum θ₁ (°)
+                            </th>
+
+                            <th>
+                                Maximum θ₂ (°)
+                            </th>
+
+                            <th>
+                                Total Energy (J)
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="observationTableBody">
+
+                        <tr>
+
+                            <td>
+                                1
+                            </td>
+
+                            <td>
+                                10
+                            </td>
+
+                            <td>
+                                10
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                2
+                            </td>
+
+                            <td>
+                                20
+                            </td>
+
+                            <td>
+                                20
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                3
+                            </td>
+
+                            <td>
+                                30
+                            </td>
+
+                            <td>
+                                30
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                4
+                            </td>
+
+                            <td>
+                                40
+                            </td>
+
+                            <td>
+                                40
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DATA EXPORT
+             ================================================= -->
+
+        <section id="dataExport">
+
+            <h2>
+                Simulation Data
+            </h2>
+
+
+            <div class="controls">
+
+
+                <button class="btn btn-download"
+                        onclick="downloadCSV()">
+
+                    ↓ Download CSV
+
+                </button>
+
+
+                <button class="btn btn-secondary"
+                        onclick="clearData()">
+
+                    Clear Data
+
+                </button>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             QUIZ
+             ================================================= -->
+
+        <section id="quiz">
+
+            <h2>
+                Knowledge Check
+            </h2>
+
+
+            <div class="quiz-container">
+
+
+                <!-- Question 1 -->
+
+                <div class="quiz-question">
+
+                    <h4>
+                        1. How many degrees of freedom does
+                        the double pendulum possess?
+                    </h4>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q1"
+                               value="1">
+
+                        1
+
+                    </label>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q1"
+                               value="2">
+
+                        2
+
+                    </label>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q1"
+                               value="3">
+
+                        3
+
+                    </label>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q1"
+                               value="4">
+
+                        4
+
+                    </label>
+
+                </div>
+
+
+
+                <!-- Question 2 -->
+
+                <div class="quiz-question">
+
+                    <h4>
+                        2. Which method is used to derive the
+                        governing equations?
+                    </h4>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q2"
+                               value="Bernoulli">
+
+                        Bernoulli Equation
+
+                    </label>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q2"
+                               value="Euler">
+
+                        Euler Equation
+
+                    </label>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q2"
+                               value="Lagrange">
+
+                        Lagrange's Equation
+
+                    </label>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q2"
+                               value="Continuity">
+
+                        Continuity Equation
+
+                    </label>
+
+                </div>
+
+
+
+                <!-- Question 3 -->
+
+                <div class="quiz-question">
+
+                    <h4>
+                        3. Which numerical method is used
+                        by this virtual laboratory?
+                    </h4>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q3"
+                               value="Euler">
+
+                        Euler Method
+
+                    </label>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q3"
+                               value="RK4">
+
+                        Fourth-Order Runge-Kutta
+
+                    </label>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q3"
+                               value="Newton">
+
+                        Newton-Raphson Method
+
+                    </label>
+
+
+                    <label class="quiz-option">
+
+                        <input type="radio"
+                               name="q3"
+                               value="Gauss">
+
+                        Gauss-Seidel Method
+
+                    </label>
+
+                </div>
+
+
+
+                <!-- Quiz button -->
+
+                <div class="controls">
+
+                    <button class="btn btn-start"
+                            onclick="checkQuiz()">
+
+                        Check Answers
+
+                    </button>
+
+                </div>
+
+
+                <div id="quizResult"
+                     class="text-center mt-20">
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ABOUT
+             ================================================= -->
+
+        <section id="about">
+
+            <h2>
+                About the Virtual Laboratory
+            </h2>
+
+
+            <div class="theory-container">
+
+
+                <h3>
+                    About This Project
+                </h3>
+
+
+                <p>
+
+                    The Double Pendulum Virtual Laboratory is
+                    an interactive educational simulation
+                    developed to demonstrate the dynamic
+                    behavior of a nonlinear two-degree-of-
+                    freedom mechanical system.
+
+                </p>
+
+
+                <p>
+
+                    The governing equations are derived using
+                    Lagrangian mechanics and solved numerically
+                    using the fourth-order Runge-Kutta method.
+
+                </p>
+
+
+                <h3>
+                    Model Information
+                </h3>
+
+
+                <ul>
+
+                    <li>
+                        System: Double Pendulum
+                    </li>
+
+                    <li>
+                        Degrees of Freedom: 2
+                    </li>
+
+                    <li>
+                        Mathematical Model: Nonlinear
+                    </li>
+
+                    <li>
+                        Numerical Solver: RK4
+                    </li>
+
+                    <li>
+                        Coordinate System: Absolute Angular Coordinates
+                    </li>
+
+                    <li>
+                        Motion: Planar
+                    </li>
+
+                    <li>
+                        Gravity: 9.81 m/s²
+                    </li>
+
+                </ul>
+
+
+                <h3>
+                    Developed By
+                </h3>
+
+
+                <p>
+
+                    <strong>
+                        Soham Bait
+                    </strong>
+
+                </p>
+
+
+                <p>
+                    Aeronautical Engineering
+                </p>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer>
+
+            <p>
+                Double Pendulum Virtual Laboratory
+            </p>
+
+            <p>
+                Engineering Dynamics Simulation
+            </p>
+
+            <p>
+                © 2026 — Educational Project
+            </p>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT FILES
+     ========================================================= -->
+
+<!-- Physics engine -->
+<script src="js/physics.js"></script>
+
+<!-- Simulation and animation -->
+<script src="js/simulation.js"></script>
+
+<!-- User controls -->
+<script src="js/controls.js"></script>
+
+<!-- Graphs -->
+<script src="js/charts.js"></script>
+
+
+
+<!-- =========================================================
+     BASIC UI FUNCTIONS
+     These will later communicate with the main JS files.
+     ========================================================= -->
+
+<script>
+
+    /* =====================================================
+       SCROLL TO SECTION
+       ===================================================== */
+
+    function scrollToSection(sectionID) {
+
+        const section =
+            document.getElementById(sectionID);
+
+        if (section) {
+
+            section.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+    }
+
+
+    /* =====================================================
+       PLACEHOLDER FUNCTIONS
+       These prevent button errors before the simulation
+       JavaScript is fully implemented.
+       ===================================================== */
+
+    function startSimulation() {
+
+        if (typeof startSimulationEngine === "function") {
+
+            startSimulationEngine();
+
+        }
+
+        else {
+
+            console.log("Simulation engine not loaded yet.");
+
+        }
+
+    }
+
+
+    function pauseSimulation() {
+
+        if (typeof pauseSimulationEngine === "function") {
+
+            pauseSimulationEngine();
+
+        }
+
+        else {
+
+            console.log("Simulation engine not loaded yet.");
+
+        }
+
+    }
+
+
+    function resetSimulation() {
+
+        if (typeof resetSimulationEngine === "function") {
+
+            resetSimulationEngine();
+
+        }
+
+        else {
+
+            console.log("Simulation engine not loaded yet.");
+
+        }
+
+    }
+
+
+    function stepSimulation() {
+
+        if (typeof stepSimulationEngine === "function") {
+
+            stepSimulationEngine();
+
+        }
+
+        else {
+
+            console.log("Simulation engine not loaded yet.");
+
+        }
+
+    }
+
+
+    function toggleTrail() {
+
+        if (typeof toggleSimulationTrail === "function") {
+
+            toggleSimulationTrail();
+
+        }
+
+    }
+
+
+    function updateParameter(parameter) {
+
+        if (typeof updateSimulationParameter === "function") {
+
+            updateSimulationParameter(parameter);
+
+        }
+
+    }
+
+
+    function updateSpeed() {
+
+        if (typeof updateSimulationSpeed === "function") {
+
+            updateSimulationSpeed();
+
+        }
+
+    }
+
+
+    function downloadCSV() {
+
+        if (typeof exportSimulationCSV === "function") {
+
+            exportSimulationCSV();
+
+        }
+
+        else {
+
+            console.log("CSV export function not loaded yet.");
+
+        }
+
+    }
+
+
+    function clearData() {
+
+        if (typeof clearSimulationData === "function") {
+
+            clearSimulationData();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       QUIZ
+       ===================================================== */
+
+    function checkQuiz() {
+
+        let score = 0;
+
+
+        /* Question 1 */
+
+        const q1 =
+            document.querySelector(
+                'input[name="q1"]:checked'
+            );
+
+        if (q1 && q1.value === "2") {
+
+            score++;
+
+        }
+
+
+        /* Question 2 */
+
+        const q2 =
+            document.querySelector(
+                'input[name="q2"]:checked'
+            );
+
+        if (q2 && q2.value === "Lagrange") {
+
+            score++;
+
+        }
+
+
+        /* Question 3 */
+
+        const q3 =
+            document.querySelector(
+                'input[name="q3"]:checked'
+            );
+
+        if (q3 && q3.value === "RK4") {
+
+            score++;
+
+        }
+
+
+        /* Result */
+
+        const result =
+            document.getElementById("quizResult");
+
+
+        result.innerHTML =
+            "<strong>Score: " +
+            score +
+            " / 3</strong>";
+
+    }
+
+
+    /* =====================================================
+       INITIAL PAGE SETUP
+       ===================================================== */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            console.log(
+                "Double Pendulum Virtual Laboratory loaded."
+            );
+
+        }
+    );
+
+</script>
+
 
 </body>
 
